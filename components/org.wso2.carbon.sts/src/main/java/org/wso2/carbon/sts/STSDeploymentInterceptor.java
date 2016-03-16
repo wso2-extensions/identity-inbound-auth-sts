@@ -50,6 +50,7 @@ import org.wso2.carbon.core.deployment.DeploymentInterceptor;
 import org.wso2.carbon.core.persistence.PersistenceUtils;
 import org.wso2.carbon.core.util.KeyStoreManager;
 import org.wso2.carbon.core.util.KeyStoreUtil;
+import org.wso2.carbon.identity.provider.AttributeCallbackHandler;
 import org.wso2.carbon.registry.api.RegistryException;
 import org.wso2.carbon.registry.core.Collection;
 import org.wso2.carbon.registry.core.Registry;
@@ -101,6 +102,7 @@ public class STSDeploymentInterceptor implements AxisObserver {
 
     public static final String HOST_NAME = "HostName";
     public static final String STS_TIME_TO_LIVE = "STSTimeToLive";
+    public static final String STS_HOST_NAME = "STSHostName";
     public static final String SECURITY_DISABLE_TOKEN_STORE = "Security.DisableTokenStore";
     public static final String SECURITY_KEY_STORE_KEY_PASSWORD = "Security.KeyStore.KeyPassword";
     public static final String SECURITY_TOKEN_PERSISTER_CLASS = "Security.TokenPersister.Class";
@@ -183,11 +185,11 @@ public class STSDeploymentInterceptor implements AxisObserver {
 
         }
 
-        issuerName = serverConfig.getFirstProperty(HOST_NAME);
+        issuerName = serverConfig.getFirstProperty(STS_HOST_NAME);
 
-        if (issuerName == null) {
+        if (StringUtils.isBlank(issuerName)) {
             // HostName not set :-( use wso2wsas-sts
-            issuerName = ServerConstants.STS_NAME;
+            issuerName = "https://" + serverConfig.getFirstProperty(HOST_NAME);
         }
 
         if (privateKeyAlias != null) {
@@ -199,12 +201,14 @@ public class STSDeploymentInterceptor implements AxisObserver {
                     new String[] { keyStoreName }, keyStoreName, privateKeyAlias);
 
             SAMLTokenIssuerConfig stsSamlConfig = new SAMLTokenIssuerConfig(issuerName, cryptoProvider, props);
+            stsSamlConfig.setIssuerName(issuerName);
             stsSamlConfig.setIssuerKeyAlias(privateKeyAlias);
             stsSamlConfig.setIssuerKeyPassword(keyPassword);
             stsSamlConfig.setAddRequestedAttachedRef(true);
             stsSamlConfig.setAddRequestedUnattachedRef(true);
             stsSamlConfig.setKeyComputation(2);
             stsSamlConfig.setProofKeyType(TokenIssuerUtil.BINARY_SECRET);
+            stsSamlConfig.setCallbackHandlerName(AttributeCallbackHandler.class.getName());
 
             String resourcePath = null;
             resourcePath = RegistryResources.SERVICE_GROUPS + ServerConstants.STS_NAME
