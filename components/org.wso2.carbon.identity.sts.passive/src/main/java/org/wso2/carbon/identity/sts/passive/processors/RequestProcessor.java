@@ -72,7 +72,7 @@ public abstract class RequestProcessor {
     private static final Log log = LogFactory.getLog(RequestProcessor.class);
     protected RahasData rahasData = null;
 
-    protected OMElement getRST(String appliesTo, String attrs, String dialect) throws Exception {
+    protected OMElement getRST(String appliesTo, String attrs, String dialect, String tokenType) throws Exception {
         OMFactory factory = null;
         OMElement element = null;
         OMElement claims = null;
@@ -97,8 +97,16 @@ public abstract class RequestProcessor {
 
         factory = OMAbstractFactory.getOMFactory();
         element = factory.createOMElement(Constants.RST_TEMPLATE);
-        TrustUtil.createTokenTypeElement(RahasConstants.VERSION_05_12, element).setText(
-                RahasConstants.TOK_TYPE_SAML_10);
+		if (RahasConstants.TOK_TYPE_SAML_10.equalsIgnoreCase(tokenType)) {
+			TrustUtil.createTokenTypeElement(RahasConstants.VERSION_05_12,
+					element).setText(RahasConstants.TOK_TYPE_SAML_10);
+		} else if (RahasConstants.TOK_TYPE_SAML_20.equalsIgnoreCase(tokenType)) {
+			TrustUtil.createTokenTypeElement(RahasConstants.VERSION_05_12,
+					element).setText(RahasConstants.TOK_TYPE_SAML_20);
+		} else {
+			TrustUtil.createTokenTypeElement(RahasConstants.VERSION_05_12,
+					element).setText(RahasConstants.TOK_TYPE_SAML_10);
+		}
         TrustUtil.createKeyTypeElement(RahasConstants.VERSION_05_12, element,
                 RahasConstants.KEY_TYPE_SYMM_KEY);
         TrustUtil.createKeySizeElement(RahasConstants.VERSION_05_12, element, 256);
