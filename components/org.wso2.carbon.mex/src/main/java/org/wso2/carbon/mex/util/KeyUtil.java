@@ -41,15 +41,10 @@ public class KeyUtil {
 
         // this is for UT token policy
         ServerConfiguration config = ServerConfiguration.getInstance();
-        String path = new File(config
-                .getFirstProperty("Security.KeyStore.Location"))
-                .getAbsolutePath();
-        String password = config
-                .getFirstProperty("Security.KeyStore.Password");
-        String keyalias = config
-                .getFirstProperty("Security.KeyStore.KeyAlias");
-        String storeType = config
-                .getFirstProperty("Security.KeyStore.Type");
+        String path = new File(config.getFirstProperty("Security.KeyStore.Location")).getAbsolutePath();
+        String password = config.getFirstProperty("Security.KeyStore.Password");
+        String keyalias = config.getFirstProperty("Security.KeyStore.KeyAlias");
+        String storeType = config.getFirstProperty("Security.KeyStore.Type");
 
         FileInputStream ksIn = new FileInputStream(path);
         BufferedInputStream ksbufin = new BufferedInputStream(ksIn);
