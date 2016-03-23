@@ -25,10 +25,9 @@ import org.osgi.service.component.ComponentContext;
 /**
  * @scr.component name="carbon.mex.component" immediate="true"
  */
-public class CustomMexComponent {
+public class MexComponent {
 
-
-    private static Log log = LogFactory.getLog(CustomMexComponent.class);
+    private static Log log = LogFactory.getLog(MexComponent.class);
 
     protected void activate(ComponentContext ctxt) {
 

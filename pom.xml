@@ -33,6 +33,16 @@
     </description>
     <url>http://wso2.org</url>
 
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.wso2.carbon</groupId>
+                <artifactId>org.wso2.carbon.xfer</artifactId>
+                <version>4.2.0</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <modules>
         <module>components/org.wso2.carbon.identity.sts.mgt</module>
         <module>components/org.wso2.carbon.identity.sts.mgt.stub</module>

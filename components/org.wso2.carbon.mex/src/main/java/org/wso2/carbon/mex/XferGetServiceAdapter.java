@@ -34,16 +34,16 @@ public class XferGetServiceAdapter implements WSTransferOperations {
         service = new MexGetService();
     }
 
-    public OMElement get(OMElement arg0) throws WSTransferException {
+    public OMElement get(OMElement request) throws WSTransferException {
 
         try {
-            if (arg0.getFirstElement() != null) {
-                return service.get(arg0);
+            if (request.getFirstElement() != null) {
+                return service.get(request);
             } else {
-                return service.get2(arg0);
+                return service.get2(request);
             }
         } catch (Exception e) {
-            logger.error("", e);
+            logger.error("Error while processing the WSTransfer request", e);
             throw new RuntimeException(e);
         }
     }
