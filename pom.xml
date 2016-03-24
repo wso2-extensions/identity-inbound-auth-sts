@@ -119,10 +119,14 @@
             <dependency>
                 <groupId>org.wso2.carbon</groupId>
                 <artifactId>org.wso2.carbon.xfer</artifactId>
-                <version>4.2.0</version>
+                <version>${carbon.xfer.package.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
+
+    <properties>
+        <carbon.xfer.package.version>4.2.0</carbon.xfer.package.version>
+    </properties>
 
     <modules>
         <module>components/org.wso2.carbon.identity.sts.mgt</module>
