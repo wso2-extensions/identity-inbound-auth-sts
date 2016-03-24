@@ -38,9 +38,9 @@ public class XferGetServiceAdapter implements WSTransferOperations {
 
         try {
             if (request.getFirstElement() != null) {
-                return service.get(request);
+                return service.requestPost(request);
             } else {
-                return service.get2(request);
+                return service.requestGet(request);
             }
         } catch (Exception e) {
             logger.error("Error while processing the WSTransfer request", e);

@@ -42,7 +42,7 @@ public class MexGetService {
     private static final String STS_END_POINT = "/wso2carbon-sts.wso2carbon-stsHttpsSoap12Endpoint";
 
 
-        public OMElement get(OMElement element) throws MexException {
+        public OMElement requestPost(OMElement element) throws MexException {
 
                 if (log.isDebugEnabled()) {
                         log.debug("---------------Begin Mex-UT Endpoint Request--------------------");
@@ -844,7 +844,7 @@ public class MexGetService {
                 return omBody;
         }
 
-        public OMElement get2(OMElement element) throws MexException {
+        public OMElement requestGet(OMElement element) throws MexException {
 
                 if (log.isDebugEnabled()) {
                         log.debug("---------------Begin Mex-UT Endpoint Request--------------------");
