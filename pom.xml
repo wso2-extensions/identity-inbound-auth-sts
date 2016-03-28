@@ -114,6 +114,20 @@
         </pluginRepository>
     </pluginRepositories>
 
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.wso2.carbon</groupId>
+                <artifactId>org.wso2.carbon.xfer</artifactId>
+                <version>${carbon.xfer.package.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <properties>
+        <carbon.xfer.package.version>4.2.0</carbon.xfer.package.version>
+    </properties>
+
     <modules>
         <module>components/org.wso2.carbon.identity.sts.mgt</module>
         <module>components/org.wso2.carbon.identity.sts.mgt.stub</module>
@@ -125,6 +139,7 @@
         <module>components/org.wso2.carbon.sts</module>
         <module>components/org.wso2.carbon.sts.stub</module>
         <module>components/org.wso2.carbon.sts.ui</module>
+        <module>components/org.wso2.carbon.mex</module>
 
         <module>features/org.wso2.carbon.identity.sts.mgt.feature</module>
         <module>features/org.wso2.carbon.identity.sts.mgt.server.feature</module>
@@ -135,6 +150,8 @@
         <module>features/org.wso2.carbon.sts.feature</module>
         <module>features/org.wso2.carbon.sts.server.feature</module>
         <module>features/org.wso2.carbon.sts.ui.feature</module>
+        <module>features/org.wso2.carbon.mex.feature</module>
+
     </modules>
 
 </project>
