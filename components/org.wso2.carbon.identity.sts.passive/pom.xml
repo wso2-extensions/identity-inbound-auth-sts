@@ -56,7 +56,6 @@
         <dependency>
             <groupId>org.apache.rampart.wso2</groupId>
             <artifactId>rampart-trust</artifactId>
-			<!-- version>1.6.1.wso2v20-SNAPSHOT</version-->
         </dependency>
         <dependency>
             <groupId>org.apache.rampart.wso2</groupId>

@@ -55,7 +55,6 @@ public class SigningRequestProcessor extends RequestProcessor {
         ResponseToken reponseToken = null;
         Vector<WSHandlerResult> handlerResultsVector = null;
         OMElement rstr = null;
-        String requestedTokenType = null;
 
         principal = new WSUsernameTokenPrincipal(request.getUserName(), false);
 
@@ -72,9 +71,9 @@ public class SigningRequestProcessor extends RequestProcessor {
         MessageContext.getCurrentMessageContext().setProperty(WSHandlerConstants.RECV_RESULTS,
                 handlerResultsVector);
 
+        String requestedTokenType = PassiveSTSUtil.extractTokenType(request);
 
         try {
-            requestedTokenType = PassiveSTSUtil.extractTokenType(request);
             MessageContext.getCurrentMessageContext().setProperty(RahasConstants.PASSIVE_STS_RST,
                     getRST(request.getRealm(), request.getAttributes(), request.getDialect(), requestedTokenType));
         } catch (Exception e) {

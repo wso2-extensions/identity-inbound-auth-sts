@@ -30,6 +30,7 @@ import javax.xml.stream.XMLStreamException;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.util.AXIOMUtil;
 import org.apache.rahas.TrustException;
+import org.wso2.carbon.identity.sts.passive.PassiveRequestorConstants;
 import org.wso2.carbon.identity.sts.passive.RequestToken;
 
 public class PassiveSTSUtil {
@@ -77,7 +78,7 @@ public class PassiveSTSUtil {
                 throw new TrustException("RequestFailed", e);
             }
             OMElement tokenElement = rootElement.getFirstChildWithName(new QName(
-                    "http://docs.oasis-open.org/ws-sx/ws-trust/200512", "TokenType"));
+                    PassiveRequestorConstants.WS_TRUST_200512_NS_URI, PassiveRequestorConstants.TOKEN_TYPE_LOCAL));
             tokenType = tokenElement.getText();
 
         }
