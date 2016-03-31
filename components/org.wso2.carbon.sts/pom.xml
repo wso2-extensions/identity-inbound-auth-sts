@@ -123,6 +123,8 @@
                             org.wso2.carbon.security.*,
                             org.wso2.carbon.identity.provider;
                             version="${carbon.identity.package.import.version.range}",
+                            org.wso2.carbon.identity.sts.store;
+                            version="${carbon.identity.package.import.version.range}",
                             javax.cache
                         </Import-Package>
                         <Export-Package>
