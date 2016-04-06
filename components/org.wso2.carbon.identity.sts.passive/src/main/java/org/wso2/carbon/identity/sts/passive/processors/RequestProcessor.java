@@ -72,7 +72,10 @@ public abstract class RequestProcessor {
     private static final Log log = LogFactory.getLog(RequestProcessor.class);
     protected RahasData rahasData = null;
 
-    protected OMElement getRST(String appliesTo, String attrs, String dialect) throws Exception {
+    /**
+     * @deprecated As of release 5.2.0 replaced by {@link #getRST(String, String, String, String)} 
+     */
+    @Deprecated protected OMElement getRST(String appliesTo, String attrs, String dialect) throws Exception {
         OMFactory factory = null;
         OMElement element = null;
         OMElement claims = null;
@@ -99,6 +102,69 @@ public abstract class RequestProcessor {
         element = factory.createOMElement(Constants.RST_TEMPLATE);
         TrustUtil.createTokenTypeElement(RahasConstants.VERSION_05_12, element).setText(
                 RahasConstants.TOK_TYPE_SAML_10);
+        TrustUtil.createKeyTypeElement(RahasConstants.VERSION_05_12, element,
+                RahasConstants.KEY_TYPE_SYMM_KEY);
+        TrustUtil.createKeySizeElement(RahasConstants.VERSION_05_12, element, 256);
+
+        if (attributes != null && attributes.length > 0) {
+            claims = TrustUtil.createClaims(RahasConstants.VERSION_05_12, element,
+                    dialect);
+            for (int i = 0; i < attributes.length; i++) {
+                addClaimType(claims, attributes[i]);
+            }
+        }
+
+        client = new STSClient(MessageContext.getCurrentMessageContext().getConfigurationContext());
+        client.setVersion(RahasConstants.VERSION_05_12);
+        client.setRstTemplate(element);
+        return client.createIssueRequest(requestType, appliesTo);
+    }
+    
+    /**
+     * Method to get the RST
+     * 
+     * @param appliesTo
+     * @param attrs
+     * @param dialect
+     * @param tokenType Requested token type. If null SAML 1.1 RST will be generated.
+     * @return
+     * @throws Exception
+     */
+    protected OMElement getRST(String appliesTo, String attrs, String dialect, String tokenType) throws Exception {
+        OMFactory factory = null;
+        OMElement element = null;
+        OMElement claims = null;
+        STSClient client = null;
+        String[] attributes = null;
+        String requestType;
+
+        if (dialect == null) {
+            dialect = UserCoreConstants.DEFAULT_CARBON_DIALECT;
+        }
+
+        if (attrs != null) {
+            if (attrs.contains("#CODE#")) {
+                attributes = attrs.split("#CODE#");
+            } else {
+                attributes = attrs.split(",");
+            }
+        }
+
+        requestType = TrustUtil.getWSTNamespaceForRSTRequestTye(RahasConstants.VERSION_05_12)
+                + RahasConstants.REQ_TYPE_ISSUE;
+
+        factory = OMAbstractFactory.getOMFactory();
+        element = factory.createOMElement(Constants.RST_TEMPLATE);
+        if (RahasConstants.TOK_TYPE_SAML_10.equalsIgnoreCase(tokenType)) {
+            TrustUtil.createTokenTypeElement(RahasConstants.VERSION_05_12,
+                    element).setText(RahasConstants.TOK_TYPE_SAML_10);
+        } else if (RahasConstants.TOK_TYPE_SAML_20.equalsIgnoreCase(tokenType)) {
+            TrustUtil.createTokenTypeElement(RahasConstants.VERSION_05_12,
+                    element).setText(RahasConstants.TOK_TYPE_SAML_20);
+        } else {
+            TrustUtil.createTokenTypeElement(RahasConstants.VERSION_05_12,
+                    element).setText(RahasConstants.TOK_TYPE_SAML_10);
+        }
         TrustUtil.createKeyTypeElement(RahasConstants.VERSION_05_12, element,
                 RahasConstants.KEY_TYPE_SYMM_KEY);
         TrustUtil.createKeySizeElement(RahasConstants.VERSION_05_12, element, 256);

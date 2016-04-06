@@ -71,7 +71,8 @@ public class AttributeRequestProcessor extends RequestProcessor {
             MessageContext.getCurrentMessageContext().setProperty(WSHandlerConstants.RECV_RESULTS,
                     handlerResultsVector);
             MessageContext.getCurrentMessageContext().setProperty(RahasConstants.PASSIVE_STS_RST,
-                    getRST(request.getRealm(), request.getAttributes(), request.getDialect()));
+                    getRST(request.getRealm(), request.getAttributes(), request.getDialect(),
+                            PassiveSTSUtil.extractTokenType(request)));
 
             ConfigurationContext configurationContext = context.getConfigurationContext();
             configurationContext.setProperty(TokenStorage.TOKEN_STORAGE_KEY, PassiveSTSUtil.getTokenStorage());

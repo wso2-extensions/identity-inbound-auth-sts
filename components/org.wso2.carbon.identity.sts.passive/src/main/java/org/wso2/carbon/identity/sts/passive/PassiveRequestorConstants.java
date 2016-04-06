@@ -53,4 +53,8 @@ public class PassiveRequestorConstants {
 
     public final static String PSEUDO = "wpseudo";
 
+    public static final String WS_TRUST_200512_NS_URI = "http://docs.oasis-open.org/ws-sx/ws-trust/200512";
+
+    public static final String TOKEN_TYPE_LOCAL = "TokenType";
+
 }

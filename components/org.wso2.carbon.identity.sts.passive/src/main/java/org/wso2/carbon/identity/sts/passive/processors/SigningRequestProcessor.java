@@ -27,6 +27,7 @@ import org.apache.rahas.RahasData;
 import org.apache.rahas.TokenStorage;
 import org.apache.rahas.TrustException;
 import org.apache.rahas.impl.SAMLPassiveTokenIssuer;
+import org.apache.rahas.impl.SAML2PassiveTokenIssuer;
 import org.apache.rahas.impl.SAMLTokenIssuerConfig;
 import org.apache.ws.security.WSConstants;
 import org.apache.ws.security.WSSecurityEngineResult;
@@ -70,10 +71,11 @@ public class SigningRequestProcessor extends RequestProcessor {
         MessageContext.getCurrentMessageContext().setProperty(WSHandlerConstants.RECV_RESULTS,
                 handlerResultsVector);
 
+        String requestedTokenType = PassiveSTSUtil.extractTokenType(request);
 
         try {
             MessageContext.getCurrentMessageContext().setProperty(RahasConstants.PASSIVE_STS_RST,
-                    getRST(request.getRealm(), request.getAttributes(), request.getDialect()));
+                    getRST(request.getRealm(), request.getAttributes(), request.getDialect(), requestedTokenType));
         } catch (Exception e) {
             log.error("Failed to get RST element.", e);
             throw new TrustException("errorWhileProcessingSigninRequest", e);
@@ -92,11 +94,26 @@ public class SigningRequestProcessor extends RequestProcessor {
         configurationContext.setProperty(TokenStorage.TOKEN_STORAGE_KEY, PassiveSTSUtil.getTokenStorage());
 
         rahasData = new RahasData(context);
-        issuer = new SAMLPassiveTokenIssuer();
-        issuer.setAudienceRestrictionCondition(request.getRealm());
-        issuer.setConfig(samlTokenIssuerConfig);
 
-        rstr = issuer.issuePassiveRSTR(rahasData);
+        if (RahasConstants.TOK_TYPE_SAML_10.equalsIgnoreCase(requestedTokenType)) {
+            SAMLPassiveTokenIssuer issuer1_0 = new SAMLPassiveTokenIssuer();
+            issuer1_0.setAudienceRestrictionCondition(request.getRealm());
+            issuer1_0.setConfig(samlTokenIssuerConfig);
+            rstr = issuer1_0.issuePassiveRSTR(rahasData);
+
+        } else if (RahasConstants.TOK_TYPE_SAML_20.equalsIgnoreCase(requestedTokenType)) {
+            SAML2PassiveTokenIssuer issuer2_0 = new SAML2PassiveTokenIssuer();
+            issuer2_0.setAudienceRestrictionCondition(request.getRealm());
+            issuer2_0.setConfig(samlTokenIssuerConfig);
+            rstr = issuer2_0.issuePassiveRSTR(rahasData);
+
+        } else {
+            SAMLPassiveTokenIssuer issuer1_0 = new SAMLPassiveTokenIssuer();
+            issuer1_0.setAudienceRestrictionCondition(request.getRealm());
+            issuer1_0.setConfig(samlTokenIssuerConfig);
+            rstr = issuer1_0.issuePassiveRSTR(rahasData);
+        }
+
         reponseToken = new ResponseToken();
         if (rstr != null) {
             try {

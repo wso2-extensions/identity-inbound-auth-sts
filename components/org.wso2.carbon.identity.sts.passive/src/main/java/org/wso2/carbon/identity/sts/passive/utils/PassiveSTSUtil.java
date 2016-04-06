@@ -24,6 +24,15 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.rahas.TokenStorage;
 import org.wso2.carbon.identity.core.util.IdentityUtil;
 
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamException;
+
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.util.AXIOMUtil;
+import org.apache.rahas.TrustException;
+import org.wso2.carbon.identity.sts.passive.PassiveRequestorConstants;
+import org.wso2.carbon.identity.sts.passive.RequestToken;
+
 public class PassiveSTSUtil {
 
     private static Log log = LogFactory.getLog(PassiveSTSUtil.class);
@@ -55,6 +64,25 @@ public class PassiveSTSUtil {
         } else {
             tokenStorage = new NoPersistenceTokenStore();
         }
+    }
+
+    public static String extractTokenType(RequestToken token) throws TrustException{
+
+        String tokenType = null;
+        String wreq = token.getRequest();
+        if (wreq != null && wreq.trim().length() > 0) {
+            OMElement rootElement;
+            try {
+                rootElement = AXIOMUtil.stringToOM(wreq);
+            } catch (XMLStreamException e) {
+                throw new TrustException("RequestFailed", e);
+            }
+            OMElement tokenElement = rootElement.getFirstChildWithName(new QName(
+                    PassiveRequestorConstants.WS_TRUST_200512_NS_URI, PassiveRequestorConstants.TOKEN_TYPE_LOCAL));
+            tokenType = tokenElement.getText();
+
+        }
+        return tokenType;
     }
 }
 
