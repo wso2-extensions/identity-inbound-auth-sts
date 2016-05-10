@@ -121,11 +121,63 @@
                 <artifactId>org.wso2.carbon.xfer</artifactId>
                 <version>${carbon.xfer.package.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.identity</groupId>
+                <artifactId>org.wso2.carbon.identity.provider</artifactId>
+                <version>${inbound.oauth.openid.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.ws.security.wso2</groupId>
+                <artifactId>wss4j</artifactId>
+                <version>${wss4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.rampart.wso2</groupId>
+                <artifactId>rampart-trust</artifactId>
+                <version>${rampart.wso2.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.rampart.wso2</groupId>
+                <artifactId>rampart-policy</artifactId>
+                <version>${rampart.wso2.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.orbit.org.opensaml</groupId>
+                <artifactId>opensaml</artifactId>
+                <version>${opensaml2.wso2.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-fileupload.wso2</groupId>
+                <artifactId>commons-fileupload</artifactId>
+                <version>${commons-fileupload.wso2.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.identity</groupId>
+                <artifactId>org.wso2.carbon.identity.sts.mgt.stub</artifactId>
+                <version>${identity.sts.mgt.stub.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.identity</groupId>
+                <artifactId>org.wso2.carbon.mex</artifactId>
+                <version>${project.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
     <properties>
         <carbon.xfer.package.version>4.2.0</carbon.xfer.package.version>
+        <inbound.oauth.openid.version>5.0.9-SNAPSHOT</inbound.oauth.openid.version>
+        <identity.sts.mgt.stub.version>5.0.9-SNAPSHOT</identity.sts.mgt.stub.version>
+        <wss4j.version>1.5.11.wso2v13</wss4j.version>
+        <rampart.wso2.version>1.6.1.wso2v20</rampart.wso2.version>
+        <opensaml2.wso2.version>2.6.4.wso2v2</opensaml2.wso2.version>
+        <opensaml2.wso2.osgi.version.range>[2.6.0,3.0.0)</opensaml2.wso2.osgi.version.range>
+        <commons-fileupload.wso2.version>1.2.2.wso2v1</commons-fileupload.wso2.version>
+        <neethi.osgi.version.range>[2.0.4.wso2v4,3.0.0)</neethi.osgi.version.range>
+        <rampart.wso2.osgi.version.range>[1.6.1,2.0.0)</rampart.wso2.osgi.version.range>
+        <wss4j.ws.security.imp.pkg.version.range>[1.5.11,2.0.0)</wss4j.ws.security.imp.pkg.version.range>
+        <equinox.osgi.stax-api.imp.pkg.version.range>[1.0.1,2.0.0)</equinox.osgi.stax-api.imp.pkg.version.range>
+        <identity.provider.version>5.0.9-SNAPSHOT</identity.provider.version>
     </properties>
 
     <modules>
