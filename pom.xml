@@ -21,11 +21,12 @@
     <parent>
         <groupId>org.wso2.carbon.identity</groupId>
         <artifactId>identity-extension-parent</artifactId>
-        <version>5.0.9-SNAPSHOT</version>
+        <version>5.1.0</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
     <artifactId>identity-inbound-auth-sts</artifactId>
+    <version>5.0.9-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>WSO2 Carbon - Identity STS Management</name>
     <description>
@@ -166,7 +167,7 @@
 
     <properties>
         <carbon.xfer.package.version>4.2.0</carbon.xfer.package.version>
-        <inbound.oauth.openid.version>5.0.9-SNAPSHOT</inbound.oauth.openid.version>
+        <inbound.oauth.openid.version>5.1.0</inbound.oauth.openid.version>
         <identity.sts.mgt.stub.version>5.0.9-SNAPSHOT</identity.sts.mgt.stub.version>
         <wss4j.version>1.5.11.wso2v13</wss4j.version>
         <rampart.wso2.version>1.6.1.wso2v20</rampart.wso2.version>
@@ -177,7 +178,7 @@
         <rampart.wso2.osgi.version.range>[1.6.1,2.0.0)</rampart.wso2.osgi.version.range>
         <wss4j.ws.security.imp.pkg.version.range>[1.5.11,2.0.0)</wss4j.ws.security.imp.pkg.version.range>
         <equinox.osgi.stax-api.imp.pkg.version.range>[1.0.1,2.0.0)</equinox.osgi.stax-api.imp.pkg.version.range>
-        <identity.provider.version>5.0.9-SNAPSHOT</identity.provider.version>
+        <identity.provider.version>5.1.0</identity.provider.version>
     </properties>
 
     <modules>
