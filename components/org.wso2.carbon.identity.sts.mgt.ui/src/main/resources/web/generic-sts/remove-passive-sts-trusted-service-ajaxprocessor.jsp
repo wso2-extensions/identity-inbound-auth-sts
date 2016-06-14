@@ -27,6 +27,11 @@
 <jsp:include page="../admin/layout/ajaxheader.jsp"/>
 
 <%
+    String httpMethod = request.getMethod();
+    if (!"post".equalsIgnoreCase(httpMethod)) {
+        response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+        return;
+    }
 
     IdentityPassiveSTSClient passiveSTSClient;
     String realmName = request.getParameter("realmName");

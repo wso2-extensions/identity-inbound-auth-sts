@@ -31,9 +31,6 @@
 <%@ page import="org.wso2.carbon.utils.ServerConstants" %>
 <%@ page import="org.owasp.encoder.Encode" %>
 
-
-<jsp:include page="../dialog/display_messages.jsp"/>
-
 <fmt:bundle basename="org.wso2.carbon.identity.sts.mgt.ui.i18n.Resources">
 <carbon:breadcrumb
         label="sts.configuration"
@@ -74,16 +71,26 @@
     }
 
     function itemRemove(hostName) {
-        CARBON.showConfirmationDialog("<fmt:message key='remove.message1'/>" + hostName + "<fmt:message key='remove.message2'/>",
-                                      function() {
-                                          location.href = "remove-trusted-service.jsp?endpointaddrs=" + hostName;
-                                      }, null);
-    }
-    function removePassiveSTSTrustService(realm) {
-        CARBON.showConfirmationDialog("<fmt:message key='remove.message1'/>" + realm + "<fmt:message key='remove.message2'/>",
-                                      function() {
-                                          location.href = "remove-passive-sts-trusted-service.jsp?realmName=" + realm;
-                                      }, null);
+
+        function doDelete() {
+            $.ajax({
+                type: 'POST',
+                url: 'remove-sts-trusted-service-ajaxprocessor.jsp',
+                headers: {
+                    Accept: "text/html"
+                },
+                data: 'endpointaddrs=' + hostName,
+                async: false,
+                success: function (responseText, status) {
+                    if (status == "success") {
+                        location.assign("sts.jsp");
+                    }
+                }
+            });
+        }
+
+        CARBON.showConfirmationDialog('<fmt:message key='remove.message1'/>' + hostName + '<fmt:message key='remove.message2'/>',
+                doDelete, null);
     }
 
 </script>
@@ -125,27 +132,6 @@
         cookie = (String) session.getAttribute(ServerConstants.ADMIN_SERVICE_COOKIE);
         sts = new CarbonSTSClient(config, session, cookie);
 
-        address = (String) request.getParameter("endpointaddrs");
-        keyAlias = (String) request.getParameter("alias");
-        session.setAttribute("returnToPath", "../generic-sts/sts.jsp");
-        session.setAttribute("cancelLink", "../generic-sts/sts.jsp");
-        session.setAttribute("backLink", "../generic-sts/sts.jsp");
-
-        try {
-            sts.addTrustedService(address, keyAlias);
-            if (spName != null && action!=null && "returnToSp".equals(action) ) {
-            	
-            	boolean qpplicationComponentFound = CarbonUIUtil.isContextRegistered(config, "/application/");
-            	if (qpplicationComponentFound) {
-%> 
-<script>
-   location.href = '../application/configure-service-provider.jsp?action=update&display=serviceName&spName=<%=Encode.forUriComponent(spName)%>&serviceName=<%=Encode.forUriComponent(address)%>';
-</script>
-<% 
-            }
-            }
-        } catch (Exception e) {
-        }
         aliases = sts.getAliasFromPrimaryKeystore();
         services = sts.getTrustedServices();
         
@@ -247,7 +233,7 @@
         <br/>
         <%} %>
 
-        <form method="get" action="sts.jsp" name="trustedservice" onsubmit="return doValidation();">
+        <form method="post" action="add-sts-trusted-service-ajaxprocessor.jsp" name="trustedservice" onsubmit="return doValidation();">
             <table class="styledLeft" width="100%">
                 <thead>
                 <tr>
