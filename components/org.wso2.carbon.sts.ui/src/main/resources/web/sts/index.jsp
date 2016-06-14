@@ -48,10 +48,26 @@
             return true;
         }
         function remove(hostName) {
+
+            function doDelete() {
+                $.ajax({
+                    type: 'POST',
+                    url: 'remove-trusted-service-ajaxprocessor.jsp',
+                    headers: {
+                        Accept: "text/html"
+                    },
+                    data: 'endpointaddrs=' + hostName,
+                    async: false,
+                    success: function (responseText, status) {
+                        if (status == "success") {
+                            location.assign("index.jsp");
+                        }
+                    }
+                });
+            }
+
             CARBON.showConfirmationDialog('You are about to remove ' + hostName + '. Do you want to proceed?',
-                    function () {
-                        location.href = "remove-trusted-service.jsp?endpointaddrs=" + hostName;
-                    }, null);
+                    doDelete, null);
         }
 
     </script>
@@ -116,8 +132,8 @@
                         <td width="20%">
                             <a title="Remove Trusted RP"
                                onclick="remove('<%=Encode.forJavaScriptAttribute(service.getServiceAddress())%>');return false;"
-                               href="#">
-                                <img src="images/delete.gif" alt="Remove Trusted Service"/>
+                               href="#" class="icon-link"
+                               style="background-image:url(images/delete.gif)">Delete
                             </a>
                         </td>
                     </tr>
