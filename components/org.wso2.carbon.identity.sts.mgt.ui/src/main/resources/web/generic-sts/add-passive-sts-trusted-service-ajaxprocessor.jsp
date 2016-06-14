@@ -21,6 +21,12 @@
 <%@ page import="org.wso2.carbon.identity.sts.passive.ui.client.IdentityPassiveSTSClient" %>
 <%@ page import="org.wso2.carbon.ui.CarbonUIUtil" %>
 <%
+    String httpMethod = request.getMethod();
+    if (!"post".equalsIgnoreCase(httpMethod)) {
+        response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+        return;
+    }
+
     String realmName = request.getParameter("realmName");
     String[] claims = request.getParameterValues("claims");
     String claimDialect = request.getParameter("dialect");

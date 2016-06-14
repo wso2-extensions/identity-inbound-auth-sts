@@ -47,10 +47,26 @@
 <script type="text/javascript">
 
     function removePassiveSTSTrustService(realm) {
-        CARBON.showConfirmationDialog("<fmt:message key='remove.message1'/>" + realm + "<fmt:message key='remove.message2'/>",
-                                      function() {
-                                          location.href = "remove-passive-sts-trusted-service.jsp?realmName=" + realm;
-                                      }, null);
+
+        function doDelete() {
+            $.ajax({
+                type: 'POST',
+                url: 'remove-passive-sts-trusted-service-ajaxprocessor.jsp',
+                headers: {
+                    Accept: "text/html"
+                },
+                data: 'realmName=' + realm,
+                async: false,
+                success: function (responseText, status) {
+                    if (status == "success") {
+                        location.assign("passive-sts.jsp");
+                    }
+                }
+            });
+        }
+
+        CARBON.showConfirmationDialog('<fmt:message key='remove.message1'/>' + realm + '<fmt:message key='remove.message2'/>',
+                doDelete, null);
     }
     function alternateTableRowsOnlyForOuterTable(id, evenStyle, oddStyle) {
         if (document.getElementsByTagName) {

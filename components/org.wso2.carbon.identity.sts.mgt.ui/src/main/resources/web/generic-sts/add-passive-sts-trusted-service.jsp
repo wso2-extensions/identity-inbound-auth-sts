@@ -73,12 +73,6 @@
         }
         return true;
     }
-    function removePassiveSTSTrustService(realm) {
-        CARBON.showConfirmationDialog("<fmt:message key='remove.message1'/>" + realm + "<fmt:message key='remove.message2'/>",
-                                      function() {
-                                          location.href = "remove-passive-sts-trusted-service.jsp?realmName=" + realm;
-                                      }, null);
-    }
 
     function loadClaims() {
         var selectedDialect = document.getElementById('claimDialects').options[document.getElementById('claimDialects').selectedIndex].value;
@@ -123,7 +117,7 @@
     <h2><fmt:message key="sts.trusted.services.new"/></h2>
 
     <div id="workArea">
-        <form method="get" action="add-passive-sts-trusted-service-finish.jsp"
+        <form method="post" action="add-passive-sts-trusted-service-ajaxprocessor.jsp"
               name="passiveSTSTrustedService"
               onsubmit="return doValidationOnClaims();">
             <table class="styledLeft" width="100%">
