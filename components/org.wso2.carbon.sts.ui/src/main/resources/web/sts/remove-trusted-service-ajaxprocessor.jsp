@@ -26,6 +26,12 @@
 <jsp:include page="../admin/layout/ajaxheader.jsp"/>
 
 <%
+    String httpMethod = request.getMethod();
+    if (!"post".equalsIgnoreCase(httpMethod)) {
+        response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+        return;
+    }
+
     TrustedServiceData[] services = null;
     String[] aliases = null;
     STSUtil sts = null;
