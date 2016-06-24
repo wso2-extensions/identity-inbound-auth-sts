@@ -171,7 +171,7 @@
         <identity.sts.mgt.stub.version>5.1.1-SNAPSHOT</identity.sts.mgt.stub.version>
         <wss4j.version>1.5.11.wso2v13</wss4j.version>
         <rampart.wso2.version>1.6.1.wso2v20</rampart.wso2.version>
-        <opensaml2.wso2.version>2.6.4.wso2v2</opensaml2.wso2.version>
+        <opensaml2.wso2.version>2.6.4.wso2v3</opensaml2.wso2.version>
         <opensaml2.wso2.osgi.version.range>[2.6.0,3.0.0)</opensaml2.wso2.osgi.version.range>
         <commons-fileupload.wso2.version>1.2.2.wso2v1</commons-fileupload.wso2.version>
         <neethi.osgi.version.range>[2.0.4.wso2v4,3.0.0)</neethi.osgi.version.range>
