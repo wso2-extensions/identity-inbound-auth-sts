@@ -45,12 +45,12 @@ import org.wso2.carbon.base.ServerConfiguration;
 import org.wso2.carbon.context.CarbonContext;
 import org.wso2.carbon.context.PrivilegedCarbonContext;
 import org.wso2.carbon.context.RegistryType;
+import org.wso2.carbon.core.CarbonConfigurationContextFactory;
 import org.wso2.carbon.core.RegistryResources;
 import org.wso2.carbon.core.deployment.DeploymentInterceptor;
 import org.wso2.carbon.core.persistence.PersistenceUtils;
 import org.wso2.carbon.core.util.KeyStoreManager;
 import org.wso2.carbon.core.util.KeyStoreUtil;
-import org.wso2.carbon.identity.provider.AttributeCallbackHandler;
 import org.wso2.carbon.registry.api.RegistryException;
 import org.wso2.carbon.registry.core.Collection;
 import org.wso2.carbon.registry.core.Registry;
@@ -200,6 +200,9 @@ public class STSDeploymentInterceptor implements AxisObserver {
             Properties props = RampartConfigUtil.getServerCryptoProperties(
                     new String[] { keyStoreName }, keyStoreName, privateKeyAlias);
 
+            String callBackHandlerName = serverConfig.getFirstProperty("Security.STSCallBackHandlerName");
+            String callBackHandlerClassName = null;
+
             SAMLTokenIssuerConfig stsSamlConfig = new SAMLTokenIssuerConfig(issuerName, cryptoProvider, props);
             stsSamlConfig.setIssuerName(issuerName);
             stsSamlConfig.setIssuerKeyAlias(privateKeyAlias);
@@ -208,7 +211,11 @@ public class STSDeploymentInterceptor implements AxisObserver {
             stsSamlConfig.setAddRequestedUnattachedRef(true);
             stsSamlConfig.setKeyComputation(2);
             stsSamlConfig.setProofKeyType(TokenIssuerUtil.BINARY_SECRET);
-            stsSamlConfig.setCallbackHandlerName(AttributeCallbackHandler.class.getName());
+            if (StringUtils.isNotBlank(callBackHandlerName)) {
+                Class clazz = Thread.currentThread().getContextClassLoader().loadClass(callBackHandlerName);
+                callBackHandlerClassName = clazz.newInstance().getClass().getName();
+                stsSamlConfig.setCallbackHandlerName(callBackHandlerClassName);
+            }
 
             String resourcePath = null;
             resourcePath = RegistryResources.SERVICE_GROUPS + ServerConstants.STS_NAME
