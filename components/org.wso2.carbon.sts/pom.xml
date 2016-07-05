@@ -125,7 +125,6 @@
                             !org.wso2.carbon.sts.internal,
                             org.wso2.carbon.sts.*; version="${carbon.identity.package.export.version}",
                         </Export-Package>
-                        <DynamicImport-Package>*</DynamicImport-Package>
                     </instructions>
                 </configuration>
             </plugin>
