@@ -200,7 +200,6 @@ public class STSDeploymentInterceptor implements AxisObserver {
                     new String[] { keyStoreName }, keyStoreName, privateKeyAlias);
 
             String callBackHandlerName = serverConfig.getFirstProperty("Security.STSCallBackHandlerName");
-            String callBackHandlerClassName = null;
 
             SAMLTokenIssuerConfig stsSamlConfig = new SAMLTokenIssuerConfig(issuerName, cryptoProvider, props);
             stsSamlConfig.setIssuerName(issuerName);
@@ -211,9 +210,7 @@ public class STSDeploymentInterceptor implements AxisObserver {
             stsSamlConfig.setKeyComputation(2);
             stsSamlConfig.setProofKeyType(TokenIssuerUtil.BINARY_SECRET);
             if (StringUtils.isNotBlank(callBackHandlerName)) {
-                Class clazz = Thread.currentThread().getContextClassLoader().loadClass(callBackHandlerName);
-                callBackHandlerClassName = clazz.newInstance().getClass().getName();
-                stsSamlConfig.setCallbackHandlerName(callBackHandlerClassName);
+                stsSamlConfig.setCallbackHandlerName(callBackHandlerName);
             }
 
             String resourcePath = null;
