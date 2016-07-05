@@ -26,7 +26,7 @@
 
     <modelVersion>4.0.0</modelVersion>
     <artifactId>identity-inbound-auth-sts</artifactId>
-    <version>5.1.1-SNAPSHOT</version>
+    <version>5.1.1-m3</version>
     <packaging>pom</packaging>
     <name>WSO2 Carbon - Identity STS Management</name>
     <description>
@@ -38,7 +38,7 @@
         <url>https://github.com/wso2-extensions/identity-inbound-auth-sts.git</url>
         <developerConnection>scm:git:https://github.com/wso2-extensions/identity-inbound-auth-sts.git</developerConnection>
         <connection>scm:git:https://github.com/wso2-extensions/identity-inbound-auth-sts.git</connection>
-        <tag>HEAD</tag>
+        <tag>v5.1.1-m3</tag>
     </scm>
 
     <repositories>
@@ -168,7 +168,7 @@
     <properties>
         <carbon.xfer.package.version>4.2.0</carbon.xfer.package.version>
         <inbound.oauth.openid.version>5.1.0</inbound.oauth.openid.version>
-        <identity.sts.mgt.stub.version>5.1.1-SNAPSHOT</identity.sts.mgt.stub.version>
+        <identity.sts.mgt.stub.version>5.1.1-m3</identity.sts.mgt.stub.version>
         <wss4j.version>1.5.11.wso2v13</wss4j.version>
         <rampart.wso2.version>1.6.1.wso2v20</rampart.wso2.version>
         <opensaml2.wso2.version>2.6.4.wso2v3</opensaml2.wso2.version>
