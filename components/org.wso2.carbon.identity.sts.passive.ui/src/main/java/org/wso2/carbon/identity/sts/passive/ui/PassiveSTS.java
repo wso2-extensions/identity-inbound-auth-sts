@@ -20,24 +20,19 @@ package org.wso2.carbon.identity.sts.passive.ui;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
-import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.owasp.encoder.Encode;
 import org.wso2.carbon.CarbonConstants;
-import org.wso2.carbon.context.CarbonContext;
 import org.wso2.carbon.identity.application.authentication.framework.cache.AuthenticationRequestCacheEntry;
-import org.wso2.carbon.identity.application.authentication.framework.cache.AuthenticationResultCache;
 import org.wso2.carbon.identity.application.authentication.framework.cache.AuthenticationResultCacheEntry;
-import org.wso2.carbon.identity.application.authentication.framework.cache.AuthenticationResultCacheKey;
-import org.wso2.carbon.identity.application.authentication.framework.config.ConfigurationFacade;
 import org.wso2.carbon.identity.application.authentication.framework.model.AuthenticationRequest;
 import org.wso2.carbon.identity.application.authentication.framework.model.AuthenticationResult;
 import org.wso2.carbon.identity.application.authentication.framework.util.FrameworkConstants;
 import org.wso2.carbon.identity.application.authentication.framework.util.FrameworkUtils;
-import org.wso2.carbon.identity.application.common.cache.CacheEntry;
 import org.wso2.carbon.identity.application.common.model.ClaimMapping;
+import org.wso2.carbon.identity.base.IdentityConstants;
 import org.wso2.carbon.identity.core.util.IdentityUtil;
 import org.wso2.carbon.identity.sts.passive.stub.types.RequestToken;
 import org.wso2.carbon.identity.sts.passive.stub.types.ResponseToken;
@@ -47,7 +42,6 @@ import org.wso2.carbon.identity.sts.passive.ui.cache.SessionDataCacheKey;
 import org.wso2.carbon.identity.sts.passive.ui.client.IdentityPassiveSTSClient;
 import org.wso2.carbon.identity.sts.passive.ui.dto.SessionDTO;
 import org.wso2.carbon.identity.sts.passive.ui.util.PassiveSTSUtil;
-import org.wso2.carbon.idp.mgt.util.IdPManagementUtil;
 import org.wso2.carbon.registry.core.utils.UUIDGenerator;
 import org.wso2.carbon.ui.CarbonUIUtil;
 import org.wso2.carbon.utils.CarbonUtils;
@@ -55,11 +49,7 @@ import org.wso2.carbon.utils.multitenancy.MultitenantConstants;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
-import javax.net.ssl.SSLSocketFactory;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -72,9 +62,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-import java.security.SecureRandom;
-import java.security.cert.X509Certificate;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -231,63 +218,61 @@ public class PassiveSTS extends HttpServlet {
         doGet(req, resp);
     }
 
-    private void openURLWithNoTrust(String realm) throws IOException {
-        // Create a trust manager that does not validate certificate chains
-        TrustManager[] trustAllCerts = new TrustManager[] {
-                new X509TrustManager() {
-                    @Override
-                    public X509Certificate[] getAcceptedIssuers() {
-                        return new X509Certificate[0];
+    private void sendSignOutCleanupRequests(HttpServletRequest request) {
+
+        Set<String> realms =
+                (Set<String>) request.getSession().getAttribute(PassiveRequestorConstants.RELYING_PARTY_REALMS);
+
+        String hostNameVerificationEnabledProperty =
+                IdentityUtil.getProperty(IdentityConstants.STS.PASSIVE_STS_SLO_HOST_NAME_VERIFICATION_ENABLED);
+        boolean isHostNameVerificationEnabled = true;
+        if ("false".equalsIgnoreCase(hostNameVerificationEnabledProperty)) {
+            isHostNameVerificationEnabled = false;
+        }
+
+        if (CollectionUtils.isNotEmpty(realms)) {
+            for (String realm : realms) {
+                // Skipping the realm which initiated the logout request
+                if (realm.equals(getAttribute(request.getParameterMap(), PassiveRequestorConstants.REALM))) {
+                    continue;
+                }
+
+                try {
+                    URL url = new URL(realm + "?wa=wsignoutcleanup1.0");
+                    HttpsURLConnection urlConnection = (HttpsURLConnection) url.openConnection();
+
+                    if (!isHostNameVerificationEnabled) {
+
+                        urlConnection.setHostnameVerifier(new HostnameVerifier() {
+                            @Override
+                            public boolean verify(String s, SSLSession sslSession) {
+                                return true;
+                            }
+                        });
                     }
 
-                    @Override
-                    public void checkClientTrusted(X509Certificate[] certs, String authType) {
-                        // Nothing to implement
+                    int responseCode = urlConnection.getResponseCode();
+                    if (responseCode == HttpsURLConnection.HTTP_OK) {
+                        if (log.isDebugEnabled()) {
+                            log.debug("Single logout cleanup request sent to " + realm + " returned with " +
+                                      urlConnection.getResponseMessage());
+                        }
+                    } else {
+                        log.warn("Failed single logout response from " + realm + " with status " +
+                                 urlConnection.getResponseMessage());
                     }
-
-                    @Override
-                    public void checkServerTrusted(X509Certificate[] certs, String authType) {
-                        // Nothing to implement
-                    }
-                } };
-
-        // Ignore differences between given hostname and certificate hostname
-        HostnameVerifier hv = new HostnameVerifier() {
-            @Override
-            public boolean verify(String hostname, SSLSession session) {
-                return true;
-            }
-        };
-
-        // Install the all-trusting trust manager
-        try {
-            SSLContext sc = SSLContext.getInstance("SSL");
-            sc.init(null, trustAllCerts, new SecureRandom());
-            SSLSocketFactory defaultSSLSocketFactory = HttpsURLConnection.getDefaultSSLSocketFactory();
-            HostnameVerifier defaultHostnameVerifier = HttpsURLConnection.getDefaultHostnameVerifier();
-            String renegotiation = System.getProperty("sun.security.ssl.allowUnsafeRenegotiation");
-            try {
-                HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
-                HttpsURLConnection.setDefaultHostnameVerifier(hv);
-                System.setProperty("sun.security.ssl.allowUnsafeRenegotiation", "true");
-                new URL(realm).getContent();
-            } finally {
-                HttpsURLConnection.setDefaultSSLSocketFactory(defaultSSLSocketFactory);
-                HttpsURLConnection.setDefaultHostnameVerifier(defaultHostnameVerifier);
-                System.getProperty("sun.security.ssl.allowUnsafeRenegotiation", renegotiation);
-            }
-        } catch (Exception ignore) {
-            if (log.isDebugEnabled()) {
-                log.debug("Error while installing trust manager", ignore);
+                } catch (IOException e) {
+                    log.error("Error sending logout cleanup request to " + realm, e);
+                }
             }
         }
     }
 
     private void persistRealms(RequestToken reqToken, HttpSession session) {
-        Set<String> realms = (Set<String>) session.getAttribute("realms");
+        Set<String> realms = (Set<String>) session.getAttribute(PassiveRequestorConstants.RELYING_PARTY_REALMS);
         if (realms == null) {
             realms = new HashSet<>();
-            session.setAttribute("realms", realms);
+            session.setAttribute(PassiveRequestorConstants.RELYING_PARTY_REALMS, realms);
         }
         realms.add(reqToken.getRealm());
     }
@@ -407,13 +392,11 @@ public class PassiveSTS extends HttpServlet {
 
     private void handleLogoutRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
-        Set<String> realms = (Set<String>) request.getSession().getAttribute("realms");
-
-        if (CollectionUtils.isNotEmpty(realms)) {
-            for (String realm : realms) {
-                openURLWithNoTrust(realm + "?wa=wsignoutcleanup1.0");
-            }
-        }
+        /**
+         * todo: Framework logout response is not handled now (https://wso2.org/jira/browse/IDENTITY-4501).
+         * todo: Once it's being fixed, sign out clean up requests should be initiated asynchronously from that point.
+         */
+        sendSignOutCleanupRequests(request);
 
         try {
             sendFrameworkForLogout(request, response);
