@@ -166,6 +166,9 @@
     </dependencyManagement>
 
     <properties>
+        <identity.framework.version>5.1.1-SNAPSHOT</identity.framework.version>
+        <carbon.identity.package.export.version>${project.version}</carbon.identity.package.export.version>
+
         <carbon.xfer.package.version>4.2.0</carbon.xfer.package.version>
         <inbound.oauth.openid.version>5.1.0</inbound.oauth.openid.version>
         <identity.sts.mgt.stub.version>5.1.1-SNAPSHOT</identity.sts.mgt.stub.version>

@@ -61,6 +61,8 @@ public class PassiveRequestorConstants {
 
     public static final String PASSIVE_ADDITIONAL_PARAMETER = "<!--$additionalParams-->";
 
+    public static final String RELYING_PARTY_REALMS = "realms";
+
     private PassiveRequestorConstants() {
     }
 }
