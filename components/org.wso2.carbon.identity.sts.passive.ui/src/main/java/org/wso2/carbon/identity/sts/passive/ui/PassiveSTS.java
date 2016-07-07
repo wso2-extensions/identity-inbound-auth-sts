@@ -67,6 +67,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Properties;
 import java.util.Scanner;
 import java.util.Set;
 
@@ -339,6 +340,7 @@ public class PassiveSTS extends HttpServlet {
     private void process(HttpServletRequest request, HttpServletResponse response,
                          SessionDTO sessionDTO, AuthenticationResult authnResult) throws ServletException, IOException {
 
+        regenerateSession(request);
         HttpSession session = request.getSession();
 
         session.removeAttribute(PassiveRequestorConstants.PASSIVE_REQ_ATTR_MAP);
@@ -511,5 +513,32 @@ public class PassiveSTS extends HttpServlet {
     private void sendToRetryPage(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
         response.sendRedirect(PassiveSTSUtil.getRetryUrl());
+    }
+
+    /**
+     * Regenerate session after successful authentication
+     *
+     * @param request HttpServelet Request instance
+     */
+    private void regenerateSession(HttpServletRequest request) {
+
+        HttpSession oldSession = request.getSession();
+
+        Enumeration attrNames = oldSession.getAttributeNames();
+        Properties props = new Properties();
+
+        while (attrNames != null && attrNames.hasMoreElements()) {
+            String key = (String) attrNames.nextElement();
+            props.put(key, oldSession.getAttribute(key));
+        }
+
+        oldSession.invalidate();
+        HttpSession newSession = request.getSession(true);
+        attrNames = props.keys();
+
+        while (attrNames != null && attrNames.hasMoreElements()) {
+            String key = (String) attrNames.nextElement();
+            newSession.setAttribute(key, props.get(key));
+        }
     }
 }
