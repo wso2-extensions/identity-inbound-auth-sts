@@ -69,10 +69,11 @@
                             org.apache.commons.logging; version="${commons-logging.osgi.version.range}",
                             org.wso2.carbon.ui; version="${carbon.kernel.package.import.version.range}",
                             org.wso2.carbon.identity.sts.mgt.stub.*;
-                            version="${carbon.identity.package.import.version.range}",
+                            version="${identity.sts.mgt.imp.pkg.version.range}",
                         </Import-Package>
                         <Export-Package>
-                            org.wso2.carbon.identity.sts.mgt.ui.*; version="${carbon.identity.package.export.version}",
+                            org.wso2.carbon.identity.sts.mgt.ui.*;
+                            version="${identity.inbound.auth.sts.package.export.version}",
                         </Export-Package>
                         <Carbon-Component>UIBundle</Carbon-Component>
                     </instructions>

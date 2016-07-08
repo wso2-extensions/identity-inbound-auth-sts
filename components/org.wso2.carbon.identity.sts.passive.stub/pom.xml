@@ -87,7 +87,7 @@
                         <Bundle-Name>${project.artifactId}</Bundle-Name>
                         <Export-Package>
                             org.wso2.carbon.identity.sts.passive.stub.*;
-                            version="${carbon.identity.package.export.version}"
+                            version="${identity.inbound.auth.sts.package.export.version}"
                         </Export-Package>
                     </instructions>
                 </configuration>

@@ -127,24 +127,25 @@
                             org.wso2.carbon.registry.api;version="${carbon.kernel.registry.imp.pkg.version}",
                             org.wso2.carbon.registry.core.*;version="${carbon.kernel.registry.imp.pkg.version}",
 
-                            org.wso2.carbon.idp.mgt; version="${carbon.identity.package.import.version.range}",
+                            org.wso2.carbon.idp.mgt; version="${identity.framework.imp.pkg.version.range}",
 
                             org.wso2.carbon.identity.provider;
-                            version="${carbon.identity.package.import.version.range}",
+                            version="${identity.inbound.auth.openid.imp.pkg.version.range}",
                             org.wso2.carbon.identity.application.common.*;
-                            version="${carbon.identity.package.import.version.range}",
+                            version="${identity.framework.imp.pkg.version.range}",
                             org.wso2.carbon.identity.application.mgt;
-                            version="${carbon.identity.package.import.version.range}",
+                            version="${identity.framework.imp.pkg.version.range}",
                             org.wso2.carbon.security.keystore.*;
-                            version="${carbon.identity.package.import.version.range}",
+                            version="${identity.framework.imp.pkg.version.range}",
                             org.wso2.carbon.security.util;
-                            version="${carbon.identity.package.import.version.range}",
+                            version="${identity.framework.imp.pkg.version.range}",
                             org.wso2.carbon.identity.core.*;
-                            version="${carbon.identity.package.import.version.range}",
+                            version="${identity.framework.imp.pkg.version.range}",
                         </Import-Package>
                         <Export-Package>
                             !org.wso2.carbon.identity.sts.passive.internal,
-                            org.wso2.carbon.identity.sts.passive.*; version="${carbon.identity.package.export.version}",
+                            org.wso2.carbon.identity.sts.passive.*;
+                            version="${identity.inbound.auth.sts.package.export.version}",
                         </Export-Package>
                     </instructions>
                 </configuration>

@@ -117,15 +117,16 @@
                             org.wso2.carbon.base; version="${carbon.base.imp.pkg.version.range}",
                             org.wso2.carbon.registry.core.*;version="${carbon.kernel.registry.imp.pkg.version}",
 
-                            org.wso2.carbon.identity.base; version="${carbon.identity.package.import.version.range}",
-                            org.wso2.carbon.identity.core.*; version="${carbon.identity.package.import.version.range}",
-                            org.wso2.carbon.security.*; version="${carbon.identity.package.import.version.range}",
+                            org.wso2.carbon.identity.base; version="${identity.framework.imp.pkg.version.range}",
+                            org.wso2.carbon.identity.core.*; version="${identity.framework.imp.pkg.version.range}",
+                            org.wso2.carbon.security.*; version="${identity.framework.imp.pkg.version.range}",
                             org.wso2.carbon.identity.provider;
-                            version="${carbon.identity.package.import.version.range}",
+                            version="${identity.framework.imp.pkg.version.range}",
                         </Import-Package>
                         <Export-Package>
                             !org.wso2.carbon.identity.sts.mgt.internal,
-                            org.wso2.carbon.identity.sts.mgt.*; version="${carbon.identity.package.export.version}",
+                            org.wso2.carbon.identity.sts.mgt.*;
+                            version="${identity.inbound.auth.sts.package.export.version}",
                         </Export-Package>
                     </instructions>
                 </configuration>
