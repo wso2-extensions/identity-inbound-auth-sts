@@ -111,19 +111,19 @@
                             org.wso2.carbon.registry.core.*;version="${carbon.kernel.registry.imp.pkg.version}",
                             org.wso2.carbon.registry.api;version="${carbon.kernel.registry.imp.pkg.version}",
 
-                            org.wso2.carbon.security.util; version="${carbon.identity.package.import.version.range}",
+                            org.wso2.carbon.security.util; version="${identity.framework.imp.pkg.version.range}",
                             org.wso2.carbon.security.keystore.*;
-                            version="${carbon.identity.package.import.version.range}",
+                            version="${identity.framework.imp.pkg.version.range}",
                             org.apache.neethi; version="${neethi.osgi.version.range}",
                             org.apache.axiom.*; version="${axiom.osgi.version.range}",
                             org.wso2.carbon.security.*,
                             org.wso2.carbon.identity.sts.store;
-                            version="${carbon.identity.package.import.version.range}",
+                            version="${identity.sts.mgt.imp.pkg.version.range}",
                             javax.cache
                         </Import-Package>
                         <Export-Package>
                             !org.wso2.carbon.sts.internal,
-                            org.wso2.carbon.sts.*; version="${carbon.identity.package.export.version}",
+                            org.wso2.carbon.sts.*; version="${identity.inbound.auth.sts.package.export.version}",
                         </Export-Package>
                     </instructions>
                 </configuration>

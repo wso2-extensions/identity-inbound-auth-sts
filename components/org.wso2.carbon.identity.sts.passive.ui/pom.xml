@@ -91,21 +91,21 @@
                             org.wso2.carbon.ui; version="${carbon.kernel.package.import.version.range}",
                             org.wso2.carbon.registry.core.utils; version="${carbon.kernel.registry.imp.pkg.version}",
                             org.wso2.carbon.identity.application.authentication.framework.*;
-                            version="${carbon.identity.package.import.version.range}",
+                            version="${identity.framework.imp.pkg.version.range}",
                             org.wso2.carbon.identity.application.common.*;
-                            version="${carbon.identity.package.import.version.range}",
+                            version="${identity.framework.imp.pkg.version.range}",
                             org.wso2.carbon.identity.sts.passive.stub.*;
-                            version="${carbon.identity.package.import.version.range}",
-                            org.wso2.carbon.idp.mgt.*; version="${carbon.identity.package.import.version.range}",
+                            version="${identity.sts.mgt.imp.pkg.version.range}",
+                            org.wso2.carbon.idp.mgt.*; version="${identity.framework.imp.pkg.version.range}",
                             org.wso2.carbon.context; version="${carbon.kernel.package.import.version.range}",
-                            org.wso2.carbon.identity.base;version="${carbon.identity.package.import.version.range}",
-                            org.wso2.carbon.identity.core.*; version="${carbon.identity.package.import.version.range}",
+                            org.wso2.carbon.identity.base;version="${identity.framework.imp.pkg.version.range}",
+                            org.wso2.carbon.identity.core.*; version="${identity.framework.imp.pkg.version.range}",
                             org.wso2.carbon.utils.*;version="${carbon.kernel.package.import.version.range}",
                             org.owasp.encoder; version ="${encoder.wso2.imp.pkg.version.range}",
                         </Import-Package>
                         <Export-Package>
                             org.wso2.carbon.identity.sts.passive.ui.*;
-                            version="${carbon.identity.package.export.version}",
+                            version="${identity.inbound.auth.sts.package.export.version}",
                         </Export-Package>
                         <Carbon-Component>UIBundle</Carbon-Component>
                     </instructions>

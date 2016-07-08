@@ -108,22 +108,22 @@
                             org.wso2.carbon.registry.core.*;version="${carbon.kernel.registry.imp.pkg.version}",
                             org.wso2.carbon.registry.api;version="${carbon.kernel.registry.imp.pkg.version}",
 
-                            org.wso2.carbon.security.util; version="${carbon.identity.package.import.version.range}",
+                            org.wso2.carbon.security.util; version="${identity.framework.imp.pkg.version.range}",
                             org.wso2.carbon.security.keystore.*;
-                            version="${carbon.identity.package.import.version.range}",
+                            version="${identity.framework.imp.pkg.version.range}",
                             org.apache.neethi; version="${neethi.osgi.version.range}",
                             org.apache.axiom.*; version="${axiom.osgi.version.range}",
-                            org.wso2.carbon.security.*;version="${carbon.identity.package.import.version.range}",
+                            org.wso2.carbon.security.*;version="${identity.framework.imp.pkg.version.range}",
                             org.wso2.carbon.identity.provider;
-                            version="${carbon.identity.package.import.version.range}",
+                            version="${identity.inbound.auth.openid.imp.pkg.version.range}",
                             javax.cache,
-                            org.wso2.carbon.security.*;version="${carbon.identity.package.import.version.range}",
+                            org.wso2.carbon.security.*;version="${identity.framework.imp.pkg.version.range}",
                             org.wso2.xfer.*; version="${xfer.import.pkg.version}",
-                            org.wso2.carbon.identity.core.util; version="${carbon.identity.package.import.version.range}",
+                            org.wso2.carbon.identity.core.util; version="${identity.framework.imp.pkg.version.range}",
                         </Import-Package>
                         <Export-Package>
                             !org.wso2.carbon.mex.internal,
-                            org.wso2.carbon.mex.* ; version="${carbon.identity.package.export.version}",
+                            org.wso2.carbon.mex.* ; version="${identity.inbound.auth.sts.package.export.version}",
                         </Export-Package>
                     </instructions>
                 </configuration>
