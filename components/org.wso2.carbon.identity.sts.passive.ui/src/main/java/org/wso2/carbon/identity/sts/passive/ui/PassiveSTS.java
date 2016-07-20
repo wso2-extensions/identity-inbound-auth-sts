@@ -198,6 +198,7 @@ public class PassiveSTS extends HttpServlet {
                             Encode.forHtmlAttribute(authenticatedIdPs) + "'>");
         }
 
+        httpResp.setContentType("text/html; charset=UTF-8");
         PrintWriter out = httpResp.getWriter();
         out.print(finalPage);
 
