@@ -63,7 +63,6 @@
         </parameter>
 
         <operation name="IssueToken" mep="http://www.w3.org/2006/01/wsdl/in-out">
-            <!--actionMapping>http://docs.oasis-open.org/ws-sx/ws-trust/200512/RST/Issue</actionMapping-->
             <actionMapping>http://schemas.xmlsoap.org/ws/2005/02/trust/RST/Issue</actionMapping>
         </operation>
 
