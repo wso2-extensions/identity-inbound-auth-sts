@@ -74,6 +74,26 @@
                         wsaw:Action="http://schemas.xmlsoap.org/ws/2005/02/trust/RST/Validate"/>
             <wsdl:output message="tns:RequestSecurityTokenResponseMsg" wsaw:Action="urn:ValidateTokenResponse"/>
         </wsdl:operation>
+        <wsdl:operation name="IssueToken2">
+            <wsdl:input message="tns:RequestSecurityTokenMsg"
+                        wsaw:Action="http://docs.oasis-open.org/ws-sx/ws-trust/200512/RST/Issue"/>
+            <wsdl:output message="tns:RequestSecurityTokenResponseMsg" wsaw:Action="urn:IssueTokenResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="CancelToken2">
+            <wsdl:input message="tns:RequestSecurityTokenMsg"
+                        wsaw:Action="http://docs.oasis-open.org/ws-sx/ws-trust/200512/RST/Cancel"/>
+            <wsdl:output message="tns:RequestSecurityTokenResponseMsg" wsaw:Action="urn:ValidateTokenResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="RenewToken2">
+            <wsdl:input message="tns:RequestSecurityTokenMsg"
+                        wsaw:Action="http://docs.oasis-open.org/ws-sx/ws-trust/200512/RST/Renew"/>
+            <wsdl:output message="tns:RequestSecurityTokenResponseMsg" wsaw:Action="urn:ValidateTokenResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="ValidateToken2">
+            <wsdl:input message="tns:RequestSecurityTokenMsg"
+                        wsaw:Action="http://docs.oasis-open.org/ws-sx/ws-trust/200512/RST/Validate"/>
+            <wsdl:output message="tns:RequestSecurityTokenResponseMsg" wsaw:Action="urn:ValidateTokenResponse"/>
+        </wsdl:operation>
     </wsdl:portType>
     <wsdl:binding name="wso2carbon-stsSoap11Binding" type="tns:wso2carbon-stsPortType">
         <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
@@ -113,6 +133,42 @@
                 <soap:body use="literal"/>
             </wsdl:output>
         </wsdl:operation>
+        <wsdl:operation name="IssueToken2">
+            <soap:operation soapAction="http://docs.oasis-open.org/ws-sx/ws-trust/200512/RST/Issue" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="CancelToken2">
+            <soap:operation soapAction="http://docs.oasis-open.org/ws-sx/ws-trust/200512/RST/Cancel" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="RenewToken2">
+            <soap:operation soapAction="http://docs.oasis-open.org/ws-sx/ws-trust/200512/RST/Renew" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="ValidateToken2">
+            <soap:operation soapAction="http://docs.oasis-open.org/ws-sx/ws-trust/200512/RST/Validate" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
     </wsdl:binding>
     <wsdl:binding name="wso2carbon-stsSoap12Binding" type="tns:wso2carbon-stsPortType">
         <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
@@ -145,6 +201,42 @@
         </wsdl:operation>
         <wsdl:operation name="ValidateToken">
             <soap12:operation soapAction="http://schemas.xmlsoap.org/ws/2005/02/trust/RST/Validate" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="IssueToken2">
+            <soap12:operation soapAction="http://docs.oasis-open.org/ws-sx/ws-trust/200512/RST/Issue" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="CancelToken2">
+            <soap12:operation soapAction="http://docs.oasis-open.org/ws-sx/ws-trust/200512/RST/Cancel" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="RenewToken2">
+            <soap12:operation soapAction="http://docs.oasis-open.org/ws-sx/ws-trust/200512/RST/Renew" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="ValidateToken2">
+            <soap12:operation soapAction="http://docs.oasis-open.org/ws-sx/ws-trust/200512/RST/Validate" style="document"/>
             <wsdl:input>
                 <soap12:body use="literal"/>
             </wsdl:input>
