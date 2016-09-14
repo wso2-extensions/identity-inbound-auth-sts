@@ -24,7 +24,7 @@
         <version>1</version>
     </parent>
 
-    <groupId>org.wso2.carbon.identity</groupId>
+    <groupId>org.wso2.carbon.identity.inbound.auth.sts</groupId>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>identity-inbound-auth-sts</artifactId>
     <version>5.1.2-SNAPSHOT</version>
@@ -159,7 +159,7 @@
                 <version>${identity.sts.mgt.stub.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.wso2.carbon.identity</groupId>
+                <groupId>org.wso2.carbon.identity.inbound.auth.sts</groupId>
                 <artifactId>org.wso2.carbon.mex</artifactId>
                 <version>${project.version}</version>
             </dependency>
