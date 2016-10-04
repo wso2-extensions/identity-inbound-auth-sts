@@ -80,7 +80,7 @@
                             org.apache.commons.logging; version="${commons-logging.osgi.version.range}",
                             org.wso2.carbon.ui;version="${carbon.kernel.package.import.version.range}",
                             org.wso2.carbon.sts.stub.service.*;
-                            version="${identity.sts.mgt.imp.pkg.version.range}",
+                            version="${identity.inbound.auth.sts.imp.pkg.version.range}",
                         </Import-Package>
                         <Export-Package>
                             org.wso2.carbon.sts.ui.*;version="${identity.inbound.auth.sts.package.export.version}"

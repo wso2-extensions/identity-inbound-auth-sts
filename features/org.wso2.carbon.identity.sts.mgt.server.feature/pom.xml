@@ -72,7 +72,7 @@
                                 <importFeatureDef>org.wso2.carbon.core:compatible:${carbon.kernel.version}</importFeatureDef>
                                 <importFeatureDef>org.wso2.carbon.security.mgt.server:compatible:${identity.framework.version}</importFeatureDef>
                                 <importFeatureDef>org.wso2.carbon.identity.core.server:compatible:${identity.framework.version}</importFeatureDef>
-                                <importFeatureDef>org.wso2.carbon.identity.provider.server:compatible:${inbound.oauth.openid.version}</importFeatureDef>
+                                <importFeatureDef>org.wso2.carbon.identity.provider.server:compatible:${inbound.auth.openid.version}</importFeatureDef>
                             </importFeatures>
                         </configuration>
                     </execution>
