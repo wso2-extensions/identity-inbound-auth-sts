@@ -47,19 +47,19 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.wso2.carbon.identity</groupId>
+            <groupId>org.wso2.carbon.identity.framework</groupId>
             <artifactId>org.wso2.carbon.identity.application.authentication.framework</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.wso2.carbon.identity</groupId>
+            <groupId>org.wso2.carbon.identity.framework</groupId>
             <artifactId>org.wso2.carbon.idp.mgt</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.wso2.carbon.identity</groupId>
+            <groupId>org.wso2.carbon.identity.framework</groupId>
             <artifactId>org.wso2.carbon.identity.base</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.wso2.carbon.identity</groupId>
+            <groupId>org.wso2.carbon.identity.framework</groupId>
             <artifactId>org.wso2.carbon.identity.core</artifactId>
         </dependency>
         <dependency>
@@ -95,7 +95,7 @@
                             org.wso2.carbon.identity.application.common.*;
                             version="${identity.framework.imp.pkg.version.range}",
                             org.wso2.carbon.identity.sts.passive.stub.*;
-                            version="${identity.sts.mgt.imp.pkg.version.range}",
+                            version="${identity.inbound.auth.sts.imp.pkg.version.range}",
                             org.wso2.carbon.idp.mgt.*; version="${identity.framework.imp.pkg.version.range}",
                             org.wso2.carbon.context; version="${carbon.kernel.package.import.version.range}",
                             org.wso2.carbon.identity.base;version="${identity.framework.imp.pkg.version.range}",
