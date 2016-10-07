@@ -169,6 +169,17 @@
                 <version>${project.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.wso2.carbon.identity.inbound.auth.sts</groupId>
+                <artifactId>org.wso2.carbon.mex2</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.identity.inbound.auth.sts</groupId>
+                <artifactId>org.wso2.carbon.mex.endpoint</artifactId>
+                <version>${project.version}</version>
+                <type>war</type>
+            </dependency>
+            <dependency>
                 <groupId>org.apache.axis2.wso2</groupId>
                 <artifactId>axis2</artifactId>
                 <version>${axis2.wso2.version}</version>
@@ -258,6 +269,11 @@
                 <artifactId>org.wso2.carbon.identity.application.authentication.endpoint</artifactId>
                 <version>${identity.framework.version}</version>
                 <type>war</type>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.cxf.wso2</groupId>
+                <artifactId>cxf-bundle</artifactId>
+                <version>${cxf-bundle.wso2.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -379,6 +395,7 @@
         <imp.pkg.version.javax.servlet>[2.6.0, 3.0.0)</imp.pkg.version.javax.servlet>
         <commons-collections.wso2.osgi.version.range>[3.2.0,4.0.0)</commons-collections.wso2.osgi.version.range>
         <encoder.wso2.imp.pkg.version.range>[1.2.0.wso2v1, 2.0.0)</encoder.wso2.imp.pkg.version.range>
+        <cxf-bundle.wso2.version>2.6.1.wso2v2</cxf-bundle.wso2.version>
 
     </properties>
 
@@ -394,6 +411,8 @@
         <module>components/org.wso2.carbon.sts.stub</module>
         <module>components/org.wso2.carbon.sts.ui</module>
         <module>components/org.wso2.carbon.mex</module>
+        <module>components/org.wso2.carbon.mex.endpoint</module>
+        <module>components/org.wso2.carbon.mex2</module>
 
         <module>features/org.wso2.carbon.identity.sts.mgt.feature</module>
         <module>features/org.wso2.carbon.identity.sts.mgt.server.feature</module>

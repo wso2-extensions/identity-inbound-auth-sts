@@ -26,9 +26,9 @@
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>org.wso2.carbon.mex</artifactId>
+    <artifactId>org.wso2.carbon.mex2</artifactId>
     <packaging>bundle</packaging>
-    <name>WSO2 Carbon - MEX</name>
+    <name>WSO2 Carbon - MEX2</name>
     <description>A custom wso2 products or solution</description>
     <url>http://wso2.org</url>
 
@@ -79,7 +79,7 @@
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Bundle-Name>${project.artifactId}</Bundle-Name>
                         <Private-Package>
-                            org.wso2.carbon.mex.internal,
+                            org.wso2.carbon.mex2.internal,
                         </Private-Package>
                         <Import-Package>
                             javax.xml.namespace,
@@ -116,8 +116,8 @@
                             org.wso2.carbon.identity.core.util; version="${identity.framework.imp.pkg.version.range}",
                         </Import-Package>
                         <Export-Package>
-                            !org.wso2.carbon.mex.internal,
-                            org.wso2.carbon.mex.* ; version="${identity.inbound.auth.sts.package.export.version}",
+                            !org.wso2.carbon.mex2.internal,
+                            org.wso2.carbon.mex2.* ; version="${identity.inbound.auth.sts.package.export.version}",
                         </Export-Package>
                     </instructions>
                 </configuration>

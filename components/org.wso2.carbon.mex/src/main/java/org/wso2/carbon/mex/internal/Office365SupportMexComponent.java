@@ -25,18 +25,18 @@ import org.osgi.service.component.ComponentContext;
 /**
  * @scr.component name="carbon.mex.component" immediate="true"
  */
-public class MexComponent {
+public class Office365SupportMexComponent {
 
-    private static Log log = LogFactory.getLog(MexComponent.class);
+    private static Log log = LogFactory.getLog(Office365SupportMexComponent.class);
 
     protected void activate(ComponentContext ctxt) {
 
-        log.info("MexServiceComponent bundle activated successfully..");
+        log.info("Office365Support MexServiceComponent bundle activated successfully..");
     }
 
     protected void deactivate(ComponentContext ctxt) {
         if (log.isDebugEnabled()) {
-            log.debug("MexServiceComponent is deactivated ");
+            log.debug("Office365Support MexServiceComponent is deactivated ");
         }
     }
 
