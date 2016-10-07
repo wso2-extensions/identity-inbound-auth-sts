@@ -15,29 +15,27 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.wso2.carbon.mex.internal;
-
+package org.wso2.carbon.mex2.internal;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.osgi.service.component.ComponentContext;
 
 /**
- * @scr.component name="carbon.mex.component" immediate="true"
+ * @scr.component name="carbon.mex2.component" immediate="true"
  */
-public class Office365SupportMexComponent {
+public class DynamicCRMCustomMexComponent {
 
-    private static Log log = LogFactory.getLog(Office365SupportMexComponent.class);
+    private static Log log = LogFactory.getLog(DynamicCRMCustomMexComponent.class);
 
     protected void activate(ComponentContext ctxt) {
 
-        log.info("Office365Support MexServiceComponent bundle activated successfully..");
+        log.info("DynamicCRMSupport MexServiceComponent bundle activated successfully.");
     }
 
     protected void deactivate(ComponentContext ctxt) {
         if (log.isDebugEnabled()) {
-            log.debug("Office365Support MexServiceComponent is deactivated ");
+            log.debug("DynamicCRMSupport MexServiceComponent is deactivated.");
         }
     }
-
 }
