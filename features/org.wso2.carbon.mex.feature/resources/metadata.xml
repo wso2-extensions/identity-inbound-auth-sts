@@ -1,8 +1,8 @@
-<EntityDescriptor ID="_9d6f374b-7fb5-4f6d-b888-c0957fd386aa" entityID="identity.organization.com"
+<EntityDescriptor ID="_9d6f374b-7fb5-4f6d-b888-c0957fd386aa" entityID="localhost"
                   xmlns="urn:oasis:names:tc:SAML:2.0:metadata">
     <RoleDescriptor xsi:type="fed:SecurityTokenServiceType"
                     protocolSupportEnumeration="http://docs.oasis-open.org/ws-sx/ws-trust/200512 http://schemas.xmlsoap.org/ws/2005/02/trust http://docs.oasis-open.org/wsfed/federation/200706"
-                    ServiceDisplayName="identity.organization.com:9443"
+                    ServiceDisplayName="localhost:9443"
                     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                     xmlns:fed="http://docs.oasis-open.org/wsfed/federation/200706">
         <KeyDescriptor use="signing">
