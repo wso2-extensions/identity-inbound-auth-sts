@@ -96,7 +96,7 @@
 
         <parameter name="useOrignalWSDL">true</parameter>
         <parameter name="serviceType">sts</parameter>
-        <parameter name="AuthorizationAction" locked="true">/permission/admin/configure/security</parameter>
+        <parameter name="AuthorizationAction" locked="true">/permission/admin/manage/identity</parameter>
         <parameter name="disableTryIt" locked="true">true</parameter>
         <parameter name="disableDeletion" locked="true">true</parameter>
     </service>

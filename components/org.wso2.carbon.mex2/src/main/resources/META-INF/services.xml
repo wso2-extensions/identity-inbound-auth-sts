@@ -27,7 +27,7 @@
             <actionMapping>http://schemas.xmlsoap.org/ws/2004/09/transfer/Get</actionMapping>
             <messageReceiver class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver"/>
         </operation>
-        <parameter name="AuthorizationAction" locked="true">/permission/admin/configure/security</parameter>
+        <parameter name="AuthorizationAction" locked="true">/permission/admin/manage/identity</parameter>
     </service>
 
 </serviceGroup>
