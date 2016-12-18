@@ -37,7 +37,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.osgi.framework.Bundle;
 import org.wso2.carbon.context.CarbonContext;
-import org.wso2.carbon.identity.core.util.IdentityIOStreamUtils;
 import org.wso2.carbon.sts.internal.STSServiceDataHolder;
 import org.wso2.carbon.utils.AbstractAxis2ConfigurationContextObserver;
 import org.wso2.carbon.utils.IOStreamUtils;
@@ -179,7 +178,13 @@ public class STSDeploymentListener extends AbstractAxis2ConfigurationContextObse
                 log.error("Error occur while deploying wso2carbon-sts service for tenant " +
                           CarbonContext.getThreadLocalCarbonContext().getTenantId(), e);
             } finally {
-                IdentityIOStreamUtils.closeInputStream(inputStream);
+                try {
+                    if (inputStream != null) {
+                        inputStream.close();
+                    }
+                } catch (IOException e) {
+                    log.error("Error occurred while closing Input stream", e);
+                }
             }
         }
 
@@ -231,8 +236,21 @@ public class STSDeploymentListener extends AbstractAxis2ConfigurationContextObse
                 IOStreamUtils.copyInputStream(bundleStream, bundleFileOutputSteam);
             }
         } finally {
-            IdentityIOStreamUtils.closeInputStream(bundleStream);
-            IdentityIOStreamUtils.closeOutputStream(bundleFileOutputSteam);
+            try {
+                if (bundleStream != null) {
+                    bundleStream.close();
+                }
+            } catch (IOException e) {
+                log.error("Error occurred while closing Input stream", e);
+            }
+
+            try {
+                if (bundleFileOutputSteam != null) {
+                    bundleFileOutputSteam.close();
+                }
+            } catch (IOException e) {
+                log.error("Error occurred while closing Output stream", e);
+            }
         }
         if (!bundleFile.exists()) {
             //If the bundle does not exits, then we check in the plugins dir.
