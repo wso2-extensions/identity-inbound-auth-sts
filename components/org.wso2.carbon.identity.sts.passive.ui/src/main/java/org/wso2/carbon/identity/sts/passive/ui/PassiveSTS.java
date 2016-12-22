@@ -80,6 +80,8 @@ public class PassiveSTS extends HttpServlet {
      */
     private static final long serialVersionUID = 1927253892844132565L;
     private static final String SESSION_DATA_KEY = "sessionDataKey";
+    private static final String STS_ACTION_SIGNOUT = "wsignout1.0";
+    private static final String STS_ACTION_SIGNIN = "wsignin1.0";
 
     private String stsRedirectPage = null;
     private String redirectHtmlFilePath = CarbonUtils.getCarbonHome() + File.separator + "repository"
@@ -330,6 +332,17 @@ public class PassiveSTS extends HttpServlet {
                 // According to ws-federation-1.2-spec; 'wtrealm' will not be sent in the Passive STS Logout Request.
                 if (sessionDTO.getRealm() == null || sessionDTO.getRealm().trim().length() == 0) {
                     sessionDTO.setRealm(new String());
+                }
+
+                // If the action is 'wsignout1.0', make it 'wsignin1.0' since wsignout1.0 can't be the action,
+                // when the flow comes here.
+                if (STS_ACTION_SIGNOUT.equals(sessionDTO.getAction())) {
+                    sessionDTO.setAction(STS_ACTION_SIGNIN);
+
+                    if (sessionDTO.getReqQueryString() != null) {
+                        sessionDTO.setReqQueryString(sessionDTO.getReqQueryString().replace(STS_ACTION_SIGNOUT,
+                                STS_ACTION_SIGNIN));
+                    }
                 }
                 sendToAuthenticationFramework(request, response, sessionDataKey, sessionDTO);
             }
