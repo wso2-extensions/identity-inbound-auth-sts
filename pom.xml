@@ -27,7 +27,7 @@
     <groupId>org.wso2.carbon.identity.inbound.auth.sts</groupId>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>identity-inbound-auth-sts</artifactId>
-    <version>5.1.11-SNAPSHOT</version>
+    <version>5.2.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>WSO2 Carbon - Identity STS Management</name>
     <description>
@@ -356,15 +356,15 @@
     </build>
 
     <properties>
-        <identity.framework.version>5.6.50</identity.framework.version>
+        <identity.framework.version>5.7.0</identity.framework.version>
         <identity.inbound.auth.sts.package.export.version>${project.version}</identity.inbound.auth.sts.package.export.version>
         <inbound.auth.openid.version>5.2.0</inbound.auth.openid.version>
 
         <carbon.kernel.version>4.4.7</carbon.kernel.version>
 
         <carbon.xfer.package.version>4.2.0</carbon.xfer.package.version>
-        <wss4j.version>1.5.11.wso2v14</wss4j.version>
-        <rampart.wso2.version>1.6.1.wso2v22</rampart.wso2.version>
+        <wss4j.version>1.5.11.wso2v16</wss4j.version>
+        <rampart.wso2.version>1.6.1.wso2v24</rampart.wso2.version>
         <opensaml2.wso2.version>2.6.4.wso2v3</opensaml2.wso2.version>
         <commons-fileupload.wso2.version>1.2.2.wso2v1</commons-fileupload.wso2.version>
         <carbon.p2.plugin.version>1.5.3</carbon.p2.plugin.version>
@@ -374,9 +374,9 @@
 
         <neethi.osgi.version.range>[2.0.4.wso2v4,3.0.0)</neethi.osgi.version.range>
 
-        <identity.framework.imp.pkg.version.range>[5.0.0,6.0.0)</identity.framework.imp.pkg.version.range>
+        <identity.framework.imp.pkg.version.range>[5.7.0,6.0.0)</identity.framework.imp.pkg.version.range>
         <identity.inbound.auth.openid.imp.pkg.version.range>[5.0.0,6.0.0)</identity.inbound.auth.openid.imp.pkg.version.range>
-        <identity.inbound.auth.sts.imp.pkg.version.range>[5.0.0,6.0.0)</identity.inbound.auth.sts.imp.pkg.version.range>
+        <identity.inbound.auth.sts.imp.pkg.version.range>[5.2.0,6.0.0)</identity.inbound.auth.sts.imp.pkg.version.range>
 
         <opensaml2.wso2.osgi.version.range>[2.6.0,3.0.0)</opensaml2.wso2.osgi.version.range>
         <rampart.wso2.osgi.version.range>[1.6.1,2.0.0)</rampart.wso2.osgi.version.range>
