@@ -119,6 +119,8 @@
                             org.wso2.carbon.security.*,
                             org.wso2.carbon.identity.sts.store;
                             version="${identity.inbound.auth.sts.imp.pkg.version.range}",
+                            org.wso2.carbon.identity.provider; resolution:=optional;
+                            version="${identity.inbound.auth.openid.imp.pkg.version.range}",
                             javax.cache
                         </Import-Package>
                         <Export-Package>
