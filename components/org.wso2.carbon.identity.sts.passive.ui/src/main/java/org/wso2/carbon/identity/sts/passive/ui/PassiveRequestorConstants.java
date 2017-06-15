@@ -27,6 +27,8 @@ public class PassiveRequestorConstants {
 
     public static final String REQUESTOR_ACTION_PSEUDONYM_10 = "wpseudo1.0";
 
+    public static final String REQUESTOR_ACTION_CLEANUP_10 = "wsignoutcleanup1.0";
+
     public static final String ACTION = "wa";
 
     public static final String REPLY_TO = "wreply";
