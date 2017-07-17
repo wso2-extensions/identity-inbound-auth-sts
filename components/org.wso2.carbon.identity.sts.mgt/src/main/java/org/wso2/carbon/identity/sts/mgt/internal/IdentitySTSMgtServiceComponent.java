@@ -240,8 +240,11 @@ public class IdentitySTSMgtServiceComponent {
         try {
             // Scenarios are listed in resources/scenario-config.xml
             URL resource = bundleContext.getBundle().getResource("scenario-config.xml");
+            if (resource == null) {
+                return;
+            }
             XmlConfiguration xmlConfiguration = new XmlConfiguration(resource.openStream(),
-                                                                     SecurityConstants.SECURITY_NAMESPACE);
+                    SecurityConstants.SECURITY_NAMESPACE);
 
             OMElement[] elements = xmlConfiguration.getElements("//ns:Scenario");
 
@@ -269,7 +272,7 @@ public class IdentitySTSMgtServiceComponent {
                 String resourceUri = SecurityConstants.SECURITY_POLICY + "/" + scenarioId;
 
                 for (Iterator modules = scenarioEle.getFirstChildWithName(SecurityConstants.MODULES_QN)
-                                                   .getChildElements(); modules.hasNext(); ) {
+                        .getChildElements(); modules.hasNext(); ) {
                     String module = ((OMElement) modules.next()).getText();
                     scenario.addModule(module);
                 }
@@ -279,10 +282,14 @@ public class IdentitySTSMgtServiceComponent {
 
                 // Store the scenario in the Registry
                 if (!scenarioId.equals(SecurityConstants.SCENARIO_DISABLE_SECURITY) &&
-                    !scenarioId.equals(SecurityConstants.POLICY_FROM_REG_SCENARIO)) {
+                        !scenarioId.equals(SecurityConstants.POLICY_FROM_REG_SCENARIO)) {
                     Resource scenarioResource = new ResourceImpl();
+                    URL urlResource = bundleContext.getBundle().getResource(scenarioId + "-policy.xml");
+                    if (urlResource == null) {
+                        return;
+                    }
                     scenarioResource.setContentStream(
-                            bundleContext.getBundle().getResource(scenarioId + "-policy.xml").openStream());
+                            urlResource.openStream());
                     if (!registry.resourceExists(resourceUri)) {
                         registry.put(resourceUri, scenarioResource);
                     }
