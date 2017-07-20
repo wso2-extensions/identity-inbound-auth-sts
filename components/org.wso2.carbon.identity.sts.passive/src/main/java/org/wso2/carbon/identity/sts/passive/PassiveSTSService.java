@@ -227,6 +227,7 @@ public class PassiveSTSService {
         if(sp == null) {
             log.error("Cannot find Service Provider corresponding to Realm : " + realm +
                     ". Skip setting ReplyTo URL from Realm (Service Provider config)");
+            return;
         }
 
         InboundAuthenticationRequestConfig[] inboundAuthenticationConfigs =
