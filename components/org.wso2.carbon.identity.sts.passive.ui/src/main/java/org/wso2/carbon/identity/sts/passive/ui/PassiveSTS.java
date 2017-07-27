@@ -60,6 +60,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.Enumeration;
@@ -87,6 +88,8 @@ public class PassiveSTS extends HttpServlet {
     private String redirectHtmlFilePath = CarbonUtils.getCarbonHome() + File.separator + "repository"
             + File.separator + "resources" + File.separator + "identity" + File.separator + "pages" + File.separator +
             "sts_response.html";
+    private static final String HTTP = "http";
+    private static final String HTTPS = "https";
 
     /**
      * This method reads Passive STS Html Redirect file content.
@@ -224,8 +227,8 @@ public class PassiveSTS extends HttpServlet {
 
     private void sendSignOutCleanupRequests(HttpServletRequest request) {
 
-        Set<String> realms =
-                (Set<String>) request.getSession().getAttribute(PassiveRequestorConstants.RELYING_PARTY_REALMS);
+        Set<String> wreplySet =
+                (Set<String>) request.getSession().getAttribute(PassiveRequestorConstants.REPLY_TO);
 
         String hostNameVerificationEnabledProperty =
                 IdentityUtil.getProperty(IdentityConstants.STS.PASSIVE_STS_SLO_HOST_NAME_VERIFICATION_ENABLED);
@@ -234,51 +237,81 @@ public class PassiveSTS extends HttpServlet {
             isHostNameVerificationEnabled = false;
         }
 
-        if (CollectionUtils.isNotEmpty(realms)) {
-            for (String realm : realms) {
+        if (CollectionUtils.isNotEmpty(wreplySet)) {
+            for (String wreply : wreplySet) {
                 // Skipping the realm which initiated the logout request
-                if (realm.equals(getAttribute(request.getParameterMap(), PassiveRequestorConstants.REALM))) {
+                if (wreply.equals(getAttribute(request.getParameterMap(), PassiveRequestorConstants.REPLY_TO))) {
                     continue;
                 }
 
                 try {
-                    URL url = new URL(realm + "?wa=wsignoutcleanup1.0");
-                    HttpsURLConnection urlConnection = (HttpsURLConnection) url.openConnection();
-
-                    if (!isHostNameVerificationEnabled) {
-
-                        urlConnection.setHostnameVerifier(new HostnameVerifier() {
-                            @Override
-                            public boolean verify(String s, SSLSession sslSession) {
-                                return true;
-                            }
-                        });
-                    }
-
-                    int responseCode = urlConnection.getResponseCode();
-                    if (responseCode == HttpsURLConnection.HTTP_OK) {
-                        if (log.isDebugEnabled()) {
-                            log.debug("Single logout cleanup request sent to " + realm + " returned with " +
-                                      urlConnection.getResponseMessage());
-                        }
+                    URL url;
+                    if (wreply.contains("?")) {
+                        url = new URL(wreply + "&" + PassiveRequestorConstants.ACTION + "=" + PassiveRequestorConstants.
+                                REQUESTOR_ACTION_CLEANUP_10);
                     } else {
-                        log.warn("Failed single logout response from " + realm + " with status " +
-                                 urlConnection.getResponseMessage());
+                        url = new URL(wreply + "?" + PassiveRequestorConstants.ACTION + "=" + PassiveRequestorConstants.
+                                REQUESTOR_ACTION_CLEANUP_10);
+                    }
+                    if (HTTP.equals(url.getProtocol())) {
+                        HttpURLConnection httpUrlConnection = (HttpURLConnection) url.openConnection();
+                        int responseCode = httpUrlConnection.getResponseCode();
+                        composeLogsFromResponse(responseCode, wreply, httpUrlConnection.getResponseMessage());
+                    } else if (HTTPS.equals(url.getProtocol())) {
+                        HttpsURLConnection httpsUrlConnection = (HttpsURLConnection) url.openConnection();
+                        if (!isHostNameVerificationEnabled) {
+                            httpsUrlConnection.setHostnameVerifier(new HostnameVerifier() {
+                                @Override
+                                public boolean verify(String s, SSLSession sslSession) {
+                                    return true;
+                                }
+                            });
+                        }
+                        int responseCode = httpsUrlConnection.getResponseCode();
+                        composeLogsFromResponse(responseCode, wreply, httpsUrlConnection.getResponseMessage());
                     }
                 } catch (IOException e) {
-                    log.error("Error sending logout cleanup request to " + realm, e);
+                    log.error("Error sending logout cleanup request to " + wreply, e);
                 }
             }
         }
     }
 
-    private void persistRealms(RequestToken reqToken, HttpSession session) {
-        Set<String> realms = (Set<String>) session.getAttribute(PassiveRequestorConstants.RELYING_PARTY_REALMS);
-        if (realms == null) {
-            realms = new HashSet<>();
-            session.setAttribute(PassiveRequestorConstants.RELYING_PARTY_REALMS, realms);
+    /**
+     * Composes logs from response code.
+     *
+     * @param responseCode response Code
+     * @param wreply wreply url
+     * @param message response message
+     */
+    private void composeLogsFromResponse(int responseCode, String wreply, String message) {
+
+        if (responseCode == HttpsURLConnection.HTTP_OK || responseCode == HttpsURLConnection.
+                HTTP_MOVED_TEMP) {
+            if (log.isDebugEnabled()) {
+                log.debug("Single logout cleanup request sent to " + wreply + " returned with " +
+                        message);
+            }
+        } else {
+            log.warn("Failed single logout response from " + wreply + " with status " +
+                    message);
         }
-        realms.add(reqToken.getRealm());
+    }
+
+    /**
+     * persists wreply urls in a session.
+     *
+     * @param reqToken request token
+     * @param session session
+     */
+    private void persistWreply(RequestToken reqToken, HttpSession session) {
+
+        Set<String> wreplySet = (Set<String>) session.getAttribute(PassiveRequestorConstants.REPLY_TO);
+        if (wreplySet == null) {
+            wreplySet = new HashSet<>();
+            session.setAttribute(PassiveRequestorConstants.REPLY_TO, wreplySet);
+        }
+        wreplySet.add(reqToken.getReplyTo());
     }
 
     private void sendToAuthenticationFramework(HttpServletRequest request, HttpServletResponse response,
@@ -330,21 +363,12 @@ public class PassiveSTS extends HttpServlet {
                 // TODO how to send back the authentication failure to client.
                 //for now user will be redirected back to the framework
                 // According to ws-federation-1.2-spec; 'wtrealm' will not be sent in the Passive STS Logout Request.
-                if (sessionDTO.getRealm() == null || sessionDTO.getRealm().trim().length() == 0) {
-                    sessionDTO.setRealm(new String());
-                }
 
-                // If the action is 'wsignout1.0', make it 'wsignin1.0' since wsignout1.0 can't be the action,
-                // when the flow comes here.
-                if (STS_ACTION_SIGNOUT.equals(sessionDTO.getAction())) {
-                    sessionDTO.setAction(STS_ACTION_SIGNIN);
-
-                    if (sessionDTO.getReqQueryString() != null) {
-                        sessionDTO.setReqQueryString(sessionDTO.getReqQueryString().replace(STS_ACTION_SIGNOUT,
-                                STS_ACTION_SIGNIN));
-                    }
+                if (StringUtils.isNotBlank(sessionDTO.getReplyTo())) {
+                    response.sendRedirect(sessionDTO.getReplyTo());
+                } else {
+                    sendToRetryPage(request, response);
                 }
-                sendToAuthenticationFramework(request, response, sessionDataKey, sessionDTO);
             }
         } else {
             sendToRetryPage(request, response);
@@ -400,7 +424,7 @@ public class PassiveSTS extends HttpServlet {
         ResponseToken respToken = passiveSTSClient.getResponse(reqToken);
 
         if (respToken != null && respToken.getResults() != null) {
-            persistRealms(reqToken, request.getSession());
+            persistWreply(reqToken, request.getSession());
             sendData(response, respToken, reqToken.getAction(),
                      authnResult.getAuthenticatedIdPs());
         }
