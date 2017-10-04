@@ -67,6 +67,7 @@ public class PassiveSTSService {
                 try {
                     responseToken = processor.process(request);
                 } catch (TrustException e) {
+                    log.error(e);
                     soapfault = genFaultResponse(MessageContext.getCurrentMessageContext(), "Sender",
                             "InvalidRequest", e.getMessage(), "none").toStringWithConsume();
                 }
