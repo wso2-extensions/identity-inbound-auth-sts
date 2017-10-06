@@ -28,6 +28,8 @@ import org.apache.axiom.soap.SOAPFaultSubCode;
 import org.apache.axiom.soap.SOAPFaultText;
 import org.apache.axiom.soap.SOAPFaultValue;
 import org.apache.axis2.context.MessageContext;
+import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.rahas.TrustException;
@@ -36,11 +38,13 @@ import org.wso2.carbon.identity.application.common.IdentityApplicationManagement
 import org.wso2.carbon.identity.application.common.model.InboundAuthenticationRequestConfig;
 import org.wso2.carbon.identity.application.common.model.Property;
 import org.wso2.carbon.identity.application.common.model.ServiceProvider;
+import org.wso2.carbon.identity.application.common.util.IdentityApplicationConstants;
 import org.wso2.carbon.identity.application.mgt.ApplicationManagementService;
 import org.wso2.carbon.identity.sts.passive.internal.RegistryBasedTrustedServiceStore;
 import org.wso2.carbon.identity.sts.passive.processors.RequestProcessor;
 
 import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamException;
 
 public class PassiveSTSService {
     private static final Log log = LogFactory.getLog(PassiveSTSService.class);
@@ -52,32 +56,33 @@ public class PassiveSTSService {
         }
 
         RequestProcessor processor = null;
-        ResponseToken responseToken = null;
+        ResponseToken responseToken = new ResponseToken();
         String soapfault = null;
-
         // Setting wreply url from sp config
-        setReplyToURL(request);
+        setReplyToURL(request, responseToken);
+        if (responseToken.getResults() == null) {
+            processor = RequestProcessorFactory.getInstance().getRequestProcessor(request.getAction());
 
-        processor = RequestProcessorFactory.getInstance().getRequestProcessor(request.getAction());
-
-        if (processor != null) {
-            try {
-                responseToken = processor.process(request);
-            } catch (TrustException e) {
+            if (processor != null) {
+                try {
+                    responseToken = processor.process(request);
+                } catch (TrustException e) {
+                    log.error(e);
+                    soapfault = genFaultResponse(MessageContext.getCurrentMessageContext(), "Sender",
+                            "InvalidRequest", e.getMessage(), "none").toStringWithConsume();
+                }
+            } else {
                 soapfault = genFaultResponse(MessageContext.getCurrentMessageContext(), "Sender",
-                        "InvalidRequest", e.getMessage(), "none").toStringWithConsume();
+                        "InvalidRequest", "Invalid Request", "none").toStringWithConsume();
             }
-        } else {
-            soapfault = genFaultResponse(MessageContext.getCurrentMessageContext(), "Sender",
-                    "InvalidRequest", "Invalid Request", "none").toStringWithConsume();
-        }
 
-        if (responseToken == null) {
-            responseToken = new ResponseToken();
-        }
+            if (responseToken == null) {
+                responseToken = new ResponseToken();
+            }
 
-        if (soapfault != null) {
-            responseToken.setResults(soapfault);
+            if (soapfault != null) {
+                responseToken.setResults(soapfault);
+            }
         }
 
         responseToken.setAuthenticated(true);
@@ -190,7 +195,7 @@ public class PassiveSTSService {
     }
 
 
-    private void setReplyToURL(RequestToken request) {
+    private void setReplyToURL(RequestToken request, ResponseToken responseToken) throws Exception {
 
         String wreply = request.getReplyTo();
 
@@ -218,15 +223,16 @@ public class PassiveSTSService {
             sp = ApplicationManagementService.getInstance().
                     getServiceProviderByClientId(realm, "passivests", tenantDomain);
         } catch (IdentityApplicationManagementException e) {
-            log.error("Error while retrieving Service Provider corresponding to Realm : " + realm +
-                    ". Skip setting ReplyTo URL from Realm (Service Provider config)", e);
+            String errorMsg = "Error while retrieving Service Provider corresponding to Realm: " + realm;
+            log.error(errorMsg, e);
+            setSoapFault("Sender","InvalidRequest", errorMsg, "none", responseToken);
             return;
         }
 
 
-        if(sp == null) {
-            log.error("Cannot find Service Provider corresponding to Realm : " + realm +
-                    ". Skip setting ReplyTo URL from Realm (Service Provider config)");
+        if (sp == null || IdentityApplicationConstants.DEFAULT_SP_CONFIG.equals(sp.getApplicationName())) {
+            String errorMsg = "Cannot find Service Provider corresponding to Realm: " + realm;
+            setSoapFault("Sender","InvalidRequest", errorMsg, "none", responseToken);
             return;
         }
 
@@ -238,28 +244,81 @@ public class PassiveSTSService {
 
                     // get wreply url from properties
                     Property[] properties = inboundAuthenticationConfigs[i].getProperties();
-                    if (properties != null) {
-                        for (int j = 0; j < properties.length; j++) {
-                            if("passiveSTSWReply".equalsIgnoreCase(properties[j].getName())) {
-                                wreply = properties[j].getValue();
-                                if (wreply != null && !wreply.isEmpty()) {
-                                    if (log.isDebugEnabled()) {
-                                        log.debug("Setting ReplyTo URL : " + wreply + " for Realm : " + realm);
-                                    }
-                                    request.setReplyTo(wreply);
-                                }
-                                return;
-                            }
+                    if (ArrayUtils.isEmpty(properties)) {
+                        String errorMsg = "WReply URL is not configured for Realm: " + realm;
+                        setSoapFault("Sender", "InvalidRequest", errorMsg, "none", responseToken);
+                        return;
+                    }
+                    for (int j = 0; j < properties.length; j++) {
+                        if (!"passiveSTSWReply".equalsIgnoreCase(properties[j].getName())) {
+                            continue;
                         }
+                        validateWReply(request, properties[j], realm, responseToken);
+                        return;
                     }
-
-                    if(log.isDebugEnabled()) {
-                        log.debug("WReply URL does not specified for Realm : " + realm + " in Service Provider configs");
-                    }
-                    return;
                 }
             }
         }
 
+    }
+
+    private void validateWReply(RequestToken request, Property wreplyPro, String realm, ResponseToken responseToken)
+            throws XMLStreamException {
+
+        if (wreplyPro == null) {
+            if (log.isDebugEnabled()) {
+                log.debug("WReply property is null for Realm:" + realm);
+            }
+            String errorMsg = "WReply URL is not configured for Realm: " + realm;
+            setSoapFault("Sender", "InvalidRequest", errorMsg, "none", responseToken);
+            return;
+        }
+
+        String wreply = wreplyPro.getValue();
+
+        if (StringUtils.isBlank(wreply)) {
+            if (log.isDebugEnabled()) {
+                log.debug("WReply URL value is null or empty for Realm:" + realm);
+            }
+            String errorMsg = "WReply URL is not configured for Realm: " + realm;
+            setSoapFault("Sender", "InvalidRequest", errorMsg, "none", responseToken);
+            return;
+        }
+
+        String wreplyFormReq = request.getReplyTo();
+
+        if (StringUtils.isBlank(wreplyFormReq)) {
+            String errorMsg = "Requested WReply URL is empty for Realm: " + realm;
+            setSoapFault("Sender", "InvalidRequest", errorMsg, "none",
+                    responseToken);
+            return;
+        }
+
+        if (!(removeTrailingSlash(wreply).equals(removeTrailingSlash(wreplyFormReq)))) {
+            String errorMsg = "Requested WReply URL: " + request.getReplyTo() + " is not registered for Realm: " +
+                    realm;
+            setSoapFault("Sender", "InvalidRequest", errorMsg, "none", responseToken);
+            return;
+        }
+
+    }
+
+    private void setSoapFault(String code, String subCode, String reason, String details, ResponseToken responseToken)
+            throws XMLStreamException {
+
+        String soapFaultStr = genFaultResponse(MessageContext.getCurrentMessageContext(), code, subCode, reason,
+                details).toStringWithConsume();
+        responseToken.setResults(soapFaultStr);
+    }
+
+    private String removeTrailingSlash(String value) {
+
+        if (StringUtils.isBlank(value)) {
+            return value;
+        }
+        if (value.endsWith("/")) {
+            value = value.substring(0, value.length() - 1);
+        }
+        return value;
     }
 }
