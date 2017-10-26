@@ -288,9 +288,11 @@ public class PassiveSTSService {
         String wreplyFormReq = request.getReplyTo();
 
         if (StringUtils.isBlank(wreplyFormReq)) {
-            String errorMsg = "Requested WReply URL is empty for Realm: " + realm;
-            setSoapFault("Sender", "InvalidRequest", errorMsg, "none",
-                    responseToken);
+            if (log.isDebugEnabled()) {
+                log.debug("In passive-sts request WReply URL is empty hence " +
+                                                "setting WReply URL : " + wreply + " for Realm : " + realm);
+            }
+            request.setReplyTo(wreply);
             return;
         }
 
