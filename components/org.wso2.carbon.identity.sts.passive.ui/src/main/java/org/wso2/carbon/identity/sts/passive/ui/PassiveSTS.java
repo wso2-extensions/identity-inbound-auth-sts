@@ -61,11 +61,14 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
@@ -238,6 +241,9 @@ public class PassiveSTS extends HttpServlet {
         }
 
         if (CollectionUtils.isNotEmpty(wreplySet)) {
+
+            List<String> malformedWreplyURLs = new ArrayList<>();
+
             for (String wreply : wreplySet) {
                 // Skipping the realm which initiated the logout request
                 if (wreply.equals(getAttribute(request.getParameterMap(), PassiveRequestorConstants.REPLY_TO))) {
@@ -270,9 +276,19 @@ public class PassiveSTS extends HttpServlet {
                         int responseCode = httpsUrlConnection.getResponseCode();
                         composeLogsFromResponse(responseCode, wreply, httpsUrlConnection.getResponseMessage());
                     }
+                } catch (MalformedURLException e) {
+                    log.warn("A malformed URL: " + wreply + " found in the wreply values set. wreply values should be" +
+                            " URLs.");
+                    malformedWreplyURLs.add(wreply);
                 } catch (IOException e) {
                     log.error("Error sending logout cleanup request to " + wreply, e);
                 }
+            }
+
+            // Removing malformed URLs from the wreply values set.
+            for (String malformedWreplyURL : malformedWreplyURLs) {
+                wreplySet.remove(malformedWreplyURL);
+                log.warn("Removing malformed URL: " + malformedWreplyURL + " from wreply values set.");
             }
         }
     }
