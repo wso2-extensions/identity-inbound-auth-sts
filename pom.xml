@@ -253,6 +253,24 @@
                 <groupId>org.wso2.carbon.identity.framework</groupId>
                 <artifactId>org.wso2.carbon.identity.base</artifactId>
                 <version>${identity.framework.version}</version>
+                <exclusions>
+                    <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>jcl-over-slf4j</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>log4j-over-slf4j</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>slf4j-log4j12</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>commons-collections</groupId>
+                        <artifactId>commons-collections</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>commons-collections.wso2</groupId>
@@ -274,6 +292,49 @@
                 <groupId>org.apache.cxf.wso2</groupId>
                 <artifactId>cxf-bundle</artifactId>
                 <version>${cxf-bundle.wso2.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.testng</groupId>
+                <artifactId>testng</artifactId>
+                <version>${testng.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.powermock</groupId>
+                <artifactId>powermock-module-testng</artifactId>
+                <version>${powermock.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.powermock</groupId>
+                <artifactId>powermock-api-mockito</artifactId>
+                <version>${powermock.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.jacoco</groupId>
+                <artifactId>org.jacoco.agent</artifactId>
+                <classifier>runtime</classifier>
+                <version>${jacoco.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>${org.slf4j.verison}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-log4j12</artifactId>
+                <version>${org.slf4j.verison}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.identity.framework</groupId>
+                <artifactId>org.wso2.carbon.identity.testutil</artifactId>
+                <version>${identity.framework.version}</version>
+                <scope>test</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -356,7 +417,7 @@
     </build>
 
     <properties>
-        <identity.framework.version>5.7.0</identity.framework.version>
+        <identity.framework.version>5.10.22</identity.framework.version>
         <identity.inbound.auth.sts.package.export.version>${project.version}</identity.inbound.auth.sts.package.export.version>
         <inbound.auth.openid.version>5.2.0</inbound.auth.openid.version>
 
@@ -396,6 +457,12 @@
         <commons-collections.wso2.osgi.version.range>[3.2.0,4.0.0)</commons-collections.wso2.osgi.version.range>
         <encoder.wso2.imp.pkg.version.range>[1.2.0.wso2v1, 2.0.0)</encoder.wso2.imp.pkg.version.range>
         <cxf-bundle.wso2.version>2.6.1.wso2v2</cxf-bundle.wso2.version>
+
+        <org.slf4j.verison>1.7.21</org.slf4j.verison>
+        <testng.version>6.9.10</testng.version>
+        <jacoco.version>0.7.9</jacoco.version>
+        <powermock.version>1.7.0</powermock.version>
+        <maven.surefire.plugin.version>2.18.1</maven.surefire.plugin.version>
 
     </properties>
 
