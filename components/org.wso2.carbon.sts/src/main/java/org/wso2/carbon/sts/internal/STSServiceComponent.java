@@ -28,27 +28,26 @@ import org.wso2.carbon.sts.STSDeploymentInterceptor;
 import org.wso2.carbon.sts.STSDeploymentListener;
 import org.wso2.carbon.user.core.service.RealmService;
 import org.wso2.carbon.utils.Axis2ConfigurationContextObserver;
-
 import java.util.Dictionary;
 import java.util.Hashtable;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Deactivate;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.ReferencePolicy;
 
-/**
- * @scr.component name="carbon.sts.component" immediate="true"
- * @scr.reference name="registry.service"
- * interface="org.wso2.carbon.registry.core.service.RegistryService"
- * cardinality="1..1" policy="dynamic" bind="setRegistryService"
- * unbind="unsetRegistryService"
- * @scr.reference name="user.realmservice.default"
- * interface="org.wso2.carbon.user.core.service.RealmService"
- * cardinality="1..1" policy="dynamic" bind="setRealmService"
- * unbind="unsetRealmService"
- */
+@Component(
+         name = "carbon.sts.component", 
+         immediate = true)
 public class STSServiceComponent {
+
     private static final Log log = LogFactory.getLog(STSServiceComponent.class);
 
     public STSServiceComponent() {
     }
 
+    @Activate
     protected void activate(ComponentContext ctxt) {
         if (log.isDebugEnabled()) {
             log.debug("Carbon STS bundle is activated");
@@ -59,24 +58,27 @@ public class STSServiceComponent {
             // Publish the OSGi service
             Dictionary props = new Hashtable();
             props.put(CarbonConstants.AXIS2_CONFIG_SERVICE, AxisObserver.class.getName());
-            ctxt.getBundleContext().registerService(AxisObserver.class.getName(),
-                                                    new STSDeploymentInterceptor(), props);
-
+            ctxt.getBundleContext().registerService(AxisObserver.class.getName(), new STSDeploymentInterceptor(), props);
             // Publish an OSGi service to listen tenant configuration context creation events
-            bundleCtx.registerService(Axis2ConfigurationContextObserver.class.getName(),
-                                      new STSDeploymentListener(),
-                                      null);
+            bundleCtx.registerService(Axis2ConfigurationContextObserver.class.getName(), new STSDeploymentListener(), null);
         } catch (Throwable e) {
             log.error("Error occurred while updating carbon STS service", e);
         }
     }
 
+    @Deactivate
     protected void deactivate(ComponentContext ctxt) {
         if (log.isDebugEnabled()) {
             log.debug("Carbon STS bundle is deactivated");
         }
     }
 
+    @Reference(
+             name = "registry.service", 
+             service = org.wso2.carbon.registry.core.service.RegistryService.class, 
+             cardinality = ReferenceCardinality.MANDATORY, 
+             policy = ReferencePolicy.DYNAMIC, 
+             unbind = "unsetRegistryService")
     protected void setRegistryService(RegistryService registryService) {
         if (log.isDebugEnabled()) {
             log.debug("RegistryService set in Carbon STS bundle");
@@ -95,6 +97,12 @@ public class STSServiceComponent {
         }
     }
 
+    @Reference(
+             name = "user.realmservice.default", 
+             service = org.wso2.carbon.user.core.service.RealmService.class, 
+             cardinality = ReferenceCardinality.MANDATORY, 
+             policy = ReferencePolicy.DYNAMIC, 
+             unbind = "unsetRealmService")
     protected void setRealmService(RealmService realmService) {
         if (log.isDebugEnabled()) {
             log.debug("Setting the RealmService");
@@ -109,3 +117,4 @@ public class STSServiceComponent {
         STSServiceDataHolder.getInstance().setRealmService(null);
     }
 }
+

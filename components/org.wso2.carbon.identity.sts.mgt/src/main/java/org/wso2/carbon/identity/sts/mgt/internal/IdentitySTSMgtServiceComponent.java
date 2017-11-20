@@ -15,7 +15,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.wso2.carbon.identity.sts.mgt.internal;
 
 import org.apache.axiom.om.OMElement;
@@ -41,32 +40,18 @@ import org.wso2.carbon.security.util.XmlConfiguration;
 import org.wso2.carbon.user.core.service.RealmService;
 import org.wso2.carbon.utils.Axis2ConfigurationContextObserver;
 import org.wso2.carbon.utils.ConfigurationContextService;
-
 import java.net.URL;
 import java.util.Iterator;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Deactivate;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.ReferencePolicy;
 
-/**
- * @scr.component name="identity.sts.mgt.component" immediate="true"
- * @scr.reference name="registry.service"
- * interface="org.wso2.carbon.registry.core.service.RegistryService"
- * cardinality="1..1" policy="dynamic" bind="setRegistryService"
- * unbind="unsetRegistryService"
- * @scr.reference name="config.context.service"
- * interface="org.wso2.carbon.utils.ConfigurationContextService" cardinality="1..1"
- * policy="dynamic" bind="setConfigurationContextService"
- * unbind="unsetConfigurationContextService"
- * @scr.reference name="identity.provider.service"
- * interface="org.wso2.carbon.identity.provider.IdentityProviderUtil"
- * cardinality="1..1" policy="dynamic" bind="setIdentityProviderAdminUtil"
- * unbind="unsetIdentityProviderAdminUtil"
- * @scr.reference name="user.realmservice.default"
- * interface="org.wso2.carbon.user.core.service.RealmService" cardinality="1..1"
- * policy="dynamic" bind="setRealmService" unbind="unsetRealmService"
- * @scr.reference name="security.config.service"
- * interface="org.wso2.carbon.security.config.SecurityConfigAdmin" cardinality="1..1"
- * policy="dynamic" bind="setSecurityConfigAdminService"
- * unbind="unsetSecurityConfigAdminService"
- */
+@Component(
+         name = "identity.sts.mgt.component", 
+         immediate = true)
 public class IdentitySTSMgtServiceComponent {
 
     private static final Log log = LogFactory.getLog(IdentitySTSMgtServiceComponent.class);
@@ -93,11 +78,16 @@ public class IdentitySTSMgtServiceComponent {
     /**
      * @param registryService
      */
+    @Reference(
+             name = "registry.service", 
+             service = org.wso2.carbon.registry.core.service.RegistryService.class, 
+             cardinality = ReferenceCardinality.MANDATORY, 
+             policy = ReferencePolicy.DYNAMIC, 
+             unbind = "unsetRegistryService")
     protected void setRegistryService(RegistryService registryService) {
         if (log.isDebugEnabled()) {
             log.info("RegistryService set in Identity STS Mgt bundle");
         }
-
         try {
             this.registryService = registryService;
         } catch (Throwable e) {
@@ -109,6 +99,12 @@ public class IdentitySTSMgtServiceComponent {
         return realmService;
     }
 
+    @Reference(
+             name = "user.realmservice.default", 
+             service = org.wso2.carbon.user.core.service.RealmService.class, 
+             cardinality = ReferenceCardinality.MANDATORY, 
+             policy = ReferencePolicy.DYNAMIC, 
+             unbind = "unsetRealmService")
     protected void setRealmService(RealmService realmService) {
         this.realmService = realmService;
     }
@@ -120,6 +116,7 @@ public class IdentitySTSMgtServiceComponent {
     /**
      * @param ctxt
      */
+    @Activate
     protected void activate(ComponentContext ctxt) {
         if (log.isDebugEnabled()) {
             log.info("Identity STS Mgt bundle is activated");
@@ -135,6 +132,7 @@ public class IdentitySTSMgtServiceComponent {
     /**
      * @param ctxt
      */
+    @Deactivate
     protected void deactivate(ComponentContext ctxt) {
         if (log.isDebugEnabled()) {
             log.info("Identity STS Mgt bundle is deactivated");
@@ -154,6 +152,12 @@ public class IdentitySTSMgtServiceComponent {
     /**
      * @param contextService
      */
+    @Reference(
+             name = "config.context.service", 
+             service = org.wso2.carbon.utils.ConfigurationContextService.class, 
+             cardinality = ReferenceCardinality.MANDATORY, 
+             policy = ReferencePolicy.DYNAMIC, 
+             unbind = "unsetConfigurationContextService")
     protected void setConfigurationContextService(ConfigurationContextService contextService) {
         if (log.isDebugEnabled()) {
             log.info("ConfigurationContextService set in Identity STS Mgt bundle");
@@ -174,6 +178,12 @@ public class IdentitySTSMgtServiceComponent {
     /**
      * @param providerUtil
      */
+    @Reference(
+             name = "identity.provider.service", 
+             service = org.wso2.carbon.identity.provider.IdentityProviderUtil.class, 
+             cardinality = ReferenceCardinality.MANDATORY, 
+             policy = ReferencePolicy.DYNAMIC, 
+             unbind = "unsetIdentityProviderAdminUtil")
     protected void setIdentityProviderAdminUtil(IdentityProviderUtil providerUtil) {
         if (log.isDebugEnabled()) {
             log.info("IdentityProviderUtil set in Identity STS Mgt bundle");
@@ -196,6 +206,12 @@ public class IdentitySTSMgtServiceComponent {
     /**
      * @param securityConfig
      */
+    @Reference(
+             name = "security.config.service", 
+             service = org.wso2.carbon.security.config.SecurityConfigAdmin.class, 
+             cardinality = ReferenceCardinality.MANDATORY, 
+             policy = ReferencePolicy.DYNAMIC, 
+             unbind = "unsetSecurityConfigAdminService")
     protected void setSecurityConfigAdminService(SecurityConfigAdmin securityConfig) {
         if (log.isDebugEnabled()) {
             log.info("SecurityConfigAdmin set in Identity STS Mgt bundle");
@@ -215,15 +231,11 @@ public class IdentitySTSMgtServiceComponent {
      * @throws Exception
      */
     private void initialize() throws Exception {
-
         // Register a Axis2ConfigurationContextObserver to activate on loading tenants.
-        bundleContext.registerService(
-                Axis2ConfigurationContextObserver.class.getName(), new STSConfigurationContextObserver(), null);
+        bundleContext.registerService(Axis2ConfigurationContextObserver.class.getName(), new STSConfigurationContextObserver(), null);
         log.debug("Registered STSConfigurationContextObserver to configure STS service for tenants.");
-
         loadSecurityScenarios();
-        STSConfigAdmin.configureService(configContext.getAxisConfiguration(),
-                                        this.registryService.getConfigSystemRegistry());
+        STSConfigAdmin.configureService(configContext.getAxisConfiguration(), this.registryService.getConfigSystemRegistry());
         STSConfigAdmin.configureGenericSTS();
         configContext.getAxisConfiguration().addObservers(new STSObserver());
     }
@@ -234,67 +246,51 @@ public class IdentitySTSMgtServiceComponent {
      * @throws Exception
      */
     private void loadSecurityScenarios() throws Exception {
-
         Registry registry = registryService.getConfigSystemRegistry();
-
         try {
             // Scenarios are listed in resources/scenario-config.xml
             URL resource = bundleContext.getBundle().getResource("scenario-config.xml");
             if (resource == null) {
                 return;
             }
-            XmlConfiguration xmlConfiguration = new XmlConfiguration(resource.openStream(),
-                    SecurityConstants.SECURITY_NAMESPACE);
-
+            XmlConfiguration xmlConfiguration = new XmlConfiguration(resource.openStream(), SecurityConstants.SECURITY_NAMESPACE);
             OMElement[] elements = xmlConfiguration.getElements("//ns:Scenario");
-
             boolean transactionStarted = Transaction.isStarted();
             if (!transactionStarted) {
                 registry.beginTransaction();
             }
-
             for (OMElement scenarioEle : elements) {
                 SecurityScenario scenario = new SecurityScenario();
                 String scenarioId = scenarioEle.getAttribute(SecurityConstants.ID_QN).getAttributeValue();
-
                 scenario.setScenarioId(scenarioId);
                 scenario.setSummary(scenarioEle.getFirstChildWithName(SecurityConstants.SUMMARY_QN).getText());
                 scenario.setDescription(scenarioEle.getFirstChildWithName(SecurityConstants.DESCRIPTION_QN).getText());
                 scenario.setCategory(scenarioEle.getFirstChildWithName(SecurityConstants.CATEGORY_QN).getText());
                 scenario.setWsuId(scenarioEle.getFirstChildWithName(SecurityConstants.WSUID_QN).getText());
                 scenario.setType(scenarioEle.getFirstChildWithName(SecurityConstants.TYPE_QN).getText());
-
                 OMElement genPolicyElem = scenarioEle.getFirstChildWithName(SecurityConstants.IS_GEN_POLICY_QN);
                 if (genPolicyElem != null && "false".equals(genPolicyElem.getText())) {
                     scenario.setGeneralPolicy(false);
                 }
-
                 String resourceUri = SecurityConstants.SECURITY_POLICY + "/" + scenarioId;
-
-                for (Iterator modules = scenarioEle.getFirstChildWithName(SecurityConstants.MODULES_QN)
-                        .getChildElements(); modules.hasNext(); ) {
+                for (Iterator modules = scenarioEle.getFirstChildWithName(SecurityConstants.MODULES_QN).getChildElements(); modules.hasNext(); ) {
                     String module = ((OMElement) modules.next()).getText();
                     scenario.addModule(module);
                 }
-
                 // Save it in the DB
                 SecurityScenarioDatabase.put(scenarioId, scenario);
-
                 // Store the scenario in the Registry
-                if (!scenarioId.equals(SecurityConstants.SCENARIO_DISABLE_SECURITY) &&
-                        !scenarioId.equals(SecurityConstants.POLICY_FROM_REG_SCENARIO)) {
+                if (!scenarioId.equals(SecurityConstants.SCENARIO_DISABLE_SECURITY) && !scenarioId.equals(SecurityConstants.POLICY_FROM_REG_SCENARIO)) {
                     Resource scenarioResource = new ResourceImpl();
                     URL urlResource = bundleContext.getBundle().getResource(scenarioId + "-policy.xml");
                     if (urlResource == null) {
                         return;
                     }
-                    scenarioResource.setContentStream(
-                            urlResource.openStream());
+                    scenarioResource.setContentStream(urlResource.openStream());
                     if (!registry.resourceExists(resourceUri)) {
                         registry.put(resourceUri, scenarioResource);
                     }
                 }
-
             }
             if (!transactionStarted) {
                 registry.commitTransaction();
@@ -304,5 +300,5 @@ public class IdentitySTSMgtServiceComponent {
             throw e;
         }
     }
-
 }
+
