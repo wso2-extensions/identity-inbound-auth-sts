@@ -52,6 +52,7 @@ public class KeyUtil {
         store.load(ksbufin, password.toCharArray());
 
         cert = (X509Certificate) store.getCertificate(keyalias);
+        ksbufin.close();
 
         return cert;
     }

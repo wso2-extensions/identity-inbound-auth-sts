@@ -105,7 +105,7 @@ public class IdentityPassiveSTSServiceComponent {
         if (log.isDebugEnabled()) {
             log.debug("RegistryService unset in Passive STS bundle");
         }
-        registryService = null;
+        IdentityPassiveSTSServiceComponent.registryService = null;
     }
 
 }

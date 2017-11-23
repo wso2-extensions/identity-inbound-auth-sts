@@ -114,6 +114,7 @@ public class STSDeploymentListener extends AbstractAxis2ConfigurationContextObse
         AxisConfiguration axisConfiguration = configContext.getAxisConfiguration();
 
         if (enumeration != null && enumeration.hasMoreElements()) {
+            InputStream inputStream = null;
             try {
                 serviceGroup = new AxisServiceGroup(axisConfiguration);
                 ClassLoader loader = new BundleClassLoader(bundle, Axis2ServiceRegistry.class.getClassLoader());
@@ -122,7 +123,7 @@ public class STSDeploymentListener extends AbstractAxis2ConfigurationContextObse
                 String bundleSymbolicName = (String) headers.get("Bundle-SymbolicName");
                 serviceGroup.setServiceGroupName(bundleSymbolicName);
                 serviceGroup.setServiceGroupClassLoader(loader);
-                InputStream inputStream = url.openStream();
+                inputStream = url.openStream();
                 DescriptionBuilder builder = new DescriptionBuilder(inputStream, configContext);
                 OMElement rootElement = builder.buildOM();
                 String elementName = rootElement.getLocalName();
@@ -176,6 +177,14 @@ public class STSDeploymentListener extends AbstractAxis2ConfigurationContextObse
             } catch (IOException e) {
                 log.error("Error occur while deploying wso2carbon-sts service for tenant " +
                           CarbonContext.getThreadLocalCarbonContext().getTenantId(), e);
+            } finally {
+                try {
+                    if (inputStream != null) {
+                        inputStream.close();
+                    }
+                } catch (IOException e) {
+                    log.error("Error occurred while closing Input stream", e);
+                }
             }
         }
 
@@ -202,29 +211,47 @@ public class STSDeploymentListener extends AbstractAxis2ConfigurationContextObse
 
         File bundleFile;
         URL bundleURL = new URL(bundleLocation);
+        InputStream bundleStream = null;
+        OutputStream bundleFileOutputSteam = null;
+        try {
+            if ("file".equals(bundleURL.getProtocol())) {
+                bundleFile = new File(bundleURL.getFile());
+            } else {
+                bundleStream = bundleURL.openStream();
 
-        if ("file".equals(bundleURL.getProtocol())) {
-            bundleFile = new File(bundleURL.getFile());
-        } else {
-            InputStream bundleStream = bundleURL.openStream();
+                // Generate temp file path for the bundle.
+                String tempBundleDirPath = System.getProperty("java.io.tmpdir") + File.separator + "bundles";
 
-            // Generate temp file path for the bundle.
-            String tempBundleDirPath = System.getProperty("java.io.tmpdir") + File.separator + "bundles";
+                //Creating a temp dir to store bundles.
+                File tempBundleDir = new File(tempBundleDirPath);
+                if (!tempBundleDir.exists() && !tempBundleDir.mkdir()) {
+                    log.warn("Could not create temp bundle directory " + tempBundleDir.getAbsolutePath());
+                    return new HashMap();
+                }
 
-            //Creating a temp dir to store bundles.
-            File tempBundleDir = new File(tempBundleDirPath);
-            if (!tempBundleDir.exists() && !tempBundleDir.mkdir()) {
-                log.warn("Could not create temp bundle directory " + tempBundleDir.getAbsolutePath());
-                return new HashMap();
+                bundleFile = new File(tempBundleDirPath, bundleFileName);
+                bundleFileOutputSteam = new FileOutputStream(bundleFile);
+
+                // Copying input stream to the file output stream
+                IOStreamUtils.copyInputStream(bundleStream, bundleFileOutputSteam);
+            }
+        } finally {
+            try {
+                if (bundleStream != null) {
+                    bundleStream.close();
+                }
+            } catch (IOException e) {
+                log.error("Error occurred while closing Input stream", e);
             }
 
-            bundleFile = new File(tempBundleDirPath, bundleFileName);
-            OutputStream bundleFileOutputSteam = new FileOutputStream(bundleFile);
-
-            // Copying input stream to the file output stream
-            IOStreamUtils.copyInputStream(bundleStream, bundleFileOutputSteam);
+            try {
+                if (bundleFileOutputSteam != null) {
+                    bundleFileOutputSteam.close();
+                }
+            } catch (IOException e) {
+                log.error("Error occurred while closing Output stream", e);
+            }
         }
-
         if (!bundleFile.exists()) {
             //If the bundle does not exits, then we check in the plugins dir.
             bundleFile = new File(componentsDirPath + File.separator + bundleURL.getFile());

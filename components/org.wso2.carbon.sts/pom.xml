@@ -22,7 +22,7 @@
         <groupId>org.wso2.carbon.identity.inbound.auth.sts</groupId>
         <artifactId>identity-inbound-auth-sts</artifactId>
         <relativePath>../../pom.xml</relativePath>
-        <version>5.1.7-SNAPSHOT</version>
+        <version>5.2.10-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -119,6 +119,8 @@
                             org.wso2.carbon.security.*,
                             org.wso2.carbon.identity.sts.store;
                             version="${identity.inbound.auth.sts.imp.pkg.version.range}",
+                            org.wso2.carbon.identity.provider; resolution:=optional;
+                            version="${identity.inbound.auth.openid.imp.pkg.version.range}",
                             javax.cache
                         </Import-Package>
                         <Export-Package>
