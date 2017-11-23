@@ -75,7 +75,6 @@ public abstract class RequestProcessor {
     /**
      * @deprecated As of release 5.2.0 replaced by {@link #getRST(String, String, String, String)}
      */
-
     @Deprecated
     protected OMElement getRST(String appliesTo, String attrs, String dialect) throws Exception {
         OMFactory factory = null;
