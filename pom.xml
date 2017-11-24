@@ -16,7 +16,8 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <parent>
         <groupId>org.wso2</groupId>
@@ -37,7 +38,8 @@
 
     <scm>
         <url>https://github.com/wso2-extensions/identity-inbound-auth-sts.git</url>
-        <developerConnection>scm:git:https://github.com/wso2-extensions/identity-inbound-auth-sts.git</developerConnection>
+        <developerConnection>scm:git:https://github.com/wso2-extensions/identity-inbound-auth-sts.git
+        </developerConnection>
         <connection>scm:git:https://github.com/wso2-extensions/identity-inbound-auth-sts.git</connection>
         <tag>HEAD</tag>
     </scm>
@@ -255,8 +257,8 @@
                 <version>${identity.framework.version}</version>
                 <exclusions>
                     <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>jcl-over-slf4j</artifactId>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>jcl-over-slf4j</artifactId>
                     </exclusion>
                     <exclusion>
                         <groupId>org.slf4j</groupId>
@@ -336,25 +338,18 @@
                 <version>${identity.framework.version}</version>
                 <scope>test</scope>
             </dependency>
+            <dependency>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>org.apache.felix.scr.ds-annotations</artifactId>
+                <version>${apache.felix.scr.ds.annotations.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
     <build>
         <pluginManagement>
             <plugins>
-                <plugin>
-                    <groupId>org.apache.felix</groupId>
-                    <artifactId>maven-scr-plugin</artifactId>
-                    <version>1.7.2</version>
-                    <executions>
-                        <execution>
-                            <id>generate-scr-scrdescriptor</id>
-                            <goals>
-                                <goal>scr</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin>
+
                 <plugin>
                     <groupId>org.apache.felix</groupId>
                     <artifactId>maven-bundle-plugin</artifactId>
@@ -383,6 +378,19 @@
                         <doCheck>false</doCheck>
                         <doUpdate>false</doUpdate>
                     </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.felix</groupId>
+                    <artifactId>maven-scr-plugin</artifactId>
+                    <version>${maven.scr.plugin.version}</version>
+                    <executions>
+                        <execution>
+                            <id>generate-scr-scrdescriptor</id>
+                            <goals>
+                                <goal>scr</goal>
+                            </goals>
+                        </execution>
+                    </executions>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -418,7 +426,8 @@
 
     <properties>
         <identity.framework.version>5.10.22</identity.framework.version>
-        <identity.inbound.auth.sts.package.export.version>${project.version}</identity.inbound.auth.sts.package.export.version>
+        <identity.inbound.auth.sts.package.export.version>${project.version}
+        </identity.inbound.auth.sts.package.export.version>
         <inbound.auth.openid.version>5.2.0</inbound.auth.openid.version>
 
         <carbon.kernel.version>4.4.7</carbon.kernel.version>
@@ -436,7 +445,8 @@
         <neethi.osgi.version.range>[2.0.4.wso2v4,3.0.0)</neethi.osgi.version.range>
 
         <identity.framework.imp.pkg.version.range>[5.7.0,6.0.0)</identity.framework.imp.pkg.version.range>
-        <identity.inbound.auth.openid.imp.pkg.version.range>[5.0.0,6.0.0)</identity.inbound.auth.openid.imp.pkg.version.range>
+        <identity.inbound.auth.openid.imp.pkg.version.range>[5.0.0,6.0.0)
+        </identity.inbound.auth.openid.imp.pkg.version.range>
         <identity.inbound.auth.sts.imp.pkg.version.range>[5.2.0,6.0.0)</identity.inbound.auth.sts.imp.pkg.version.range>
 
         <opensaml2.wso2.osgi.version.range>[2.6.0,3.0.0)</opensaml2.wso2.osgi.version.range>
@@ -464,6 +474,8 @@
         <powermock.version>1.7.0</powermock.version>
         <maven.surefire.plugin.version>2.18.1</maven.surefire.plugin.version>
 
+        <apache.felix.scr.ds.annotations.version>1.2.4</apache.felix.scr.ds.annotations.version>
+        <maven.scr.plugin.version>1.16.0</maven.scr.plugin.version>
     </properties>
 
     <modules>
@@ -495,8 +507,3 @@
     </modules>
 
 </project>
-
-
-
-
-
