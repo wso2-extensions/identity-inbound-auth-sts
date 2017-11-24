@@ -20,22 +20,30 @@ package org.wso2.carbon.mex2.internal;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.osgi.service.component.ComponentContext;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Deactivate;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.ReferencePolicy;
 
-/**
- * @scr.component name="carbon.mex2.component" immediate="true"
- */
+@Component(
+         name = "carbon.mex2.component", 
+         immediate = true)
 public class DynamicCRMCustomMexComponent {
 
     private static Log log = LogFactory.getLog(DynamicCRMCustomMexComponent.class);
 
+    @Activate
     protected void activate(ComponentContext ctxt) {
-
         log.info("DynamicCRMSupport MexServiceComponent bundle activated successfully.");
     }
 
+    @Deactivate
     protected void deactivate(ComponentContext ctxt) {
         if (log.isDebugEnabled()) {
             log.debug("DynamicCRMSupport MexServiceComponent is deactivated.");
         }
     }
 }
+
