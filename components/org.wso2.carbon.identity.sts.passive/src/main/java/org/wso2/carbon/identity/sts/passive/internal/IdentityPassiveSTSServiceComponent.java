@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.wso2.carbon.identity.sts.passive.internal;
 
 import org.apache.commons.logging.Log;
@@ -25,24 +24,25 @@ import org.wso2.carbon.registry.core.Registry;
 import org.wso2.carbon.registry.core.exceptions.RegistryException;
 import org.wso2.carbon.registry.core.service.RegistryService;
 import org.wso2.carbon.user.core.service.RealmService;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Deactivate;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.ReferencePolicy;
 
-/**
- * @scr.component name="identity.passive.sts.component" immediate="true"
- * @scr.reference name="registry.service"
- * interface="org.wso2.carbon.registry.core.service.RegistryService"
- * cardinality="1..1" policy="dynamic" bind="setRegistryService"
- * unbind="unsetRegistryService"
- * @scr.reference name="user.realmservice.default"
- * interface="org.wso2.carbon.user.core.service.RealmService" cardinality="1..1"
- * policy="dynamic" bind="setRealmService" unbind="unsetRealmService"
- */
+@Component(
+         name = "identity.passive.sts.component", 
+         immediate = true)
 public class IdentityPassiveSTSServiceComponent {
+
     private static Log log = LogFactory.getLog(IdentityPassiveSTSServiceComponent.class);
+
     private static RealmService userRealmService = null;
+
     private static RegistryService registryService;
 
     /**
-     *
      */
     public IdentityPassiveSTSServiceComponent() {
     }
@@ -57,6 +57,12 @@ public class IdentityPassiveSTSServiceComponent {
     /**
      * @param userRealmDelegating
      */
+    @Reference(
+             name = "user.realmservice.default", 
+             service = org.wso2.carbon.user.core.service.RealmService.class, 
+             cardinality = ReferenceCardinality.MANDATORY, 
+             policy = ReferencePolicy.DYNAMIC, 
+             unbind = "unsetRealmService")
     protected void setRealmService(RealmService realm) {
         if (log.isDebugEnabled()) {
             log.info("DelegatingUserRealm set in Identity Provider bundle");
@@ -69,20 +75,18 @@ public class IdentityPassiveSTSServiceComponent {
     }
 
     public static Registry getGovernanceSystemRegistry() throws RegistryException {
-        return (Registry) CarbonContext.getThreadLocalCarbonContext().getRegistry(
-                RegistryType.SYSTEM_GOVERNANCE);
+        return (Registry) CarbonContext.getThreadLocalCarbonContext().getRegistry(RegistryType.SYSTEM_GOVERNANCE);
     }
 
     public static Registry getConfigSystemRegistry() throws RegistryException {
-        return (Registry) CarbonContext.getThreadLocalCarbonContext().getRegistry(
-                RegistryType.SYSTEM_CONFIGURATION);
+        return (Registry) CarbonContext.getThreadLocalCarbonContext().getRegistry(RegistryType.SYSTEM_CONFIGURATION);
     }
 
     /**
      * @param ctxt
      */
+    @Activate
     protected void activate(ComponentContext ctxt) {
-
     }
 
     /**
@@ -94,6 +98,12 @@ public class IdentityPassiveSTSServiceComponent {
         }
     }
 
+    @Reference(
+             name = "registry.service", 
+             service = org.wso2.carbon.registry.core.service.RegistryService.class, 
+             cardinality = ReferenceCardinality.MANDATORY, 
+             policy = ReferencePolicy.DYNAMIC, 
+             unbind = "unsetRegistryService")
     protected void setRegistryService(RegistryService registryService) {
         if (log.isDebugEnabled()) {
             log.debug("RegistryService set in Passive STS bundle");
@@ -107,5 +117,5 @@ public class IdentityPassiveSTSServiceComponent {
         }
         IdentityPassiveSTSServiceComponent.registryService = null;
     }
-
 }
+
