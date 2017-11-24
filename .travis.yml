@@ -1,0 +1,14 @@
+{
+  "language": "java",
+  "jdk": "oraclejdk8",
+  "cache": {
+    "directories": [
+      ".autoconf",
+      "$HOME/.m2"
+    ]
+  },
+  "script": "mvn clean install",
+  "group": "stable",
+  "dist": "trusty",
+  "os": "linux"
+}
