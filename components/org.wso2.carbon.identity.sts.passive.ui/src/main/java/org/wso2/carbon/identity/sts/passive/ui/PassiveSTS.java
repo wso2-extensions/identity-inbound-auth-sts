@@ -317,17 +317,17 @@ public class PassiveSTS extends HttpServlet {
     /**
      * persists wreply urls in a session.
      *
-     * @param reqToken request token
+     * @param responseToken response token
      * @param session session
      */
-    private void persistWreply(RequestToken reqToken, HttpSession session) {
+    private void persistWreply(ResponseToken responseToken, HttpSession session) {
 
         Set<String> wreplySet = (Set<String>) session.getAttribute(PassiveRequestorConstants.REPLY_TO);
         if (wreplySet == null) {
             wreplySet = new HashSet<>();
             session.setAttribute(PassiveRequestorConstants.REPLY_TO, wreplySet);
         }
-        wreplySet.add(reqToken.getReplyTo());
+        wreplySet.add(responseToken.getReplyTo());
     }
 
     private void sendToAuthenticationFramework(HttpServletRequest request, HttpServletResponse response,
@@ -440,7 +440,7 @@ public class PassiveSTS extends HttpServlet {
         ResponseToken respToken = passiveSTSClient.getResponse(reqToken);
 
         if (respToken != null && respToken.getResults() != null) {
-            persistWreply(reqToken, request.getSession());
+            persistWreply(respToken, request.getSession());
             sendData(response, respToken, reqToken.getAction(),
                      authnResult.getAuthenticatedIdPs());
         }
