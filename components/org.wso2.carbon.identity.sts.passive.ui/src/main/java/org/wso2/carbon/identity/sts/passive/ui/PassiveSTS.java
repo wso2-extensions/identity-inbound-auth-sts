@@ -20,6 +20,7 @@ package org.wso2.carbon.identity.sts.passive.ui;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -31,7 +32,13 @@ import org.wso2.carbon.identity.application.authentication.framework.model.Authe
 import org.wso2.carbon.identity.application.authentication.framework.model.AuthenticationResult;
 import org.wso2.carbon.identity.application.authentication.framework.util.FrameworkConstants;
 import org.wso2.carbon.identity.application.authentication.framework.util.FrameworkUtils;
+import org.wso2.carbon.identity.application.common.IdentityApplicationManagementException;
 import org.wso2.carbon.identity.application.common.model.ClaimMapping;
+import org.wso2.carbon.identity.application.common.model.InboundAuthenticationRequestConfig;
+import org.wso2.carbon.identity.application.common.model.Property;
+import org.wso2.carbon.identity.application.common.model.ServiceProvider;
+import org.wso2.carbon.identity.application.common.util.IdentityApplicationConstants;
+import org.wso2.carbon.identity.application.mgt.ApplicationManagementService;
 import org.wso2.carbon.identity.base.IdentityConstants;
 import org.wso2.carbon.identity.core.util.IdentityUtil;
 import org.wso2.carbon.identity.sts.passive.stub.types.RequestToken;
@@ -41,6 +48,7 @@ import org.wso2.carbon.identity.sts.passive.ui.cache.SessionDataCacheEntry;
 import org.wso2.carbon.identity.sts.passive.ui.cache.SessionDataCacheKey;
 import org.wso2.carbon.identity.sts.passive.ui.client.IdentityPassiveSTSClient;
 import org.wso2.carbon.identity.sts.passive.ui.dto.SessionDTO;
+import org.wso2.carbon.identity.sts.passive.ui.util.PassiveSTSHttpServletRequestWrapper;
 import org.wso2.carbon.identity.sts.passive.ui.util.PassiveSTSUtil;
 import org.wso2.carbon.registry.core.utils.UUIDGenerator;
 import org.wso2.carbon.ui.CarbonUIUtil;
@@ -93,6 +101,8 @@ public class PassiveSTS extends HttpServlet {
             "sts_response.html";
     private static final String HTTP = "http";
     private static final String HTTPS = "https";
+    private static final String PASSIVE_STS_CLIENT_TYPE = "passivests";
+    private static final String PASSIVE_STS_W_REPLY_PROPERTY = "passiveSTSWReply";
 
     /**
      * This method reads Passive STS Html Redirect file content.
@@ -448,6 +458,14 @@ public class PassiveSTS extends HttpServlet {
 
     private void handleLogoutRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
+        // wreply parameter is optional for the logout request. So we are setting that value from the service
+        // provider configuration in case it is not available in the request.
+        if (StringUtils.isBlank(getAttribute(request.getParameterMap(), PassiveRequestorConstants.REPLY_TO)) &&
+                StringUtils.isNotBlank(getAttribute(request.getParameterMap(), PassiveRequestorConstants.REALM))) {
+            request = new PassiveSTSHttpServletRequestWrapper(request);
+            setWReplyUrl((PassiveSTSHttpServletRequestWrapper) request);
+        }
+
         /**
          * todo: Framework logout response is not handled now (https://wso2.org/jira/browse/IDENTITY-4501).
          * todo: Once it's being fixed, sign out clean up requests should be initiated asynchronously from that point.
@@ -459,6 +477,54 @@ public class PassiveSTS extends HttpServlet {
         } catch (ServletException e) {
             if (log.isDebugEnabled()) {
                 log.debug("Error while sending the logout request", e);
+            }
+        }
+    }
+
+    /**
+     * This method set the wreply value to the request from the service provider configuration
+     *
+     * @param request logout request
+     */
+    private void setWReplyUrl(PassiveSTSHttpServletRequestWrapper request) {
+
+        String wtrealm = getAttribute(request.getParameterMap(), PassiveRequestorConstants.REALM);
+        String tenantDomain = getAttribute(request.getParameterMap(), MultitenantConstants.TENANT_DOMAIN);
+        if (StringUtils.isBlank(tenantDomain)) {
+            tenantDomain = MultitenantConstants.SUPER_TENANT_DOMAIN_NAME;
+        }
+
+        ServiceProvider serviceProvider;
+        try {
+            serviceProvider = ApplicationManagementService.getInstance().getServiceProviderByClientId(wtrealm,
+                    PASSIVE_STS_CLIENT_TYPE, tenantDomain);
+        } catch (IdentityApplicationManagementException e) {
+            log.error("Failed to retrieve service provider configuration for wtrealm: " + wtrealm + " in tenant: "
+                    + tenantDomain);
+            return;
+        }
+
+        if (serviceProvider == null || IdentityApplicationConstants.DEFAULT_SP_CONFIG.equals(serviceProvider
+                .getApplicationName())) {
+            return;
+        }
+
+        InboundAuthenticationRequestConfig[] inboundAuthenticationConfigs =
+                serviceProvider.getInboundAuthenticationConfig().getInboundAuthenticationRequestConfigs();
+        if (inboundAuthenticationConfigs != null) {
+            loop:
+            for (InboundAuthenticationRequestConfig inboundAuthenticationConfig : inboundAuthenticationConfigs) {
+                if (PASSIVE_STS_CLIENT_TYPE.equals(inboundAuthenticationConfig.getInboundAuthType())) {
+                    Property[] properties = inboundAuthenticationConfig.getProperties();
+                    if (ArrayUtils.isNotEmpty(properties)) {
+                        for (Property property : properties) {
+                            if (PASSIVE_STS_W_REPLY_PROPERTY.equalsIgnoreCase(property.getName())) {
+                                request.addParameter(PassiveRequestorConstants.REPLY_TO, property.getValue());
+                                break loop;
+                            }
+                        }
+                    }
+                }
             }
         }
     }
