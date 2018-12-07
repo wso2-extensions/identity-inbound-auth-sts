@@ -112,6 +112,8 @@ public class STSDeploymentInterceptor implements AxisObserver {
             "Security.TokenPersister.Properties.Property.Name";
     public static final String SECURITY_TOKEN_PERSISTER_PROPERTIES_PROPERTY_VALUE =
             "Security.TokenPersister.Properties.Property.Value";
+    public static final String STS_SIGNATURE_ALGORITHM = "Security.STSSignatureAlgorithm";
+    public static final String STS_DIGEST_ALGORITHM = "Security.STSDigestAlgorithm";
 
     /**
      * Updates STS service during deployment
@@ -209,6 +211,12 @@ public class STSDeploymentInterceptor implements AxisObserver {
             stsSamlConfig.setAddRequestedUnattachedRef(true);
             stsSamlConfig.setKeyComputation(2);
             stsSamlConfig.setProofKeyType(TokenIssuerUtil.BINARY_SECRET);
+
+            String signatureAlgorithm = serverConfig.getFirstProperty(STS_SIGNATURE_ALGORITHM);
+            String digestAlgorithm = serverConfig.getFirstProperty(STS_DIGEST_ALGORITHM);
+            stsSamlConfig.setSignatureAlgorithm(signatureAlgorithm);
+            stsSamlConfig.setDigestAlgorithm(digestAlgorithm);
+
             if (StringUtils.isNotBlank(callBackHandlerName)) {
                 stsSamlConfig.setCallbackHandlerName(callBackHandlerName);
             }
