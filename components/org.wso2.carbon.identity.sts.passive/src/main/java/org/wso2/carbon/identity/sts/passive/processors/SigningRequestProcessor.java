@@ -96,6 +96,7 @@ public class SigningRequestProcessor extends RequestProcessor {
 
         ConfigurationContext configurationContext = context.getConfigurationContext();
         configurationContext.setProperty(TokenStorage.TOKEN_STORAGE_KEY, PassiveSTSUtil.getTokenStorage());
+        context.setProperty("tenant-domain", request.getTenantDomain());
 
         rahasData = new RahasData(context);
 
