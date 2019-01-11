@@ -83,6 +83,8 @@ import java.util.Properties;
 import java.util.Scanner;
 import java.util.Set;
 
+import static org.wso2.carbon.identity.application.authentication.framework.util.FrameworkConstants.AUTHENTICATED_USER;
+
 public class PassiveSTS extends HttpServlet {
 
     private static final Log log = LogFactory.getLog(PassiveSTS.class);
@@ -447,7 +449,15 @@ public class PassiveSTS extends HttpServlet {
         IdentityPassiveSTSClient passiveSTSClient = null;
         passiveSTSClient = new IdentityPassiveSTSClient(serverURL, configContext);
 
-        ResponseToken respToken = passiveSTSClient.getResponse(reqToken);
+        ResponseToken respToken;
+        // Adding the AuthenticatedUser as a threadLocal property in order to avoid API changes related to RequestToken
+        try {
+            IdentityUtil.threadLocalProperties.get().put(AUTHENTICATED_USER, authnResult.getSubject());
+            respToken = passiveSTSClient.getResponse(reqToken);
+        } finally {
+            // Remove thread local variable
+            IdentityUtil.threadLocalProperties.get().remove(AUTHENTICATED_USER);
+        }
 
         if (respToken != null && respToken.getResults() != null) {
             persistWreply(respToken, request.getSession());
