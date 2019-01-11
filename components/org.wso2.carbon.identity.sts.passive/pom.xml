@@ -90,6 +90,10 @@
             <artifactId>org.apache.felix.scr.ds-annotations</artifactId>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.identity.framework</groupId>
+            <artifactId>org.wso2.carbon.identity.application.authentication.framework</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
@@ -146,6 +150,8 @@
                             version="${identity.framework.imp.pkg.version.range}",
                             org.wso2.carbon.identity.core.*;
                             version="${identity.framework.imp.pkg.version.range}",
+                            org.wso2.carbon.identity.application.authentication.framework.*;
+                            version="${identity.framework.imp.pkg.version.range}"
                         </Import-Package>
                         <Export-Package>
                             !org.wso2.carbon.identity.sts.passive.internal,
