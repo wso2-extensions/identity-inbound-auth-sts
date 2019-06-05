@@ -27,7 +27,7 @@
     <groupId>org.wso2.carbon.identity.inbound.auth.sts</groupId>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>identity-inbound-auth-sts</artifactId>
-    <version>5.2.19-SNAPSHOT</version>
+    <version>5.2.21-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>WSO2 Carbon - Identity STS Management</name>
     <description>
@@ -290,9 +290,14 @@
                 <type>war</type>
             </dependency>
             <dependency>
-                <groupId>org.apache.cxf.wso2</groupId>
-                <artifactId>cxf-bundle</artifactId>
-                <version>${cxf-bundle.wso2.version}</version>
+                <groupId>org.apache.cxf</groupId>
+                <artifactId>cxf-core</artifactId>
+                <version>${cxf-bundle.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.ws.rs</groupId>
+                <artifactId>javax.ws.rs-api</artifactId>
+                <version>${javax.ws.rs-api.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.testng</groupId>
@@ -434,7 +439,7 @@
         <carbon.xfer.package.version>4.2.0</carbon.xfer.package.version>
         <wss4j.version>1.5.11.wso2v16</wss4j.version>
         <rampart.wso2.version>1.6.1-wso2v28</rampart.wso2.version>
-        <opensaml2.wso2.version>2.6.4.wso2v3</opensaml2.wso2.version>
+        <opensaml2.wso2.version>2.6.4.wso2v5</opensaml2.wso2.version>
         <commons-fileupload.wso2.version>1.2.2.wso2v1</commons-fileupload.wso2.version>
         <carbon.p2.plugin.version>1.5.3</carbon.p2.plugin.version>
         <commons-collections.version>3.2.0.wso2v1</commons-collections.version>
@@ -465,7 +470,8 @@
         <imp.pkg.version.javax.servlet>[2.6.0, 3.0.0)</imp.pkg.version.javax.servlet>
         <commons-collections.wso2.osgi.version.range>[3.2.0,4.0.0)</commons-collections.wso2.osgi.version.range>
         <encoder.wso2.imp.pkg.version.range>[1.2.0.wso2v1, 2.0.0)</encoder.wso2.imp.pkg.version.range>
-        <cxf-bundle.wso2.version>2.6.1.wso2v2</cxf-bundle.wso2.version>
+        <cxf-bundle.version>3.2.8</cxf-bundle.version>
+        <javax.ws.rs-api.version>2.1.1</javax.ws.rs-api.version>
 
         <org.slf4j.verison>1.7.21</org.slf4j.verison>
         <testng.version>6.9.10</testng.version>
