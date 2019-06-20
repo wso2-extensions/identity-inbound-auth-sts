@@ -429,29 +429,29 @@
     </build>
 
     <properties>
-        <identity.framework.version>5.10.22</identity.framework.version>
+        <identity.framework.version>5.13.4</identity.framework.version>
         <identity.inbound.auth.sts.package.export.version>${project.version}
         </identity.inbound.auth.sts.package.export.version>
-        <inbound.auth.openid.version>5.2.0</inbound.auth.openid.version>
+        <inbound.auth.openid.version>5.3.0</inbound.auth.openid.version>
 
-        <carbon.kernel.version>4.4.7</carbon.kernel.version>
+        <carbon.kernel.version>4.5.0-m1</carbon.kernel.version>
 
         <carbon.xfer.package.version>4.2.0</carbon.xfer.package.version>
         <wss4j.version>1.5.11.wso2v16</wss4j.version>
-        <rampart.wso2.version>1.6.1-wso2v28</rampart.wso2.version>
+        <rampart.wso2.version>1.6.1-wso2v36</rampart.wso2.version>
         <opensaml2.wso2.version>2.6.4.wso2v5</opensaml2.wso2.version>
         <commons-fileupload.wso2.version>1.2.2.wso2v1</commons-fileupload.wso2.version>
         <carbon.p2.plugin.version>1.5.3</carbon.p2.plugin.version>
         <commons-collections.version>3.2.0.wso2v1</commons-collections.version>
         <maven.buildnumber.plugin.version>1.4</maven.buildnumber.plugin.version>
-        <axis2.wso2.version>1.6.1.wso2v12</axis2.wso2.version>
+        <axis2.wso2.version>1.6.1-wso2v37</axis2.wso2.version>
 
         <neethi.osgi.version.range>[2.0.4.wso2v4,3.0.0)</neethi.osgi.version.range>
 
-        <identity.framework.imp.pkg.version.range>[5.7.0,6.0.0)</identity.framework.imp.pkg.version.range>
-        <identity.inbound.auth.openid.imp.pkg.version.range>[5.0.0,6.0.0)
+        <identity.framework.imp.pkg.version.range>[5.13.0,6.0.0)</identity.framework.imp.pkg.version.range>
+        <identity.inbound.auth.openid.imp.pkg.version.range>[5.3.0,6.0.0)
         </identity.inbound.auth.openid.imp.pkg.version.range>
-        <identity.inbound.auth.sts.imp.pkg.version.range>[5.2.0,6.0.0)</identity.inbound.auth.sts.imp.pkg.version.range>
+        <identity.inbound.auth.sts.imp.pkg.version.range>[5.3.0,6.0.0)</identity.inbound.auth.sts.imp.pkg.version.range>
 
         <opensaml2.wso2.osgi.version.range>[2.6.0,3.0.0)</opensaml2.wso2.osgi.version.range>
         <rampart.wso2.osgi.version.range>[1.6.1,2.0.0)</rampart.wso2.osgi.version.range>
@@ -463,7 +463,7 @@
         <commons-lang.wso2.osgi.version.range>[2.6.0,3.0.0)</commons-lang.wso2.osgi.version.range>
         <osgi.framework.imp.pkg.version.range>[1.7.0, 2.0.0)</osgi.framework.imp.pkg.version.range>
         <osgi.service.component.imp.pkg.version.range>[1.2.0, 2.0.0)</osgi.service.component.imp.pkg.version.range>
-        <carbon.kernel.package.import.version.range>[4.4.0, 5.0.0)</carbon.kernel.package.import.version.range>
+        <carbon.kernel.package.import.version.range>[4.5.0, 5.0.0)</carbon.kernel.package.import.version.range>
         <carbon.base.imp.pkg.version.range>[1.0.0, 2.0.0)</carbon.base.imp.pkg.version.range>
         <carbon.kernel.registry.imp.pkg.version>[1.0.1, 2.0.0)</carbon.kernel.registry.imp.pkg.version>
         <encoder.wso2.version>1.2.0.wso2v1</encoder.wso2.version>
