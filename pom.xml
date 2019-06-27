@@ -439,7 +439,7 @@
         <carbon.xfer.package.version>4.2.0</carbon.xfer.package.version>
         <wss4j.version>1.5.11.wso2v16</wss4j.version>
         <rampart.wso2.version>1.6.1-wso2v36</rampart.wso2.version>
-        <opensaml2.wso2.version>2.6.4.wso2v5</opensaml2.wso2.version>
+        <opensaml2.wso2.version>2.6.6.wso2v3</opensaml2.wso2.version>
         <commons-fileupload.wso2.version>1.2.2.wso2v1</commons-fileupload.wso2.version>
         <carbon.p2.plugin.version>1.5.3</carbon.p2.plugin.version>
         <commons-collections.version>3.2.0.wso2v1</commons-collections.version>
