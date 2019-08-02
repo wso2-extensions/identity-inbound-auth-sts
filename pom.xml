@@ -21,7 +21,7 @@
     <parent>
         <groupId>org.wso2</groupId>
         <artifactId>wso2</artifactId>
-        <version>1</version>
+        <version>1.2</version>
     </parent>
 
     <groupId>org.wso2.carbon.identity.inbound.auth.sts</groupId>
@@ -413,14 +413,33 @@
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>buildnumber-maven-plugin</artifactId>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <configuration>
+                    <source>1.8</source>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <configuration>
+                            <!--This parameter disables doclint-->
+                            <doclint>none</doclint>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 
     <properties>
-        <identity.framework.version>5.13.4</identity.framework.version>
+        <identity.framework.version>5.14.0</identity.framework.version>
         <identity.inbound.auth.sts.package.export.version>${project.version}
         </identity.inbound.auth.sts.package.export.version>
-        <inbound.auth.openid.version>5.3.0</inbound.auth.openid.version>
+        <inbound.auth.openid.version>5.4.0</inbound.auth.openid.version>
 
         <carbon.kernel.version>4.5.0-m3</carbon.kernel.version>
 
@@ -436,10 +455,10 @@
 
         <neethi.osgi.version.range>[2.0.4.wso2v4,3.0.0)</neethi.osgi.version.range>
 
-        <identity.framework.imp.pkg.version.range>[5.13.0,6.0.0)</identity.framework.imp.pkg.version.range>
-        <identity.inbound.auth.openid.imp.pkg.version.range>[5.3.0,6.0.0)
+        <identity.framework.imp.pkg.version.range>[5.14.0,6.0.0)</identity.framework.imp.pkg.version.range>
+        <identity.inbound.auth.openid.imp.pkg.version.range>[5.4.0,6.0.0)
         </identity.inbound.auth.openid.imp.pkg.version.range>
-        <identity.inbound.auth.sts.imp.pkg.version.range>[5.3.0,6.0.0)</identity.inbound.auth.sts.imp.pkg.version.range>
+        <identity.inbound.auth.sts.imp.pkg.version.range>[5.4.0,6.0.0)</identity.inbound.auth.sts.imp.pkg.version.range>
 
         <opensaml2.wso2.osgi.version.range>[2.6.0,3.0.0)</opensaml2.wso2.osgi.version.range>
         <rampart.wso2.osgi.version.range>[1.6.1,2.0.0)</rampart.wso2.osgi.version.range>
