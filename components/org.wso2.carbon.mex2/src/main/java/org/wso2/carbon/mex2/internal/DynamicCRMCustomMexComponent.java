@@ -32,7 +32,7 @@ import org.osgi.service.component.annotations.ReferencePolicy;
          immediate = true)
 public class DynamicCRMCustomMexComponent {
 
-    private static Log log = LogFactory.getLog(DynamicCRMCustomMexComponent.class);
+    private static final Log log = LogFactory.getLog(DynamicCRMCustomMexComponent.class);
 
     @Activate
     protected void activate(ComponentContext ctxt) {
