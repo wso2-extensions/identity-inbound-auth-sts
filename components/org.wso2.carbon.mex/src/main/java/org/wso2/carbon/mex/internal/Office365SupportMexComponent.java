@@ -32,7 +32,7 @@ import org.osgi.service.component.annotations.ReferencePolicy;
          immediate = true)
 public class Office365SupportMexComponent {
 
-    private static Log log = LogFactory.getLog(Office365SupportMexComponent.class);
+    private static final Log log = LogFactory.getLog(Office365SupportMexComponent.class);
 
     @Activate
     protected void activate(ComponentContext ctxt) {

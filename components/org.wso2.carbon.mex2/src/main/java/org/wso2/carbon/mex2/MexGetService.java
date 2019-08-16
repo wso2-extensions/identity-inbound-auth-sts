@@ -33,7 +33,7 @@ import java.security.cert.X509Certificate;
 
 public class MexGetService {
 
-        private static Log log = LogFactory.getLog(MexGetService.class);
+        private static final Log log = LogFactory.getLog(MexGetService.class);
         private static final String SERVICE_URL = "/services";
         private static final String STS_END_POINT = "/wso2carbon-sts.wso2carbon-stsHttpsSoap12Endpoint";
         private static final String KERBEROS_MIXED = "/kerberosmixed";

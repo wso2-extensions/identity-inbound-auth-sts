@@ -35,7 +35,7 @@ import org.wso2.carbon.identity.sts.passive.RequestToken;
 
 public class PassiveSTSUtil {
 
-    private static Log log = LogFactory.getLog(PassiveSTSUtil.class);
+    private static final Log log = LogFactory.getLog(PassiveSTSUtil.class);
     private static TokenStorage tokenStorage;
 
     public static TokenStorage getTokenStorage() {
