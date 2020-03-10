@@ -20,6 +20,7 @@ package org.wso2.carbon.identity.sts.passive.processors;
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.rahas.RahasConstants;
@@ -35,11 +36,14 @@ import org.apache.ws.security.WSUsernameTokenPrincipal;
 import org.apache.ws.security.handler.WSHandlerConstants;
 import org.apache.ws.security.handler.WSHandlerResult;
 import org.wso2.carbon.base.ServerConfiguration;
+import org.wso2.carbon.context.PrivilegedCarbonContext;
 import org.wso2.carbon.identity.application.authentication.framework.model.AuthenticatedUser;
 import org.wso2.carbon.identity.core.util.IdentityUtil;
 import org.wso2.carbon.identity.sts.passive.RequestToken;
 import org.wso2.carbon.identity.sts.passive.ResponseToken;
+import org.wso2.carbon.identity.sts.passive.internal.IdentityPassiveSTSServiceComponent;
 import org.wso2.carbon.identity.sts.passive.utils.PassiveSTSUtil;
+import org.wso2.carbon.user.api.UserStoreException;
 
 import javax.xml.stream.XMLStreamException;
 import java.util.Vector;
@@ -64,6 +68,7 @@ public class SigningRequestProcessor extends RequestProcessor {
         Vector<WSHandlerResult> handlerResultsVector = null;
         OMElement rstr = null;
 
+        String tenantDomain = null;
         principal = new WSUsernameTokenPrincipal(request.getUserName(), false);
 
         engineResult = new WSSecurityEngineResult(WSConstants.UT, principal, null, null, null);
@@ -91,59 +96,75 @@ public class SigningRequestProcessor extends RequestProcessor {
 
         SAMLTokenIssuerConfig samlTokenIssuerConfig = null;
         try {
+            tenantDomain = request.getTenantDomain();
+            int tenantId = IdentityPassiveSTSServiceComponent.getRealmService().getTenantManager()
+                            .getTenantId(tenantDomain);
+            if (StringUtils.isNotEmpty(tenantDomain)) {
+                PrivilegedCarbonContext.startTenantFlow();
+                PrivilegedCarbonContext.getThreadLocalCarbonContext().setTenantDomain(tenantDomain);
+                PrivilegedCarbonContext.getThreadLocalCarbonContext().setTenantId(tenantId);
+            }
+
             samlTokenIssuerConfig = getSAMLTokenIssuerConfig(MessageContext.getCurrentMessageContext()
                     .getAxisService(), true);
+
+            ConfigurationContext configurationContext = context.getConfigurationContext();
+            configurationContext.setProperty(TokenStorage.TOKEN_STORAGE_KEY, PassiveSTSUtil.getTokenStorage());
+            context.setProperty("spTenantDomain", request.getTenantDomain());
+
+            AuthenticatedUser authenticatedUser = (AuthenticatedUser) IdentityUtil.threadLocalProperties.get()
+                    .get(AUTHENTICATED_USER);
+            context.setProperty(AUTHENTICATED_USER, authenticatedUser);
+
+            rahasData = new RahasData(context);
+
+            ServerConfiguration serverConfig = ServerConfiguration.getInstance();
+
+            String signatureAlgorithm = serverConfig.getFirstProperty(STS_SIGNATURE_ALGORITHM);
+            String digestAlgorithm = serverConfig.getFirstProperty(STS_DIGEST_ALGORITHM);
+            samlTokenIssuerConfig.setSignatureAlgorithm(signatureAlgorithm);
+            samlTokenIssuerConfig.setDigestAlgorithm(digestAlgorithm);
+
+            if (RahasConstants.TOK_TYPE_SAML_10.equalsIgnoreCase(requestedTokenType)) {
+                SAMLPassiveTokenIssuer issuer1_0 = new SAMLPassiveTokenIssuer();
+                issuer1_0.setAudienceRestrictionCondition(request.getRealm());
+                issuer1_0.setConfig(samlTokenIssuerConfig);
+                rstr = issuer1_0.issuePassiveRSTR(rahasData);
+
+            } else if (RahasConstants.TOK_TYPE_SAML_20.equalsIgnoreCase(requestedTokenType)) {
+                SAML2PassiveTokenIssuer issuer2_0 = new SAML2PassiveTokenIssuer();
+                issuer2_0.setAudienceRestrictionCondition(request.getRealm());
+                issuer2_0.setConfig(samlTokenIssuerConfig);
+                rstr = issuer2_0.issuePassiveRSTR(rahasData);
+
+            } else {
+                SAMLPassiveTokenIssuer issuer1_0 = new SAMLPassiveTokenIssuer();
+                issuer1_0.setAudienceRestrictionCondition(request.getRealm());
+                issuer1_0.setConfig(samlTokenIssuerConfig);
+                rstr = issuer1_0.issuePassiveRSTR(rahasData);
+            }
+
+            reponseToken = new ResponseToken();
+            if (rstr != null) {
+                try {
+                    reponseToken.setResults(rstr.toStringWithConsume());
+                } catch (XMLStreamException e) {
+                    log.error(e.getMessage(), e);
+                    throw new TrustException("errorWhileProcessingSigninRequest", e);
+                }
+            }
+
+        } catch (UserStoreException e) {
+            log.error("Error while getting tenant Id from realm service.", e);
+            throw new TrustException("ErrorWhileProcessingSigningRequest", e);
         } catch (Exception e) {
             log.error("Failed to get saml token issuer config.", e);
             throw new TrustException("errorWhileProcessingSigninRequest", e);
-        }
-
-        ConfigurationContext configurationContext = context.getConfigurationContext();
-        configurationContext.setProperty(TokenStorage.TOKEN_STORAGE_KEY, PassiveSTSUtil.getTokenStorage());
-        context.setProperty("spTenantDomain", request.getTenantDomain());
-
-        AuthenticatedUser authenticatedUser = (AuthenticatedUser) IdentityUtil.threadLocalProperties.get()
-                .get(AUTHENTICATED_USER);
-        context.setProperty(AUTHENTICATED_USER, authenticatedUser);
-
-        rahasData = new RahasData(context);
-
-        ServerConfiguration serverConfig = ServerConfiguration.getInstance();
-
-        String signatureAlgorithm = serverConfig.getFirstProperty(STS_SIGNATURE_ALGORITHM);
-        String digestAlgorithm = serverConfig.getFirstProperty(STS_DIGEST_ALGORITHM);
-        samlTokenIssuerConfig.setSignatureAlgorithm(signatureAlgorithm);
-        samlTokenIssuerConfig.setDigestAlgorithm(digestAlgorithm);
-
-        if (RahasConstants.TOK_TYPE_SAML_10.equalsIgnoreCase(requestedTokenType)) {
-            SAMLPassiveTokenIssuer issuer1_0 = new SAMLPassiveTokenIssuer();
-            issuer1_0.setAudienceRestrictionCondition(request.getRealm());
-            issuer1_0.setConfig(samlTokenIssuerConfig);
-            rstr = issuer1_0.issuePassiveRSTR(rahasData);
-
-        } else if (RahasConstants.TOK_TYPE_SAML_20.equalsIgnoreCase(requestedTokenType)) {
-            SAML2PassiveTokenIssuer issuer2_0 = new SAML2PassiveTokenIssuer();
-            issuer2_0.setAudienceRestrictionCondition(request.getRealm());
-            issuer2_0.setConfig(samlTokenIssuerConfig);
-            rstr = issuer2_0.issuePassiveRSTR(rahasData);
-
-        } else {
-            SAMLPassiveTokenIssuer issuer1_0 = new SAMLPassiveTokenIssuer();
-            issuer1_0.setAudienceRestrictionCondition(request.getRealm());
-            issuer1_0.setConfig(samlTokenIssuerConfig);
-            rstr = issuer1_0.issuePassiveRSTR(rahasData);
-        }
-
-        reponseToken = new ResponseToken();
-        if (rstr != null) {
-            try {
-                reponseToken.setResults(rstr.toStringWithConsume());
-            } catch (XMLStreamException e) {
-                log.error(e.getMessage(), e);
-                throw new TrustException("errorWhileProcessingSigninRequest", e);
+        } finally {
+            if (StringUtils.isNotEmpty(tenantDomain)) {
+                PrivilegedCarbonContext.endTenantFlow();
             }
         }
         return reponseToken;
     }
-
 }
