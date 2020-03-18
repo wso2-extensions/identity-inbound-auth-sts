@@ -136,6 +136,11 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.rampart.wso2</groupId>
+                <artifactId>rampart-core</artifactId>
+                <version>${rampart.wso2.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.rampart.wso2</groupId>
                 <artifactId>rampart-trust</artifactId>
                 <version>${rampart.wso2.version}</version>
             </dependency>
@@ -267,6 +272,16 @@
                         <artifactId>commons-collections</artifactId>
                     </exclusion>
                 </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>backport-util-concurrent.wso2</groupId>
+                <artifactId>backport-util-concurrent</artifactId>
+                <version>${orbit.version.backport.util}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.orbit.org.apache.neethi</groupId>
+                <artifactId>neethi</artifactId>
+                <version>${neethi.osgi.version}</version>
             </dependency>
             <dependency>
                 <groupId>commons-lang.wso2</groupId>
@@ -458,19 +473,23 @@
         <maven.buildnumber.plugin.version>1.4</maven.buildnumber.plugin.version>
         <axis2.wso2.version>1.6.1-wso2v37</axis2.wso2.version>
         <commons-lang.wso2.version>2.6.0.wso2v1</commons-lang.wso2.version>
+        <orbit.version.backport.util>3.1.0.wso2v1</orbit.version.backport.util>
 
+        <neethi.osgi.version>2.0.4.wso2v5</neethi.osgi.version>
         <neethi.osgi.version.range>[2.0.4.wso2v4,3.0.0)</neethi.osgi.version.range>
 
         <identity.framework.imp.pkg.version.range>[5.14.0, 6.0.0)</identity.framework.imp.pkg.version.range>
         <identity.inbound.auth.openid.imp.pkg.version.range>[5.4.0, 6.0.0)
         </identity.inbound.auth.openid.imp.pkg.version.range>
         <identity.inbound.auth.sts.imp.pkg.version.range>[5.4.0, 6.0.0)</identity.inbound.auth.sts.imp.pkg.version.range>
+        <carbon.user.api.imp.pkg.version.range>[1.0.1, 2.0.0)</carbon.user.api.imp.pkg.version.range>
 
         <opensaml2.wso2.osgi.version.range>[2.6.0,3.0.0)</opensaml2.wso2.osgi.version.range>
         <rampart.wso2.osgi.version.range>[1.6.1,2.0.0)</rampart.wso2.osgi.version.range>
         <wss4j.ws.security.imp.pkg.version.range>[1.5.11,2.0.0)</wss4j.ws.security.imp.pkg.version.range>
         <equinox.osgi.stax-api.imp.pkg.version.range>[1.0.1,2.0.0)</equinox.osgi.stax-api.imp.pkg.version.range>
         <axiom.osgi.version.range>[1.2.11, 2.0.0)</axiom.osgi.version.range>
+        <axiom.org.jaxen.imp.pkg.version.range>[1.1.1, 2.0.0)</axiom.org.jaxen.imp.pkg.version.range>
         <axis2.osgi.version.range>[1.6.1.wso2v12, 2.0.0)</axis2.osgi.version.range>
         <commons-logging.osgi.version.range>[1.2.0, 2.0.0)</commons-logging.osgi.version.range>
         <commons-lang.wso2.osgi.version.range>[2.6.0,3.0.0)</commons-lang.wso2.osgi.version.range>
@@ -512,6 +531,7 @@
         <module>components/org.wso2.carbon.mex</module>
         <module>components/org.wso2.carbon.mex.endpoint</module>
         <module>components/org.wso2.carbon.mex2</module>
+        <module>components/org.wso2.carbon.security.sts.common</module>
 
         <module>features/org.wso2.carbon.identity.sts.mgt.feature</module>
         <module>features/org.wso2.carbon.identity.sts.mgt.server.feature</module>
