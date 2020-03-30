@@ -1,5 +1,5 @@
 
-<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns1="http://org.apache.axis2/xsd" xmlns:ns="http://service.sts.security.carbon.wso2.org" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:ax2619="http://security.carbon.wso2.org/xsd" xmlns:ax2623="http://util.service.sts.security.carbon.wso2.org/xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:ax2620="http://base.identity.carbon.wso2.org/xsd" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="http://service.sts.security.carbon.wso2.org">
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns="http://service.sts.common.sts.identity.carbon.wso2.org" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:ax2458="http://security.carbon.wso2.org/xsd" xmlns:ax2462="http://util.service.sts.security.carbon.wso2.org/xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:ax2459="http://base.identity.carbon.wso2.org/xsd" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="http://service.sts.common.sts.identity.carbon.wso2.org">
     <wsdl:documentation>STSAdminService</wsdl:documentation>
     <wsdl:types>
         <xs:schema attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://util.service.sts.security.carbon.wso2.org/xsd">
@@ -10,11 +10,11 @@
                 </xs:sequence>
             </xs:complexType>
         </xs:schema>
-        <xs:schema xmlns:ax2621="http://base.identity.carbon.wso2.org/xsd" attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://security.carbon.wso2.org/xsd">
+        <xs:schema attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://security.carbon.wso2.org/xsd">
             <xs:import namespace="http://base.identity.carbon.wso2.org/xsd"/>
             <xs:complexType name="SecurityConfigException">
                 <xs:complexContent>
-                    <xs:extension base="ax2620:IdentityException">
+                    <xs:extension base="ax2459:IdentityException">
                         <xs:sequence/>
                     </xs:extension>
                 </xs:complexContent>
@@ -27,33 +27,20 @@
                 </xs:sequence>
             </xs:complexType>
         </xs:schema>
-        <xs:schema xmlns:ax2624="http://util.service.sts.security.carbon.wso2.org/xsd" xmlns:ax2622="http://security.carbon.wso2.org/xsd" attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://service.sts.security.carbon.wso2.org">
+        <xs:schema attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://service.sts.common.sts.identity.carbon.wso2.org">
             <xs:import namespace="http://security.carbon.wso2.org/xsd"/>
             <xs:import namespace="http://util.service.sts.security.carbon.wso2.org/xsd"/>
             <xs:element name="STSAdminServiceSecurityConfigException">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="SecurityConfigException" nillable="true" type="ax2619:SecurityConfigException"/>
+                        <xs:element minOccurs="0" name="SecurityConfigException" nillable="true" type="ax2458:SecurityConfigException"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
-            <xs:element name="getCertAliasOfPrimaryKeyStore">
-                <xs:complexType>
-                    <xs:sequence/>
-                </xs:complexType>
-            </xs:element>
-            <xs:element name="getCertAliasOfPrimaryKeyStoreResponse">
+            <xs:element name="setProofKeyType">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="xs:string"/>
-                    </xs:sequence>
-                </xs:complexType>
-            </xs:element>
-            <xs:element name="addTrustedService">
-                <xs:complexType>
-                    <xs:sequence>
-                        <xs:element minOccurs="0" name="serviceAddress" nillable="true" type="xs:string"/>
-                        <xs:element minOccurs="0" name="certAlias" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="keyType" nillable="true" type="xs:string"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -72,7 +59,27 @@
             <xs:element name="getTrustedServicesResponse">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax2623:TrustedServiceData"/>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax2462:TrustedServiceData"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="addTrustedService">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="serviceAddress" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="certAlias" nillable="true" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getCertAliasOfPrimaryKeyStore">
+                <xs:complexType>
+                    <xs:sequence/>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getCertAliasOfPrimaryKeyStoreResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="xs:string"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -88,13 +95,6 @@
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
-            <xs:element name="setProofKeyType">
-                <xs:complexType>
-                    <xs:sequence>
-                        <xs:element minOccurs="0" name="keyType" nillable="true" type="xs:string"/>
-                    </xs:sequence>
-                </xs:complexType>
-            </xs:element>
         </xs:schema>
     </wsdl:types>
     <wsdl:message name="removeTrustedServiceRequest">
@@ -104,11 +104,21 @@
     <wsdl:message name="STSAdminServiceSecurityConfigException">
         <wsdl:part name="parameters" element="ns:STSAdminServiceSecurityConfigException"/>
     </wsdl:message>
+    <wsdl:message name="setProofKeyTypeRequest">
+        <wsdl:part name="parameters" element="ns:setProofKeyType"/>
+    </wsdl:message>
+    <wsdl:message name="setProofKeyTypeResponse"/>
     <wsdl:message name="getProofKeyTypeRequest">
         <wsdl:part name="parameters" element="ns:getProofKeyType"/>
     </wsdl:message>
     <wsdl:message name="getProofKeyTypeResponse">
         <wsdl:part name="parameters" element="ns:getProofKeyTypeResponse"/>
+    </wsdl:message>
+    <wsdl:message name="getTrustedServicesRequest">
+        <wsdl:part name="parameters" element="ns:getTrustedServices"/>
+    </wsdl:message>
+    <wsdl:message name="getTrustedServicesResponse">
+        <wsdl:part name="parameters" element="ns:getTrustedServicesResponse"/>
     </wsdl:message>
     <wsdl:message name="getCertAliasOfPrimaryKeyStoreRequest">
         <wsdl:part name="parameters" element="ns:getCertAliasOfPrimaryKeyStore"/>
@@ -116,80 +126,46 @@
     <wsdl:message name="getCertAliasOfPrimaryKeyStoreResponse">
         <wsdl:part name="parameters" element="ns:getCertAliasOfPrimaryKeyStoreResponse"/>
     </wsdl:message>
-    <wsdl:message name="setProofKeyTypeRequest">
-        <wsdl:part name="parameters" element="ns:setProofKeyType"/>
-    </wsdl:message>
-    <wsdl:message name="setProofKeyTypeResponse"/>
     <wsdl:message name="addTrustedServiceRequest">
         <wsdl:part name="parameters" element="ns:addTrustedService"/>
     </wsdl:message>
     <wsdl:message name="addTrustedServiceResponse"/>
-    <wsdl:message name="getTrustedServicesRequest">
-        <wsdl:part name="parameters" element="ns:getTrustedServices"/>
-    </wsdl:message>
-    <wsdl:message name="getTrustedServicesResponse">
-        <wsdl:part name="parameters" element="ns:getTrustedServicesResponse"/>
-    </wsdl:message>
     <wsdl:portType name="STSAdminServicePortType">
         <wsdl:operation name="removeTrustedService">
             <wsdl:input message="ns:removeTrustedServiceRequest" wsaw:Action="urn:removeTrustedService"/>
             <wsdl:output message="ns:removeTrustedServiceResponse" wsaw:Action="urn:removeTrustedServiceResponse"/>
             <wsdl:fault message="ns:STSAdminServiceSecurityConfigException" name="STSAdminServiceSecurityConfigException" wsaw:Action="urn:removeTrustedServiceSTSAdminServiceSecurityConfigException"/>
         </wsdl:operation>
-        <wsdl:operation name="getProofKeyType">
-            <wsdl:input message="ns:getProofKeyTypeRequest" wsaw:Action="urn:getProofKeyType"/>
-            <wsdl:output message="ns:getProofKeyTypeResponse" wsaw:Action="urn:getProofKeyTypeResponse"/>
-            <wsdl:fault message="ns:STSAdminServiceSecurityConfigException" name="STSAdminServiceSecurityConfigException" wsaw:Action="urn:getProofKeyTypeSTSAdminServiceSecurityConfigException"/>
-        </wsdl:operation>
-        <wsdl:operation name="getCertAliasOfPrimaryKeyStore">
-            <wsdl:input message="ns:getCertAliasOfPrimaryKeyStoreRequest" wsaw:Action="urn:getCertAliasOfPrimaryKeyStore"/>
-            <wsdl:output message="ns:getCertAliasOfPrimaryKeyStoreResponse" wsaw:Action="urn:getCertAliasOfPrimaryKeyStoreResponse"/>
-            <wsdl:fault message="ns:STSAdminServiceSecurityConfigException" name="STSAdminServiceSecurityConfigException" wsaw:Action="urn:getCertAliasOfPrimaryKeyStoreSTSAdminServiceSecurityConfigException"/>
-        </wsdl:operation>
         <wsdl:operation name="setProofKeyType">
             <wsdl:input message="ns:setProofKeyTypeRequest" wsaw:Action="urn:setProofKeyType"/>
             <wsdl:output message="ns:setProofKeyTypeResponse" wsaw:Action="urn:setProofKeyTypeResponse"/>
             <wsdl:fault message="ns:STSAdminServiceSecurityConfigException" name="STSAdminServiceSecurityConfigException" wsaw:Action="urn:setProofKeyTypeSTSAdminServiceSecurityConfigException"/>
         </wsdl:operation>
-        <wsdl:operation name="addTrustedService">
-            <wsdl:input message="ns:addTrustedServiceRequest" wsaw:Action="urn:addTrustedService"/>
-            <wsdl:output message="ns:addTrustedServiceResponse" wsaw:Action="urn:addTrustedServiceResponse"/>
-            <wsdl:fault message="ns:STSAdminServiceSecurityConfigException" name="STSAdminServiceSecurityConfigException" wsaw:Action="urn:addTrustedServiceSTSAdminServiceSecurityConfigException"/>
+        <wsdl:operation name="getProofKeyType">
+            <wsdl:input message="ns:getProofKeyTypeRequest" wsaw:Action="urn:getProofKeyType"/>
+            <wsdl:output message="ns:getProofKeyTypeResponse" wsaw:Action="urn:getProofKeyTypeResponse"/>
+            <wsdl:fault message="ns:STSAdminServiceSecurityConfigException" name="STSAdminServiceSecurityConfigException" wsaw:Action="urn:getProofKeyTypeSTSAdminServiceSecurityConfigException"/>
         </wsdl:operation>
         <wsdl:operation name="getTrustedServices">
             <wsdl:input message="ns:getTrustedServicesRequest" wsaw:Action="urn:getTrustedServices"/>
             <wsdl:output message="ns:getTrustedServicesResponse" wsaw:Action="urn:getTrustedServicesResponse"/>
             <wsdl:fault message="ns:STSAdminServiceSecurityConfigException" name="STSAdminServiceSecurityConfigException" wsaw:Action="urn:getTrustedServicesSTSAdminServiceSecurityConfigException"/>
         </wsdl:operation>
+        <wsdl:operation name="getCertAliasOfPrimaryKeyStore">
+            <wsdl:input message="ns:getCertAliasOfPrimaryKeyStoreRequest" wsaw:Action="urn:getCertAliasOfPrimaryKeyStore"/>
+            <wsdl:output message="ns:getCertAliasOfPrimaryKeyStoreResponse" wsaw:Action="urn:getCertAliasOfPrimaryKeyStoreResponse"/>
+            <wsdl:fault message="ns:STSAdminServiceSecurityConfigException" name="STSAdminServiceSecurityConfigException" wsaw:Action="urn:getCertAliasOfPrimaryKeyStoreSTSAdminServiceSecurityConfigException"/>
+        </wsdl:operation>
+        <wsdl:operation name="addTrustedService">
+            <wsdl:input message="ns:addTrustedServiceRequest" wsaw:Action="urn:addTrustedService"/>
+            <wsdl:output message="ns:addTrustedServiceResponse" wsaw:Action="urn:addTrustedServiceResponse"/>
+            <wsdl:fault message="ns:STSAdminServiceSecurityConfigException" name="STSAdminServiceSecurityConfigException" wsaw:Action="urn:addTrustedServiceSTSAdminServiceSecurityConfigException"/>
+        </wsdl:operation>
     </wsdl:portType>
     <wsdl:binding name="STSAdminServiceSoap11Binding" type="ns:STSAdminServicePortType">
         <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
         <wsdl:operation name="removeTrustedService">
             <soap:operation soapAction="urn:removeTrustedService" style="document"/>
-            <wsdl:input>
-                <soap:body use="literal"/>
-            </wsdl:input>
-            <wsdl:output>
-                <soap:body use="literal"/>
-            </wsdl:output>
-            <wsdl:fault name="STSAdminServiceSecurityConfigException">
-                <soap:fault use="literal" name="STSAdminServiceSecurityConfigException"/>
-            </wsdl:fault>
-        </wsdl:operation>
-        <wsdl:operation name="getProofKeyType">
-            <soap:operation soapAction="urn:getProofKeyType" style="document"/>
-            <wsdl:input>
-                <soap:body use="literal"/>
-            </wsdl:input>
-            <wsdl:output>
-                <soap:body use="literal"/>
-            </wsdl:output>
-            <wsdl:fault name="STSAdminServiceSecurityConfigException">
-                <soap:fault use="literal" name="STSAdminServiceSecurityConfigException"/>
-            </wsdl:fault>
-        </wsdl:operation>
-        <wsdl:operation name="getCertAliasOfPrimaryKeyStore">
-            <soap:operation soapAction="urn:getCertAliasOfPrimaryKeyStore" style="document"/>
             <wsdl:input>
                 <soap:body use="literal"/>
             </wsdl:input>
@@ -212,8 +188,8 @@
                 <soap:fault use="literal" name="STSAdminServiceSecurityConfigException"/>
             </wsdl:fault>
         </wsdl:operation>
-        <wsdl:operation name="addTrustedService">
-            <soap:operation soapAction="urn:addTrustedService" style="document"/>
+        <wsdl:operation name="getProofKeyType">
+            <soap:operation soapAction="urn:getProofKeyType" style="document"/>
             <wsdl:input>
                 <soap:body use="literal"/>
             </wsdl:input>
@@ -226,6 +202,30 @@
         </wsdl:operation>
         <wsdl:operation name="getTrustedServices">
             <soap:operation soapAction="urn:getTrustedServices" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="STSAdminServiceSecurityConfigException">
+                <soap:fault use="literal" name="STSAdminServiceSecurityConfigException"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="getCertAliasOfPrimaryKeyStore">
+            <soap:operation soapAction="urn:getCertAliasOfPrimaryKeyStore" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="STSAdminServiceSecurityConfigException">
+                <soap:fault use="literal" name="STSAdminServiceSecurityConfigException"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="addTrustedService">
+            <soap:operation soapAction="urn:addTrustedService" style="document"/>
             <wsdl:input>
                 <soap:body use="literal"/>
             </wsdl:input>
@@ -251,30 +251,6 @@
                 <soap12:fault use="literal" name="STSAdminServiceSecurityConfigException"/>
             </wsdl:fault>
         </wsdl:operation>
-        <wsdl:operation name="getProofKeyType">
-            <soap12:operation soapAction="urn:getProofKeyType" style="document"/>
-            <wsdl:input>
-                <soap12:body use="literal"/>
-            </wsdl:input>
-            <wsdl:output>
-                <soap12:body use="literal"/>
-            </wsdl:output>
-            <wsdl:fault name="STSAdminServiceSecurityConfigException">
-                <soap12:fault use="literal" name="STSAdminServiceSecurityConfigException"/>
-            </wsdl:fault>
-        </wsdl:operation>
-        <wsdl:operation name="getCertAliasOfPrimaryKeyStore">
-            <soap12:operation soapAction="urn:getCertAliasOfPrimaryKeyStore" style="document"/>
-            <wsdl:input>
-                <soap12:body use="literal"/>
-            </wsdl:input>
-            <wsdl:output>
-                <soap12:body use="literal"/>
-            </wsdl:output>
-            <wsdl:fault name="STSAdminServiceSecurityConfigException">
-                <soap12:fault use="literal" name="STSAdminServiceSecurityConfigException"/>
-            </wsdl:fault>
-        </wsdl:operation>
         <wsdl:operation name="setProofKeyType">
             <soap12:operation soapAction="urn:setProofKeyType" style="document"/>
             <wsdl:input>
@@ -287,8 +263,8 @@
                 <soap12:fault use="literal" name="STSAdminServiceSecurityConfigException"/>
             </wsdl:fault>
         </wsdl:operation>
-        <wsdl:operation name="addTrustedService">
-            <soap12:operation soapAction="urn:addTrustedService" style="document"/>
+        <wsdl:operation name="getProofKeyType">
+            <soap12:operation soapAction="urn:getProofKeyType" style="document"/>
             <wsdl:input>
                 <soap12:body use="literal"/>
             </wsdl:input>
@@ -311,29 +287,35 @@
                 <soap12:fault use="literal" name="STSAdminServiceSecurityConfigException"/>
             </wsdl:fault>
         </wsdl:operation>
+        <wsdl:operation name="getCertAliasOfPrimaryKeyStore">
+            <soap12:operation soapAction="urn:getCertAliasOfPrimaryKeyStore" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="STSAdminServiceSecurityConfigException">
+                <soap12:fault use="literal" name="STSAdminServiceSecurityConfigException"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="addTrustedService">
+            <soap12:operation soapAction="urn:addTrustedService" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="STSAdminServiceSecurityConfigException">
+                <soap12:fault use="literal" name="STSAdminServiceSecurityConfigException"/>
+            </wsdl:fault>
+        </wsdl:operation>
     </wsdl:binding>
     <wsdl:binding name="STSAdminServiceHttpBinding" type="ns:STSAdminServicePortType">
         <http:binding verb="POST"/>
         <wsdl:operation name="removeTrustedService">
             <http:operation location="removeTrustedService"/>
-            <wsdl:input>
-                <mime:content type="text/xml" part="parameters"/>
-            </wsdl:input>
-            <wsdl:output>
-                <mime:content type="text/xml" part="parameters"/>
-            </wsdl:output>
-        </wsdl:operation>
-        <wsdl:operation name="getProofKeyType">
-            <http:operation location="getProofKeyType"/>
-            <wsdl:input>
-                <mime:content type="text/xml" part="parameters"/>
-            </wsdl:input>
-            <wsdl:output>
-                <mime:content type="text/xml" part="parameters"/>
-            </wsdl:output>
-        </wsdl:operation>
-        <wsdl:operation name="getCertAliasOfPrimaryKeyStore">
-            <http:operation location="getCertAliasOfPrimaryKeyStore"/>
             <wsdl:input>
                 <mime:content type="text/xml" part="parameters"/>
             </wsdl:input>
@@ -350,8 +332,8 @@
                 <mime:content type="text/xml" part="parameters"/>
             </wsdl:output>
         </wsdl:operation>
-        <wsdl:operation name="addTrustedService">
-            <http:operation location="addTrustedService"/>
+        <wsdl:operation name="getProofKeyType">
+            <http:operation location="getProofKeyType"/>
             <wsdl:input>
                 <mime:content type="text/xml" part="parameters"/>
             </wsdl:input>
@@ -361,6 +343,24 @@
         </wsdl:operation>
         <wsdl:operation name="getTrustedServices">
             <http:operation location="getTrustedServices"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="getCertAliasOfPrimaryKeyStore">
+            <http:operation location="getCertAliasOfPrimaryKeyStore"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="addTrustedService">
+            <http:operation location="addTrustedService"/>
             <wsdl:input>
                 <mime:content type="text/xml" part="parameters"/>
             </wsdl:input>

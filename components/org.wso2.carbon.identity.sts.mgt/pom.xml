@@ -70,6 +70,10 @@
             <artifactId>org.wso2.carbon.security.mgt</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.wso2.carbon.identity.inbound.auth.sts</groupId>
+            <artifactId>org.wso2.carbon.identity.sts.common</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.ops4j.pax.logging</groupId>
             <artifactId>pax-logging-api</artifactId>
         </dependency>
@@ -134,6 +138,7 @@
                             org.wso2.carbon.identity.base; version="${identity.framework.imp.pkg.version.range}",
                             org.wso2.carbon.identity.core.*; version="${identity.framework.imp.pkg.version.range}",
                             org.wso2.carbon.security.*; version="${identity.framework.imp.pkg.version.range}",
+                            org.wso2.carbon.identity.sts.common.*; version="${identity.inbound.auth.sts.imp.pkg.version.range}"
                             org.wso2.carbon.identity.provider;
                             version="${identity.inbound.auth.openid.imp.pkg.version.range}",
                         </Import-Package>

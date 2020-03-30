@@ -66,6 +66,10 @@
             <artifactId>org.wso2.carbon.security.mgt</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.wso2.carbon.identity.inbound.auth.sts</groupId>
+            <artifactId>org.wso2.carbon.identity.sts.common</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.wso2.orbit.org.opensaml</groupId>
             <artifactId>opensaml</artifactId>
         </dependency>
@@ -147,7 +151,9 @@
                             org.wso2.carbon.identity.core.*;
                             version="${identity.framework.imp.pkg.version.range}",
                             org.wso2.carbon.identity.application.authentication.framework.*;
-                            version="${identity.framework.imp.pkg.version.range}"
+                            version="${identity.framework.imp.pkg.version.range}",
+                            org.wso2.carbon.identity.sts.common.util.*;
+                            version="${identity.inbound.auth.sts.imp.pkg.version.range}"
                         </Import-Package>
                         <Export-Package>
                             !org.wso2.carbon.identity.sts.passive.internal,

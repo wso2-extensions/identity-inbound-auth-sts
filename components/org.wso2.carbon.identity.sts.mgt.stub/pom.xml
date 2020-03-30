@@ -92,6 +92,10 @@
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Bundle-Name>${project.artifactId}</Bundle-Name>
                         <Export-Package>
+                            org.wso2.carbon.identity.base.xsd.*;
+                            version="${identity.inbound.auth.sts.package.export.version}",
+                            org.wso2.carbon.identity.common.sts.service.*;
+                            version="${identity.inbound.auth.sts.package.export.version}",
                             org.wso2.carbon.identity.sts.mgt.stub.*;
                             version="${identity.inbound.auth.sts.package.export.version}"
                         </Export-Package>

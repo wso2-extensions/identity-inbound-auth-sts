@@ -21,14 +21,19 @@ import org.apache.axis2.engine.AxisObserver;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.component.ComponentContext;
 import org.wso2.carbon.CarbonConstants;
-import org.wso2.carbon.identity.application.mgt.listener.ApplicationMgtListener;
+import org.wso2.carbon.core.RegistryResources;
+import org.wso2.carbon.registry.core.Collection;
+import org.wso2.carbon.registry.core.Registry;
+import org.wso2.carbon.registry.core.Resource;
+import org.wso2.carbon.registry.core.exceptions.RegistryException;
+import org.wso2.carbon.registry.core.jdbc.utils.Transaction;
 import org.wso2.carbon.registry.core.service.RegistryService;
+import org.wso2.carbon.security.SecurityConstants;
+import org.wso2.carbon.security.SecurityServiceHolder;
 import org.wso2.carbon.sts.STSDeploymentInterceptor;
 import org.wso2.carbon.sts.STSDeploymentListener;
-import org.wso2.carbon.sts.listener.STSApplicationMgtListener;
 import org.wso2.carbon.user.core.service.RealmService;
 import org.wso2.carbon.utils.Axis2ConfigurationContextObserver;
 import java.util.Dictionary;
@@ -58,21 +63,21 @@ public class STSServiceComponent {
         try {
             BundleContext bundleCtx = ctxt.getBundleContext();
             STSServiceDataHolder.getInstance().setBundle(bundleCtx.getBundle());
+
+            try {
+                addKeystores();
+            } catch (Exception e) {
+                String msg = "Cannot add keystores";
+                log.error(msg, e);
+                throw new RuntimeException(msg, e);
+            }
+
             // Publish the OSGi service
             Dictionary props = new Hashtable();
             props.put(CarbonConstants.AXIS2_CONFIG_SERVICE, AxisObserver.class.getName());
             ctxt.getBundleContext().registerService(AxisObserver.class.getName(), new STSDeploymentInterceptor(), props);
             // Publish an OSGi service to listen tenant configuration context creation events
             bundleCtx.registerService(Axis2ConfigurationContextObserver.class.getName(), new STSDeploymentListener(), null);
-            ServiceRegistration stsApplicationMgtListener = bundleCtx.registerService(ApplicationMgtListener
-                    .class.getName(), new STSApplicationMgtListener(), null);
-            if (stsApplicationMgtListener != null) {
-                if (log.isDebugEnabled()) {
-                    log.debug("STS - ApplicationMgtListener registered.");
-                }
-            } else {
-                log.error("STS - ApplicationMgtListener could not be registered.");
-            }
         } catch (Throwable e) {
             log.error("Error occurred while updating carbon STS service", e);
         }
@@ -127,6 +132,32 @@ public class STSServiceComponent {
             log.debug("Unsetting the RealmService");
         }
         STSServiceDataHolder.getInstance().setRealmService(null);
+    }
+
+    private void addKeystores() throws RegistryException {
+        Registry registry = SecurityServiceHolder.getRegistryService().getGovernanceSystemRegistry();
+        try {
+            boolean transactionStarted = Transaction.isStarted();
+            if (!transactionStarted) {
+                registry.beginTransaction();
+            }
+            if (!registry.resourceExists(SecurityConstants.KEY_STORES)) {
+                Collection kstores = registry.newCollection();
+                registry.put(SecurityConstants.KEY_STORES, kstores);
+
+                Resource primResource = registry.newResource();
+                if (!registry.resourceExists(RegistryResources.SecurityManagement.PRIMARY_KEYSTORE_PHANTOM_RESOURCE)) {
+                    registry.put(RegistryResources.SecurityManagement.PRIMARY_KEYSTORE_PHANTOM_RESOURCE,
+                            primResource);
+                }
+            }
+            if (!transactionStarted) {
+                registry.commitTransaction();
+            }
+        } catch (Exception e) {
+            registry.rollbackTransaction();
+            throw e;
+        }
     }
 }
 

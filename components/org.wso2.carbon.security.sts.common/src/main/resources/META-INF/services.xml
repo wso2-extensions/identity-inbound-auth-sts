@@ -19,12 +19,13 @@
 <!-- services.xml of sample-1 : No Security-->
 <serviceGroup>
 
-    <service name="SecurityAdminService" scope="transportsession">
+    <service name="SecurityAdminService" scope="transportsession" targetNamespace="http://service.config.security.carbon.wso2.org">
+        <schema schemaNamespace="http://service.config.security.carbon.wso2.org" />
         <transports>
             <transport>https</transport>
         </transports>
         <parameter name="ServiceClass" locked="false">
-            org.wso2.carbon.security.sts.config.service.SecurityConfigAdminService
+            org.wso2.carbon.identity.sts.common.config.service.SecurityConfigAdminService
         </parameter>
         <operation name="activateUsernameTokenAuthentication">
             <parameter name="AuthorizationAction" locked="true">/permission/admin/manage/identity/securitymgt/update
@@ -62,7 +63,7 @@
             <transport>https</transport>
         </transports>
         <parameter name="ServiceClass" locked="false">
-            org.wso2.carbon.security.sts.service.sts.STSAdminServiceImpl
+            org.wso2.carbon.identity.sts.common.sts.service.STSAdminServiceImpl
         </parameter>
         <operation name="addTrustedService">
             <parameter name="AuthorizationAction" locked="true">/permission/admin/manage/identity/stsmgt/create

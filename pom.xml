@@ -358,6 +358,11 @@
                 <scope>test</scope>
             </dependency>
             <dependency>
+                <groupId>org.wso2.carbon.identity.inbound.auth.sts</groupId>
+                <artifactId>org.wso2.carbon.identity.sts.common</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>org.apache.felix.scr.ds-annotations</artifactId>
                 <version>${apache.felix.scr.ds.annotations.version}</version>
@@ -456,7 +461,7 @@
     </build>
 
     <properties>
-        <identity.framework.version>5.14.67</identity.framework.version>
+        <identity.framework.version>5.15.0</identity.framework.version>
         <identity.inbound.auth.sts.package.export.version>${project.version}
         </identity.inbound.auth.sts.package.export.version>
         <inbound.auth.openid.version>5.4.0</inbound.auth.openid.version>
@@ -502,6 +507,7 @@
         <imp.pkg.version.javax.servlet>[2.6.0, 3.0.0)</imp.pkg.version.javax.servlet>
         <commons-collections.wso2.osgi.version.range>[3.2.0,4.0.0)</commons-collections.wso2.osgi.version.range>
         <encoder.wso2.imp.pkg.version.range>[1.2.0.wso2v1, 2.0.0)</encoder.wso2.imp.pkg.version.range>
+        <carbon.consent.mgt.imp.pkg.version.range>[1.0.0, 3.0.0)</carbon.consent.mgt.imp.pkg.version.range>
         <cxf-bundle.version>3.2.8</cxf-bundle.version>
         <javax.ws.rs-api.version>2.1.1</javax.ws.rs-api.version>
 

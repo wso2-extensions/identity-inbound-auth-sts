@@ -10,7 +10,7 @@
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>org.wso2.carbon.identity.security.sts.common</artifactId>
+    <artifactId>org.wso2.carbon.identity.sts.common</artifactId>
     <packaging>bundle</packaging>
     <name>WSO2 Carbon - Security STS</name>
     <description>A custom wso2 products or solution</description>
@@ -121,7 +121,7 @@
                         <Bundle-Name>${project.artifactId}</Bundle-Name>
                         <Axis2Module>${project.artifactId}-${project.version}</Axis2Module>
                         <Private-Package>
-                            org.wso2.carbon.security.sts.internal,
+                            org.wso2.carbon.identity.sts.common.internal,
                         </Private-Package>
                         <Import-Package>
                             javax.cache,
@@ -164,8 +164,8 @@
                             org.wso2.carbon.security.*; version="${identity.framework.imp.pkg.version.range}"
                         </Import-Package>
                         <Export-Package>
-                            !org.wso2.carbon.security.internal,
-                            org.wso2.carbon.security.sts*; version="${carbon.identity.package.export.version}",
+                            !org.wso2.carbon.identity.sts.common.internal,
+                            org.wso2.carbon.identity.sts.common.*; version="${identity.inbound.auth.sts.package.export.version}",
                         </Export-Package>
                         <Axis2RequiredServices>org.apache.axis2.engine.AxisObserver</Axis2RequiredServices>
                     </instructions>

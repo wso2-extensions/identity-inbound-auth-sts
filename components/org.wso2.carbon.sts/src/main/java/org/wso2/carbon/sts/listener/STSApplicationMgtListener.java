@@ -35,14 +35,14 @@ import org.wso2.carbon.identity.application.common.model.ServiceProvider;
 import org.wso2.carbon.identity.application.common.util.IdentityApplicationConstants.Authenticator.WSTrust;
 import org.wso2.carbon.identity.application.mgt.ApplicationMgtSystemConfig;
 import org.wso2.carbon.identity.application.mgt.dao.ApplicationDAO;
-import org.wso2.carbon.identity.application.mgt.internal.ApplicationManagementServiceComponentHolder;
 import org.wso2.carbon.identity.application.mgt.listener.AbstractApplicationMgtListener;
 import org.wso2.carbon.registry.api.RegistryException;
 import org.wso2.carbon.registry.core.Registry;
 import org.wso2.carbon.security.SecurityConfigException;
-import org.wso2.carbon.security.config.SecurityServiceAdmin;
-import org.wso2.carbon.security.sts.service.STSAdminServiceImpl;
+import org.wso2.carbon.identity.sts.common.config.SecurityServiceAdmin;
+import org.wso2.carbon.identity.sts.common.sts.service.STSAdminServiceImpl;
 import org.wso2.carbon.security.sts.service.util.TrustedServiceData;
+import org.wso2.carbon.sts.internal.ApplicationManagementServiceComponentHolder;
 import org.wso2.carbon.utils.ServerConstants;
 
 import java.io.ByteArrayInputStream;

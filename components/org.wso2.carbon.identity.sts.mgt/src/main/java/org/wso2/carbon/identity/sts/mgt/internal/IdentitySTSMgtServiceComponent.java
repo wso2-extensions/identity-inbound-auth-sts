@@ -33,10 +33,10 @@ import org.wso2.carbon.registry.core.ResourceImpl;
 import org.wso2.carbon.registry.core.jdbc.utils.Transaction;
 import org.wso2.carbon.registry.core.service.RegistryService;
 import org.wso2.carbon.security.SecurityConstants;
-import org.wso2.carbon.security.SecurityScenario;
-import org.wso2.carbon.security.SecurityScenarioDatabase;
-import org.wso2.carbon.security.config.SecurityConfigAdmin;
-import org.wso2.carbon.security.util.XmlConfiguration;
+import org.wso2.carbon.identity.sts.common.SecurityScenario;
+import org.wso2.carbon.identity.sts.common.SecurityScenarioDatabase;
+import org.wso2.carbon.identity.sts.common.config.SecurityConfigAdmin;
+import org.wso2.carbon.identity.sts.common.util.XmlConfiguration;
 import org.wso2.carbon.user.core.service.RealmService;
 import org.wso2.carbon.utils.Axis2ConfigurationContextObserver;
 import org.wso2.carbon.utils.ConfigurationContextService;
@@ -208,7 +208,7 @@ public class IdentitySTSMgtServiceComponent {
      */
     @Reference(
              name = "security.config.service", 
-             service = org.wso2.carbon.security.config.SecurityConfigAdmin.class, 
+             service = SecurityConfigAdmin.class,
              cardinality = ReferenceCardinality.MANDATORY, 
              policy = ReferencePolicy.DYNAMIC, 
              unbind = "unsetSecurityConfigAdminService")

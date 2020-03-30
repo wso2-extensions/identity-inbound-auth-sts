@@ -16,24 +16,24 @@
  ~ under the License.
  -->
 
-<module name="POXSecurityModule" class="org.wso2.carbon.security.sts.pox.POXSecurityModule">
+<module name="POXSecurityModule" class="org.wso2.carbon.identity.sts.common.pox.POXSecurityModule">
     <InFlow>
         <handler name="POXSecurityHandler"
-                 class="org.wso2.carbon.security.sts.pox.POXSecurityHandler">
+                 class="org.wso2.carbon.identity.sts.common.pox.POXSecurityHandler">
             <order phase="Transport" after="SOAPActionBasedDispatcher"/>
         </handler>
     </InFlow> 
     
      <InFaultFlow>
         <handler name="POXSecurityHandler"
-                 class="org.wso2.carbon.security.sts.pox.POXSecurityHandler">
+                 class="org.wso2.carbon.identity.sts.common.pox.POXSecurityHandler">
             <order phase="Transport" after="SOAPActionBasedDispatcher"/>
         </handler>
     </InFaultFlow>
 
     <OutFaultFlow>
         <handler name="POXSecurityHandler"
-                 class="org.wso2.carbon.security.sts.pox.POXSecurityHandler">
+                 class="org.wso2.carbon.identity.sts.common.pox.POXSecurityHandler">
             <order phase="Transport" after="SOAPActionBasedDispatcher"/>
         </handler>
     </OutFaultFlow>
