@@ -45,7 +45,7 @@ import org.wso2.carbon.identity.application.common.util.IdentityApplicationConst
 import org.wso2.carbon.identity.application.common.util.IdentityApplicationManagementUtil;
 import org.wso2.carbon.identity.base.IdentityConstants;
 import org.wso2.carbon.identity.core.util.IdentityUtil;
-import org.wso2.carbon.identity.provider.AttributeCallbackHandler;
+import org.wso2.carbon.identity.sts.common.identity.provider.AttributeCallbackHandler;
 import org.wso2.carbon.identity.sts.common.util.RampartConfigUtil;
 import org.wso2.carbon.identity.sts.common.util.ServerCrypto;
 import org.wso2.carbon.identity.sts.passive.RequestToken;

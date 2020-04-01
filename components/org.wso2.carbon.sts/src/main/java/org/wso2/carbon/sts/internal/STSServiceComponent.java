@@ -24,6 +24,7 @@ import org.osgi.framework.BundleContext;
 import org.osgi.service.component.ComponentContext;
 import org.wso2.carbon.CarbonConstants;
 import org.wso2.carbon.core.RegistryResources;
+import org.wso2.carbon.identity.sts.common.identity.provider.IdentityAttributeService;
 import org.wso2.carbon.registry.core.Collection;
 import org.wso2.carbon.registry.core.Registry;
 import org.wso2.carbon.registry.core.Resource;
@@ -132,6 +133,29 @@ public class STSServiceComponent {
             log.debug("Unsetting the RealmService");
         }
         STSServiceDataHolder.getInstance().setRealmService(null);
+    }
+
+    @Reference(
+            name = "identity.attribute.service",
+            service = org.wso2.carbon.identity.sts.common.identity.provider.IdentityAttributeService.class,
+            cardinality = ReferenceCardinality.MULTIPLE,
+            policy = ReferencePolicy.DYNAMIC,
+            unbind = "removeAttributeService")
+    protected void addAttributeService(IdentityAttributeService attributeService) {
+
+        if (log.isDebugEnabled()) {
+            log.debug("IdentityAttributeService added in Carbon STS bundle");
+        }
+    }
+
+    /**
+     * @param attributeService
+     */
+    protected void removeAttributeService(IdentityAttributeService attributeService) {
+
+        if (log.isDebugEnabled()) {
+            log.debug("IdentityAttributeService removed in Carbon STS bundle");
+        }
     }
 
     private void addKeystores() throws RegistryException {

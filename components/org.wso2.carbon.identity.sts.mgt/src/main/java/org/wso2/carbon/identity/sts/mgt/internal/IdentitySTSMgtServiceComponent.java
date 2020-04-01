@@ -23,7 +23,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.component.ComponentContext;
-import org.wso2.carbon.identity.provider.IdentityProviderUtil;
+import org.wso2.carbon.identity.sts.common.identity.provider.IdentityProviderUtil;
 import org.wso2.carbon.identity.sts.mgt.STSConfigurationContextObserver;
 import org.wso2.carbon.identity.sts.mgt.STSObserver;
 import org.wso2.carbon.identity.sts.mgt.admin.STSConfigAdmin;
@@ -179,8 +179,8 @@ public class IdentitySTSMgtServiceComponent {
      * @param providerUtil
      */
     @Reference(
-             name = "identity.provider.service", 
-             service = org.wso2.carbon.identity.provider.IdentityProviderUtil.class, 
+             name = "identity.provider.sts.service",
+             service = IdentityProviderUtil.class,
              cardinality = ReferenceCardinality.MANDATORY, 
              policy = ReferencePolicy.DYNAMIC, 
              unbind = "unsetIdentityProviderAdminUtil")

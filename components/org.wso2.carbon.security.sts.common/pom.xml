@@ -87,6 +87,18 @@
             </exclusions>
         </dependency>
         <dependency>
+            <groupId>org.wso2.carbon.identity.inbound.auth.openid</groupId>
+            <artifactId>org.wso2.carbon.identity.provider</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.orbit.org.opensaml</groupId>
+            <artifactId>opensaml</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.orbit.joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.wso2.carbon</groupId>
             <artifactId>javax.cache.wso2</artifactId>
         </dependency>
@@ -132,6 +144,8 @@
                             javax.xml.bind,
                             javax.xml.bind.annotation,
                             org.w3c.dom,
+                            org.joda.time;version="${joda.wso2.osgi.version.range}",
+                            org.opensaml.*; version="${opensaml2.wso2.osgi.version.range}",
                             org.jaxen; version="${axiom.org.jaxen.imp.pkg.version.range}",
 
                             org.apache.axiom.*; version="${axiom.osgi.version.range}",
@@ -142,6 +156,7 @@
                             org.apache.rampart.*; version="${rampart.wso2.osgi.version.range}",
                             org.apache.ws.secpolicy.*; version="${rampart.wso2.osgi.version.range}",
                             org.apache.ws.security.*; version="${wss4j.ws.security.imp.pkg.version.range}",
+                            org.apache.xml.security.*; version="${xmlsec.version.range}",
                             org.apache.commons.logging; version="${commons-logging.osgi.version.range}",
                             org.apache.commons.collections; version="${commons-collections.wso2.osgi.version.range}",
                             org.apache.commons.lang; version="${commons-lang.wso2.osgi.version.range}",
@@ -159,8 +174,10 @@
                             org.wso2.carbon.user.api; version="${carbon.user.api.imp.pkg.version.range}",
                             org.wso2.carbon.registry.core.*;version="${carbon.kernel.registry.imp.pkg.version}",
                             org.wso2.carbon.registry.api;version="${carbon.kernel.registry.imp.pkg.version}",
+                            org.wso2.carbon.identity.provider; version="${identity.inbound.auth.openid.imp.pkg.version.range}",
                             org.wso2.carbon.identity.core.*; version="${identity.framework.imp.pkg.version.range}",
                             org.wso2.carbon.identity.base; version="${identity.framework.imp.pkg.version.range}",
+                            org.wso2.carbon.identity.application.*; version="${identity.framework.imp.pkg.version.range}",
                             org.wso2.carbon.security.*; version="${identity.framework.imp.pkg.version.range}"
                         </Import-Package>
                         <Export-Package>

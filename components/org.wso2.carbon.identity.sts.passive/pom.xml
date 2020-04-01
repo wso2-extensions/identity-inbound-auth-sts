@@ -152,7 +152,7 @@
                             version="${identity.framework.imp.pkg.version.range}",
                             org.wso2.carbon.identity.application.authentication.framework.*;
                             version="${identity.framework.imp.pkg.version.range}",
-                            org.wso2.carbon.identity.sts.common.util.*;
+                            org.wso2.carbon.identity.sts.common.*;
                             version="${identity.inbound.auth.sts.imp.pkg.version.range}"
                         </Import-Package>
                         <Export-Package>
