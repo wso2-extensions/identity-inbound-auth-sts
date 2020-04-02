@@ -22,7 +22,7 @@
         <groupId>org.wso2.carbon.identity.inbound.auth.sts</groupId>
         <artifactId>identity-inbound-auth-sts</artifactId>
         <relativePath>../../pom.xml</relativePath>
-        <version>5.5.2-SNAPSHOT</version>
+        <version>5.5.2</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -131,6 +131,8 @@
                             org.wso2.carbon.context; version="${carbon.kernel.package.import.version.range}",
                             org.wso2.carbon.core.util; version="${carbon.kernel.package.import.version.range}",
                             org.wso2.carbon.user.core.service;version="${carbon.kernel.package.import.version.range}",
+                            org.wso2.carbon.user.core.tenant;version="${carbon.kernel.package.import.version.range}",
+                            org.wso2.carbon.user.api; version="${carbon.user.api.imp.pkg.version.range}",
 
                             org.wso2.carbon.base; version="${carbon.base.imp.pkg.version.range}",
                             org.wso2.carbon.registry.api;version="${carbon.kernel.registry.imp.pkg.version}",
