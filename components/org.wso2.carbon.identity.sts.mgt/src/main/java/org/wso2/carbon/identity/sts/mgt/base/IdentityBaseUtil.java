@@ -105,7 +105,7 @@ public class IdentityBaseUtil {
         RampartConfig rampartConfig = new RampartConfig();
         rampartConfig.setUser(privateKeyAlias);
         //TODO use a registry based callback handler
-        rampartConfig.setPwCbClass("org.wso2.carbon.identity.base.InMemoryPasswordCallbackHandler");
+        rampartConfig.setPwCbClass("org.wso2.carbon.identity.sts.mgt.base.InMemoryPasswordCallbackHandler");
 
         //Set the private key alias and private key password in the password callback handler
         InMemoryPasswordCallbackHandler.addUser(privateKeyAlias, privateKeyPassword);

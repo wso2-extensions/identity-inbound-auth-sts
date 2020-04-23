@@ -5,7 +5,7 @@
     <parent>
         <artifactId>identity-inbound-auth-sts</artifactId>
         <groupId>org.wso2.carbon.identity.inbound.auth.sts</groupId>
-        <version>5.5.2-SNAPSHOT</version>
+        <version>5.5.2</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
@@ -122,7 +122,6 @@
 
     <build>
         <plugins>
-
             <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
@@ -187,6 +186,26 @@
                         <Axis2RequiredServices>org.apache.axis2.engine.AxisObserver</Axis2RequiredServices>
                     </instructions>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>sts-components</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <descriptors>
+                                <descriptor>src/assembly/pack-sts-components.xml</descriptor>
+                            </descriptors>
+                            <finalName>wso2is-sts-components-${project.version}</finalName>
+                            <appendAssemblyId>false</appendAssemblyId>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
