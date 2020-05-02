@@ -17,12 +17,15 @@ package org.wso2.carbon.identity.sts.passive.internal;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.osgi.framework.BundleContext;
 import org.osgi.service.component.ComponentContext;
 import org.wso2.carbon.context.CarbonContext;
 import org.wso2.carbon.context.RegistryType;
+import org.wso2.carbon.identity.sts.passive.PassiveSTSServiceImpl;
 import org.wso2.carbon.registry.core.Registry;
 import org.wso2.carbon.registry.core.exceptions.RegistryException;
 import org.wso2.carbon.registry.core.service.RegistryService;
+import org.wso2.carbon.security.sts.service.PassiveSTSServiceInterface;
 import org.wso2.carbon.user.core.service.RealmService;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -87,6 +90,21 @@ public class IdentityPassiveSTSServiceComponent {
      */
     @Activate
     protected void activate(ComponentContext ctxt) {
+
+        try {
+            BundleContext bundleCtx = ctxt.getBundleContext();
+            bundleCtx.registerService(PassiveSTSServiceInterface.class, new PassiveSTSServiceImpl(), null);
+        } catch (Throwable e) {
+            log.error("Failed to activate Identity Passive STS bundle.", e);
+        }
+
+        log.debug("Identity Passive STS bundle  is activated.");
+    }
+
+    @Deactivate
+    protected void deactivate(ComponentContext ctxt) {
+
+        log.debug("Identity Passive STS bundle is deactivated.");
     }
 
     /**

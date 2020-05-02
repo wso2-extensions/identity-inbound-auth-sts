@@ -35,6 +35,11 @@
             <artifactId>org.wso2.carbon.utils</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.apache.santuario</groupId>
+            <artifactId>xmlsec</artifactId>
+            <version>${xmlsec.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.apache.ws.security.wso2</groupId>
             <artifactId>wss4j</artifactId>
         </dependency>
@@ -155,7 +160,7 @@
                             org.apache.rampart.*; version="${rampart.wso2.osgi.version.range}",
                             org.apache.ws.secpolicy.*; version="${rampart.wso2.osgi.version.range}",
                             org.apache.ws.security.*; version="${wss4j.ws.security.imp.pkg.version.range}",
-                            org.apache.xml.security.*; version="${xmlsec.version.range}",
+                            org.apache.xml.security.*; version="${xmlsec.version.imp.pkg.version.range}",
                             org.apache.commons.logging; version="${commons-logging.osgi.version.range}",
                             org.apache.commons.collections; version="${commons-collections.wso2.osgi.version.range}",
                             org.apache.commons.lang; version="${commons-lang.wso2.osgi.version.range}",

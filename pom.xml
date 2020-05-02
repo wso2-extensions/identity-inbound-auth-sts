@@ -130,6 +130,11 @@
                 <version>${inbound.auth.openid.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.apache.santuario</groupId>
+                <artifactId>xmlsec</artifactId>
+                <version>${xmlsec.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.apache.ws.security.wso2</groupId>
                 <artifactId>wss4j</artifactId>
                 <version>${wss4j.version}</version>
@@ -466,7 +471,7 @@
     </build>
 
     <properties>
-        <identity.framework.version>5.15.0</identity.framework.version>
+        <identity.framework.version>5.17.70-SNAPSHOT</identity.framework.version>
         <identity.inbound.auth.sts.package.export.version>${project.version}
         </identity.inbound.auth.sts.package.export.version>
         <inbound.auth.openid.version>5.4.0</inbound.auth.openid.version>
@@ -474,7 +479,9 @@
         <carbon.kernel.version>4.6.0</carbon.kernel.version>
         <carbon.kernel.feature.version>4.6.0</carbon.kernel.feature.version>
         <carbon.xfer.package.version>4.2.0</carbon.xfer.package.version>
-        <wss4j.version>1.5.11.wso2v16</wss4j.version>
+        <xmlsec.version>1.4.8</xmlsec.version>
+        <xmlsec.version.imp.pkg.version.range>[1.4.4,2.0.0)</xmlsec.version.imp.pkg.version.range>
+        <wss4j.version>1.5.11-wso2v21-SNAPSHOT</wss4j.version>
         <rampart.wso2.version>1.6.1-wso2v43</rampart.wso2.version>
         <opensaml2.wso2.version>2.6.6.wso2v3</opensaml2.wso2.version>
         <commons-fileupload.wso2.version>1.2.2.wso2v1</commons-fileupload.wso2.version>
@@ -516,7 +523,6 @@
         <carbon.consent.mgt.imp.pkg.version.range>[1.0.0, 3.0.0)</carbon.consent.mgt.imp.pkg.version.range>
         <cxf-bundle.version>3.2.8</cxf-bundle.version>
         <javax.ws.rs-api.version>2.1.1</javax.ws.rs-api.version>
-        <xmlsec.version.range>[1.4.2, 2.0.0)</xmlsec.version.range>
 
         <joda.wso2.version>2.9.4.wso2v1</joda.wso2.version>
         <joda.wso2.osgi.version.range>[2.8.2,3.0.0)</joda.wso2.osgi.version.range>

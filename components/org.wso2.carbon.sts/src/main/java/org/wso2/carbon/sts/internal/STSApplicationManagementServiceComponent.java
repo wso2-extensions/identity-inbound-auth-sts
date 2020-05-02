@@ -31,8 +31,8 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 import org.wso2.carbon.consent.mgt.core.ConsentManager;
 import org.wso2.carbon.identity.application.mgt.AbstractInboundAuthenticatorConfig;
 import org.wso2.carbon.identity.application.mgt.listener.ApplicationMgtListener;
-import org.wso2.carbon.identity.application.mgt.listener.STSApplicationMgtListener;
 import org.wso2.carbon.registry.core.service.RegistryService;
+import org.wso2.carbon.sts.listener.STSApplicationMgtListener;
 import org.wso2.carbon.user.core.service.RealmService;
 import org.wso2.carbon.utils.ConfigurationContextService;
 
@@ -50,6 +50,7 @@ public class STSApplicationManagementServiceComponent {
     @Activate
     protected void activate(ComponentContext context) {
         try {
+            bundleContext = context.getBundleContext();
             ServiceRegistration stsApplicationMgtListener = bundleContext.registerService(ApplicationMgtListener
                     .class.getName(), new STSApplicationMgtListener(), null);
             if (stsApplicationMgtListener != null) {
