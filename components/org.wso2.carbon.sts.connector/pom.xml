@@ -124,9 +124,9 @@
                         </goals>
                         <configuration>
                             <descriptors>
-                                <descriptor>src/assembly/pack-sts-components.xml</descriptor>
+                                <descriptor>src/assembly/sts-connector.xml</descriptor>
                             </descriptors>
-                            <finalName>wso2is-sts-components-${project.version}</finalName>
+                            <finalName>wso2is-sts-connector-${project.version}</finalName>
                             <appendAssemblyId>false</appendAssemblyId>
                         </configuration>
                     </execution>

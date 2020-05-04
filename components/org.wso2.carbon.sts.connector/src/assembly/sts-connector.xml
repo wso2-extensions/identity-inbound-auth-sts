@@ -22,50 +22,50 @@
     <includeBaseDirectory>false</includeBaseDirectory>
     <dependencySets>
         <dependencySet>
-            <outputDirectory>wso2is-sts-components-${project.version}/dropins/</outputDirectory>
+            <outputDirectory>wso2is-sts-connector-${project.version}/dropins/</outputDirectory>
             <includes>
                 <include>org.wso2.orbit.org.opensaml:opensaml</include>
             </includes>
         </dependencySet>
         <dependencySet>
-            <outputDirectory>wso2is-sts-components-${project.version}/dropins/</outputDirectory>
+            <outputDirectory>wso2is-sts-connector-${project.version}/dropins/</outputDirectory>
             <includes>
                 <include>org.apache.ws.security.wso2:wss4j</include>
             </includes>
         </dependencySet>
         <dependencySet>
-            <outputDirectory>wso2is-sts-components-${project.version}/dropins/</outputDirectory>
+            <outputDirectory>wso2is-sts-connector-${project.version}/dropins/</outputDirectory>
             <includes>
                 <include>org.apache.rampart.wso2:rampart-core</include>
             </includes>
         </dependencySet>
         <dependencySet>
-            <outputDirectory>wso2is-sts-components-${project.version}/dropins/</outputDirectory>
+            <outputDirectory>wso2is-sts-connector-${project.version}/dropins/</outputDirectory>
             <includes>
                 <include>org.apache.rampart.wso2:rampart-trust</include>
             </includes>
         </dependencySet>
         <dependencySet>
-            <outputDirectory>wso2is-sts-components-${project.version}/dropins/</outputDirectory>
+            <outputDirectory>wso2is-sts-connector-${project.version}/dropins/</outputDirectory>
             <includes>
                 <include>org.apache.rampart.wso2:rampart-policy</include>
             </includes>
         </dependencySet>
         <dependencySet>
-            <outputDirectory>wso2is-sts-components-${project.version}/dropins/</outputDirectory>
+            <outputDirectory>wso2is-sts-connector-${project.version}/dropins/</outputDirectory>
             <includes>
                 <include>org.wso2.carbon:org.wso2.carbon.xfer</include>
             </includes>
         </dependencySet>
         <dependencySet>
-            <outputDirectory>wso2is-sts-components-${project.version}/deployment-server-webapps/</outputDirectory>
+            <outputDirectory>wso2is-sts-connector-${project.version}/deployment-server-webapps/</outputDirectory>
             <outputFileNameMapping>mexut.war</outputFileNameMapping>
             <includes>
                 <include>org.wso2.carbon.identity.inbound.auth.sts:org.wso2.carbon.mex.endpoint</include>
             </includes>
         </dependencySet>
         <dependencySet>
-            <outputDirectory>wso2is-sts-components-${project.version}/deployment-client-modules/</outputDirectory>
+            <outputDirectory>wso2is-sts-connector-${project.version}/deployment-client-modules/</outputDirectory>
             <includes>
                 <include>org.apache.rampart:rampart</include>
             </includes>
@@ -76,97 +76,97 @@
             <source>
                 ../org.wso2.carbon.identity.sts.mgt/target/org.wso2.carbon.identity.sts.mgt-${project.version}.jar
             </source>
-            <outputDirectory>wso2is-sts-components-${project.version}/dropins/</outputDirectory>
+            <outputDirectory>wso2is-sts-connector-${project.version}/dropins/</outputDirectory>
         </file>
         <file>
             <source>
                 ../org.wso2.carbon.identity.sts.mgt.stub/target/org.wso2.carbon.identity.sts.mgt.stub-${project.version}.jar
             </source>
-            <outputDirectory>wso2is-sts-components-${project.version}/dropins/</outputDirectory>
+            <outputDirectory>wso2is-sts-connector-${project.version}/dropins/</outputDirectory>
         </file>
         <file>
             <source>
                 ../org.wso2.carbon.identity.sts.mgt.ui/target/org.wso2.carbon.identity.sts.mgt.ui-${project.version}.jar
             </source>
-            <outputDirectory>wso2is-sts-components-${project.version}/dropins/</outputDirectory>
+            <outputDirectory>wso2is-sts-connector-${project.version}/dropins/</outputDirectory>
         </file>
         <file>
             <source>
                 ../org.wso2.carbon.identity.sts.passive/target/org.wso2.carbon.identity.sts.passive-${project.version}.jar
             </source>
-            <outputDirectory>wso2is-sts-components-${project.version}/dropins/</outputDirectory>
+            <outputDirectory>wso2is-sts-connector-${project.version}/dropins/</outputDirectory>
         </file>
         <file>
             <source>
                 ../org.wso2.carbon.identity.sts.passive.stub/target/org.wso2.carbon.identity.sts.passive.stub-${project.version}.jar
             </source>
-            <outputDirectory>wso2is-sts-components-${project.version}/dropins/</outputDirectory>
+            <outputDirectory>wso2is-sts-connector-${project.version}/dropins/</outputDirectory>
         </file>
         <file>
             <source>
                 ../org.wso2.carbon.identity.sts.passive.ui/target/org.wso2.carbon.identity.sts.passive.ui-${project.version}.jar
             </source>
-            <outputDirectory>wso2is-sts-components-${project.version}/dropins/</outputDirectory>
+            <outputDirectory>wso2is-sts-connector-${project.version}/dropins/</outputDirectory>
         </file>
         <file>
             <source>
                 ../org.wso2.carbon.identity.sts.store/target/org.wso2.carbon.identity.sts.store-${project.version}.jar
             </source>
-            <outputDirectory>wso2is-sts-components-${project.version}/dropins/</outputDirectory>
+            <outputDirectory>wso2is-sts-connector-${project.version}/dropins/</outputDirectory>
         </file>
         <file>
             <source>
                 ../org.wso2.carbon.mex/target/org.wso2.carbon.mex-${project.version}.jar
             </source>
-            <outputDirectory>wso2is-sts-components-${project.version}/dropins/</outputDirectory>
+            <outputDirectory>wso2is-sts-connector-${project.version}/dropins/</outputDirectory>
         </file>
         <file>
             <source>
                 ../org.wso2.carbon.mex2/target/org.wso2.carbon.mex2-${project.version}.jar
             </source>
-            <outputDirectory>wso2is-sts-components-${project.version}/dropins/</outputDirectory>
+            <outputDirectory>wso2is-sts-connector-${project.version}/dropins/</outputDirectory>
         </file>
         <file>
             <source>
                 ../org.wso2.carbon.sts/target/org.wso2.carbon.sts-${project.version}.jar
             </source>
-            <outputDirectory>wso2is-sts-components-${project.version}/dropins/</outputDirectory>
+            <outputDirectory>wso2is-sts-connector-${project.version}/dropins/</outputDirectory>
         </file>
         <file>
             <source>
                 ../org.wso2.carbon.sts.stub/target/org.wso2.carbon.sts.stub-${project.version}.jar
             </source>
-            <outputDirectory>wso2is-sts-components-${project.version}/dropins/</outputDirectory>
+            <outputDirectory>wso2is-sts-connector-${project.version}/dropins/</outputDirectory>
         </file>
         <file>
             <source>
                 ../org.wso2.carbon.sts.ui/target/org.wso2.carbon.sts.ui-${project.version}.jar
             </source>
-            <outputDirectory>wso2is-sts-components-${project.version}/dropins/</outputDirectory>
+            <outputDirectory>wso2is-sts-connector-${project.version}/dropins/</outputDirectory>
         </file>
         <file>
             <source>
                 ../org.wso2.carbon.security.sts.common/target/org.wso2.carbon.identity.sts.common-${project.version}.jar
             </source>
-            <outputDirectory>wso2is-sts-components-${project.version}/dropins/</outputDirectory>
+            <outputDirectory>wso2is-sts-connector-${project.version}/dropins/</outputDirectory>
         </file>
         <file>
             <source>
                 ../../features/org.wso2.carbon.mex.feature/resources/metadata.xml
             </source>
-            <outputDirectory>wso2is-sts-components-${project.version}/deployment-server-webapps/</outputDirectory>
+            <outputDirectory>wso2is-sts-connector-${project.version}/deployment-server-webapps/</outputDirectory>
         </file>
         <file>
             <source>
                 ../../features/org.wso2.carbon.identity.sts.passive.server.feature/resources/sts_response.html
             </source>
-            <outputDirectory>wso2is-sts-components-${project.version}/other-files/</outputDirectory>
+            <outputDirectory>wso2is-sts-connector-${project.version}/other-files/</outputDirectory>
         </file>
         <file>
             <source>
                 ./src/main/resources/setup_sts.sh
             </source>
-            <outputDirectory>wso2is-sts-components-${project.version}/</outputDirectory>
+            <outputDirectory>wso2is-sts-connector-${project.version}/</outputDirectory>
         </file>
     </files>
 </assembly>
