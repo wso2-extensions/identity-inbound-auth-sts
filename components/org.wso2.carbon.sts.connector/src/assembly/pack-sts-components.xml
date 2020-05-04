@@ -51,6 +51,25 @@
                 <include>org.apache.rampart.wso2:rampart-policy</include>
             </includes>
         </dependencySet>
+        <dependencySet>
+            <outputDirectory>wso2is-sts-components-${project.version}/dropins/</outputDirectory>
+            <includes>
+                <include>org.wso2.carbon:org.wso2.carbon.xfer</include>
+            </includes>
+        </dependencySet>
+        <dependencySet>
+            <outputDirectory>wso2is-sts-components-${project.version}/deployment-server-webapps/</outputDirectory>
+            <outputFileNameMapping>mexut.war</outputFileNameMapping>
+            <includes>
+                <include>org.wso2.carbon.identity.inbound.auth.sts:org.wso2.carbon.mex.endpoint</include>
+            </includes>
+        </dependencySet>
+        <dependencySet>
+            <outputDirectory>wso2is-sts-components-${project.version}/deployment-client-modules/</outputDirectory>
+            <includes>
+                <include>org.apache.rampart:rampart</include>
+            </includes>
+        </dependencySet>
     </dependencySets>
     <files>
         <file>
@@ -127,9 +146,27 @@
         </file>
         <file>
             <source>
-                target/org.wso2.carbon.identity.sts.common-${project.version}.jar
+                ../org.wso2.carbon.security.sts.common/target/org.wso2.carbon.identity.sts.common-${project.version}.jar
             </source>
             <outputDirectory>wso2is-sts-components-${project.version}/dropins/</outputDirectory>
+        </file>
+        <file>
+            <source>
+                ../../features/org.wso2.carbon.mex.feature/resources/metadata.xml
+            </source>
+            <outputDirectory>wso2is-sts-components-${project.version}/deployment-server-webapps/</outputDirectory>
+        </file>
+        <file>
+            <source>
+                ../../features/org.wso2.carbon.identity.sts.passive.server.feature/resources/sts_response.html
+            </source>
+            <outputDirectory>wso2is-sts-components-${project.version}/other-files/</outputDirectory>
+        </file>
+        <file>
+            <source>
+                ./src/main/resources/setup_sts.sh
+            </source>
+            <outputDirectory>wso2is-sts-components-${project.version}/</outputDirectory>
         </file>
     </files>
 </assembly>

@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) 2020, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+  ~
+  ~  WSO2 Inc. licenses this file to you under the Apache License,
+  ~  Version 2.0 (the "License"); you may not use this file except
+  ~  in compliance with the License.
+  ~  You may obtain a copy of the License at
+  ~
+  ~    http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing,
+  ~ software distributed under the License is distributed on an
+  ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~ KIND, either express or implied.  See the License for the
+  ~ specific language governing permissions and limitations
+  ~ under the License.
+  -->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>identity-inbound-auth-sts</artifactId>
+        <groupId>org.wso2.carbon.identity.inbound.auth.sts</groupId>
+        <version>5.5.3-SNAPSHOT</version>
+        <relativePath>../../pom.xml</relativePath>
+    </parent>
+
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>org.wso2.carbon.sts.connector</artifactId>
+    <packaging>jar</packaging>
+    <name>WSO2 Carbon - STS Components</name>
+    <description>A custom wso2 products or solution</description>
+    <url>http://wso2.org</url>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.wso2.orbit.org.opensaml</groupId>
+            <artifactId>opensaml</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.ws.security.wso2</groupId>
+            <artifactId>wss4j</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.rampart.wso2</groupId>
+            <artifactId>rampart-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.rampart.wso2</groupId>
+            <artifactId>rampart-trust</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.rampart.wso2</groupId>
+            <artifactId>rampart-policy</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.rampart</groupId>
+            <artifactId>rampart</artifactId>
+            <type>mar</type>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon</groupId>
+            <artifactId>org.wso2.carbon.xfer</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.identity.inbound.auth.sts</groupId>
+            <artifactId>org.wso2.carbon.identity.sts.mgt</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.identity.inbound.auth.sts</groupId>
+            <artifactId>org.wso2.carbon.identity.sts.mgt.stub</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.identity.inbound.auth.sts</groupId>
+            <artifactId>org.wso2.carbon.identity.sts.mgt.ui</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.identity.inbound.auth.sts</groupId>
+            <artifactId>org.wso2.carbon.sts</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.identity.inbound.auth.sts</groupId>
+            <artifactId>org.wso2.carbon.sts.stub</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.identity.inbound.auth.sts</groupId>
+            <artifactId>org.wso2.carbon.sts.ui</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.identity.inbound.auth.sts</groupId>
+            <artifactId>org.wso2.carbon.identity.sts.store</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.identity.inbound.auth.sts</groupId>
+            <artifactId>org.wso2.carbon.mex</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.identity.inbound.auth.sts</groupId>
+            <artifactId>org.wso2.carbon.mex2</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.identity.inbound.auth.sts</groupId>
+            <artifactId>org.wso2.carbon.mex.endpoint</artifactId>
+            <type>war</type>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.identity.inbound.auth.sts</groupId>
+            <artifactId>org.wso2.carbon.identity.sts.common</artifactId>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>sts-components</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <descriptors>
+                                <descriptor>src/assembly/pack-sts-components.xml</descriptor>
+                            </descriptors>
+                            <finalName>wso2is-sts-components-${project.version}</finalName>
+                            <appendAssemblyId>false</appendAssemblyId>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>
