@@ -33,14 +33,15 @@ public class SecurityConfigAdminService extends AbstractAdmin {
 
     @Override
     protected UserRealm getUserRealm() {
+
         return (UserRealm) CarbonContext.getThreadLocalCarbonContext().getUserRealm();
     }
 
     public void activateUsernameTokenAuthentication(String serviceName, String[] userGroups)
             throws SecurityConfigException {
+
         SecurityConfigAdmin admin = new SecurityConfigAdmin(getUserRealm(), getConfigSystemRegistry(), getAxisConfig());
         admin.activateUsernameTokenAuthentication(serviceName, userGroups);
-
     }
 
     public void disableSecurityOnService(String serviceName) throws SecurityConfigException {
@@ -51,6 +52,7 @@ public class SecurityConfigAdminService extends AbstractAdmin {
 
     public void applySecurity(String serviceName, String policyId, String policyPath, String[] trustedStores,
                               String privateStore, String[] userGroupNames) throws SecurityConfigException {
+
         SecurityConfigAdmin admin = new SecurityConfigAdmin(getUserRealm(), getConfigSystemRegistry(), getAxisConfig());
         admin.applySecurity(serviceName, policyId, policyPath, trustedStores, privateStore, userGroupNames);
     }
@@ -68,12 +70,12 @@ public class SecurityConfigAdminService extends AbstractAdmin {
                                             String servicePrincipalPassword)
             throws SecurityConfigException {
 
-        if (servicePrincipalName == null || StringUtils.equals("".trim(),servicePrincipalName)) {
+        if (servicePrincipalName == null || StringUtils.equals("".trim(), servicePrincipalName)) {
             throw new SecurityConfigException("Please specify a valid service principal. " +
                     "Service principal should not be null");
         }
 
-        if (servicePrincipalPassword == null || StringUtils.equals("".trim(),servicePrincipalPassword)) {
+        if (servicePrincipalPassword == null || StringUtils.equals("".trim(), servicePrincipalPassword)) {
             throw new SecurityConfigException("Please specify a valid service principal password. " +
                     "Service principal password should not be null");
         }
@@ -85,11 +87,10 @@ public class SecurityConfigAdminService extends AbstractAdmin {
         kerberosConfigurations.setServicePrinciplePassword(servicePrincipalPassword);
 
         admin.applySecurity(serviceName, policyId, kerberosConfigurations);
-
     }
 
-
     public SecurityScenarioDataWrapper getScenarios(String serviceName) throws SecurityConfigException {
+
         Collection<SecurityScenario> scenarios = SecurityScenarioDatabase.getAllScenarios();
         SecurityScenarioData[] scenarioData = new SecurityScenarioData[scenarios.size()];
         int count = 0;
@@ -113,19 +114,23 @@ public class SecurityConfigAdminService extends AbstractAdmin {
 
     private SecurityScenarioData getCurrentScenario(String serviceName)
             throws SecurityConfigException {
+
         SecurityConfigAdmin admin = new SecurityConfigAdmin(getUserRealm(), getConfigSystemRegistry(), getAxisConfig());
         admin.forceActualServiceDeployment(serviceName);
         return admin.getCurrentScenario(serviceName);
     }
 
     public SecurityScenarioData getSecurityScenario(String sceneId) throws SecurityConfigException {
+
         SecurityConfigAdmin admin = new SecurityConfigAdmin(getUserRealm(), getConfigSystemRegistry(), getAxisConfig());
         return admin.getSecurityScenario(sceneId);
     }
 
     public SecurityConfigData getSecurityConfigData(String serviceName, String scenarioId, String policyPath)
             throws SecurityConfigException {
+
         SecurityConfigAdmin admin = new SecurityConfigAdmin(getUserRealm(), getConfigSystemRegistry(), getAxisConfig());
         return admin.getSecurityConfigData(serviceName, scenarioId, policyPath);
     }
+
 }

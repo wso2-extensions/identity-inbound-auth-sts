@@ -39,10 +39,12 @@ import java.util.Vector;
  * Meta-data collection of related to CardSpace required for token issuance.
  */
 public class IdentityProviderData extends GenericIdentityProviderData {
+
     private static final Log log = LogFactory.getLog(IdentityProviderData.class);
     private SAMLAssertion assertion;
 
     public IdentityProviderData(RahasData data) throws IdentityProviderException, ClassNotFoundException {
+
         super(data);
     }
 
@@ -52,6 +54,7 @@ public class IdentityProviderData extends GenericIdentityProviderData {
      */
     @Override
     protected void processInfoCardReference(OMElement rst) throws IdentityProviderException {
+
         OMElement infoCardRef = null;
         OMElement omCardID = null;
 
@@ -74,6 +77,7 @@ public class IdentityProviderData extends GenericIdentityProviderData {
      */
     @Override
     protected void readAuthenticationMechanism(RahasData data) throws IdentityProviderException {
+
         MessageContext inContext = null;
         Vector results = null;
 
@@ -108,15 +112,18 @@ public class IdentityProviderData extends GenericIdentityProviderData {
 
     @Override
     public String getUserIdentifier() {
+
         return userIdentifier;
     }
 
     public void setUserIdentifier(String userIdentifier) {
+
         this.userIdentifier = userIdentifier;
     }
 
     @Override
     public String getTenantDomain() throws IdentityProviderException {
+
         if (this.authMechanism == IdentityConstants.AUTH_TYPE_SELF_ISSUED) { //only for tenant 0
             return null;
         }
@@ -138,6 +145,7 @@ public class IdentityProviderData extends GenericIdentityProviderData {
      */
     @Override
     public String getDisplayName(String uri) {
+
         Claim claim = null;
 
         if (log.isDebugEnabled()) {
@@ -156,11 +164,13 @@ public class IdentityProviderData extends GenericIdentityProviderData {
 
     @Override
     public String getCardID() {
+
         return cardID;
     }
 
     @Override
     public String getDisplayTokenLang() {
+
         return displayTokenLang;
     }
 

@@ -67,7 +67,8 @@ public class SecurityConfigParamBuilder {
 
     private static final Log log = LogFactory.getLog(SecurityConfigParamBuilder.class);
 
-    private SecurityConfigParamBuilder(){}
+    private SecurityConfigParamBuilder() {
+    }
 
     /**
      * Parse security configuration element and build the Security Config Parameters
@@ -100,7 +101,7 @@ public class SecurityConfigParamBuilder {
                             String value = trustProperty.getText().trim();
                             if (log.isDebugEnabled()) {
                                 log.debug("Trust Config property name : " + name +
-                                          " value : " + value);
+                                        " value : " + value);
                             }
 
                             if (ServerCrypto.PROP_ID_PRIVATE_STORE.equals(name)) {
@@ -123,7 +124,7 @@ public class SecurityConfigParamBuilder {
                             String value = authorizationProperty.getText().trim();
                             if (log.isDebugEnabled()) {
                                 log.debug("Authorization Config property name : " + name +
-                                          " value : " + value);
+                                        " value : " + value);
                             }
                             if (SecurityConstants.ALLOWED_ROLES_PARAM_NAME.equals(name)) {
                                 securityConfigParams.setAllowedRoles(value);
@@ -141,7 +142,7 @@ public class SecurityConfigParamBuilder {
                             String value = kerberosProperty.getText().trim();
                             if (log.isDebugEnabled()) {
                                 log.debug("Kerberos Config property name : " + name +
-                                          " value : " + value);
+                                        " value : " + value);
                             }
                             if (KerberosConfig.SERVICE_PRINCIPLE_PASSWORD.equals(name)) {
                                 securityConfigParams.setServerPrincipalPassword(value);
@@ -161,4 +162,3 @@ public class SecurityConfigParamBuilder {
     }
 
 }
-

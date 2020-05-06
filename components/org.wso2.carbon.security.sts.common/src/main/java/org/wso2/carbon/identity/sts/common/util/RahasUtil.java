@@ -34,7 +34,8 @@ import java.util.Properties;
 
 public class RahasUtil {
 
-    private RahasUtil(){}
+    private RahasUtil() {
+    }
 
     public static Parameter getSCTIssuerConfigParameter(String cryptoImpl,
                                                         Properties cryptoProperties,

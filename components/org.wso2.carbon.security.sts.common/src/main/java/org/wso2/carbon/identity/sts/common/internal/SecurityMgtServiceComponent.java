@@ -47,6 +47,7 @@ import org.wso2.carbon.utils.ConfigurationContextService;
         immediate = true
 )
 public class SecurityMgtServiceComponent {
+
     private static String POX_SECURITY_MODULE = "POXSecurityModule";
     private static final Log log = LogFactory.getLog(SecurityMgtServiceComponent.class);
     private static ConfigurationContextService configContextService = null;
@@ -54,11 +55,13 @@ public class SecurityMgtServiceComponent {
     private static RegistryService registryService;
 
     public static ConfigurationContext getServerConfigurationContext() {
+
         return configContextService.getServerConfigContext();
     }
 
     @Activate
     protected void activate(ComponentContext ctxt) {
+
         try {
             ConfigurationContext mainConfigCtx = configContextService.getServerConfigContext();
             AxisConfiguration mainAxisConfig = mainConfigCtx.getAxisConfiguration();
@@ -84,6 +87,7 @@ public class SecurityMgtServiceComponent {
 
     @Deactivate
     protected void deactivate(ComponentContext ctxt) {
+
         try {
             AxisConfiguration serverAxisConfig =
                     configContextService.getServerConfigContext().getAxisConfiguration();
@@ -104,6 +108,7 @@ public class SecurityMgtServiceComponent {
             unbind = "unsetConfigurationContextService"
     )
     protected void setConfigurationContextService(ConfigurationContextService contextService) {
+
         if (log.isDebugEnabled()) {
             log.debug("Setting the ConfigurationContext");
         }
@@ -119,6 +124,7 @@ public class SecurityMgtServiceComponent {
             unbind = "unsetRegistryService"
     )
     protected void setRegistryService(RegistryService registryService) {
+
         if (log.isDebugEnabled()) {
             log.debug("Setting the RegistryService");
         }
@@ -134,6 +140,7 @@ public class SecurityMgtServiceComponent {
             unbind = "unsetRealmService"
     )
     protected void setRealmService(RealmService realmService) {
+
         if (log.isDebugEnabled()) {
             log.debug("Setting the RealmService");
         }
@@ -142,6 +149,7 @@ public class SecurityMgtServiceComponent {
     }
 
     protected void unsetRealmService(RealmService realmService) {
+
         if (log.isDebugEnabled()) {
             log.debug("Unsetting the RealmService");
         }
@@ -150,6 +158,7 @@ public class SecurityMgtServiceComponent {
     }
 
     protected void unsetConfigurationContextService(ConfigurationContextService contextService) {
+
         if (log.isDebugEnabled()) {
             log.debug("Unsetting the ConfigurationContext");
         }
@@ -158,6 +167,7 @@ public class SecurityMgtServiceComponent {
     }
 
     protected void unsetRegistryService(RegistryService registryService) {
+
         if (log.isDebugEnabled()) {
             log.debug("Unsetting the RegistryService");
         }
@@ -173,6 +183,7 @@ public class SecurityMgtServiceComponent {
             unbind = "unsetTenantRegistryLoader"
     )
     protected void setTenantRegistryLoader(TenantRegistryLoader tenantRegistryLoader) {
+
         if (log.isDebugEnabled()) {
             log.debug("Tenant Registry Loader is set in the SAML SSO bundle");
         }
@@ -180,6 +191,7 @@ public class SecurityMgtServiceComponent {
     }
 
     protected void unsetTenantRegistryLoader(TenantRegistryLoader tenantRegistryLoader) {
+
         if (log.isDebugEnabled()) {
             log.debug("Tenant Registry Loader is unset in the SAML SSO bundle");
         }
@@ -203,7 +215,9 @@ public class SecurityMgtServiceComponent {
          is started */
     }
 
-    public static RegistryService getRegistryService(){
+    public static RegistryService getRegistryService() {
+
         return registryService;
     }
+
 }

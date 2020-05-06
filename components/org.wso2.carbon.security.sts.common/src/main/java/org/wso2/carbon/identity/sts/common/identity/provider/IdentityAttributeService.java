@@ -22,6 +22,6 @@ import org.opensaml.SAMLException;
 
 public interface IdentityAttributeService {
 
-    public void handle(SAMLAttributeCallback callback) throws SAMLException;
+    void handle(SAMLAttributeCallback callback) throws SAMLException;
 
 }

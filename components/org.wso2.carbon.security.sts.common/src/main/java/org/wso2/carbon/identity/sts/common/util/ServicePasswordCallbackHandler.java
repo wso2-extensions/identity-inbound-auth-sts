@@ -68,6 +68,7 @@ public class ServicePasswordCallbackHandler implements CallbackHandler {
                                           String serviceId,
                                           Registry registry, UserRealm realm)
             throws RegistryException, SecurityConfigException {
+
         this.registry = registry;
         this.serviceId = serviceId;
         this.serviceGroupId = serviceGroupId;
@@ -77,6 +78,7 @@ public class ServicePasswordCallbackHandler implements CallbackHandler {
 
     @Override
     public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
+
         try {
             for (int i = 0; i < callbacks.length; i++) {
                 if (callbacks[i] instanceof WSPasswordCallback) {
@@ -179,13 +181,13 @@ public class ServicePasswordCallbackHandler implements CallbackHandler {
                             }
                         default:
 
-                        /*
-                         * When the password is null WS4J reports an error
-                         * saying no password available for the user. But its
-                         * better if we simply report authentication failure
-                         * Therefore setting the password to be the empty string
-                         * in this situation.
-                         */
+                            /*
+                             * When the password is null WS4J reports an error
+                             * saying no password available for the user. But its
+                             * better if we simply report authentication failure
+                             * Therefore setting the password to be the empty string
+                             * in this situation.
+                             */
 
                             passwordCallback.setPassword(receivedPasswd);
                             break;
@@ -229,6 +231,7 @@ public class ServicePasswordCallbackHandler implements CallbackHandler {
     }
 
     private String getDecryptedPassword(String encryptedString) throws SecurityConfigException {
+
         CryptoUtil cryptoUtil = CryptoUtil.getDefaultCryptoUtil();
         try {
             return new String(cryptoUtil.base64DecodeAndDecrypt(encryptedString));

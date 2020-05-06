@@ -38,11 +38,13 @@ public class SignInPolicyTest {
 
     @BeforeClass
     public void setup() {
+
         existingPolicy = IdentityBaseUtil.policyString;
     }
 
     @Test
     public void testGetSignOnlyPolicy() throws Exception {
+
         Policy signOnlyPolicy = IdentityBaseUtil.getSignOnlyPolicy();
         assertNotNull(signOnlyPolicy);
         QName qName = new QName("http://docs.oasis-open" +
@@ -53,6 +55,7 @@ public class SignInPolicyTest {
 
     @Test(expectedExceptions = IdentityException.class)
     public void testGetSignOnlyPolicyInvalidPolicyString() throws Exception {
+
         IdentityBaseUtil.policyString = "Some Invalid Text";
         Policy signOnlyPolicy = IdentityBaseUtil.getSignOnlyPolicy();
         assertNotNull(signOnlyPolicy);
@@ -64,6 +67,8 @@ public class SignInPolicyTest {
 
     @AfterClass
     public void tearDown() {
+
         IdentityBaseUtil.policyString = existingPolicy;
     }
+
 }

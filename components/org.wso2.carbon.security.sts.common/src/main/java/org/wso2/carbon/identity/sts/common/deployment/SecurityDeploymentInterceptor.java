@@ -105,20 +105,20 @@ import javax.xml.stream.XMLStreamReader;
  * NOTE: This is a special type of AxisObserver, which can be used only within an OSGi framework
  * hence should not be added to the axis2.xml directly. If done so, it will throw NPEs, since
  * the registry & userRealm references are set through the OSGi decalative service framework.
- *
  */
-
 @Component(
         name = "SecurityDeploymentInterceptor",
         immediate = true
 )
 public class SecurityDeploymentInterceptor implements AxisObserver {
+
     private static final Log log = LogFactory.getLog(SecurityDeploymentInterceptor.class);
     private static final String NO_POLICY_ID = "NoPolicy";
     private static final String APPLY_POLICY_TO_BINDINGS = "applyPolicyToBindings";
 
     @Activate
     protected void activate(ComponentContext ctxt) {
+
         BundleContext bundleCtx = ctxt.getBundleContext();
         try {
             PrivilegedCarbonContext carbonContext = PrivilegedCarbonContext.getThreadLocalCarbonContext();
@@ -173,6 +173,7 @@ public class SecurityDeploymentInterceptor implements AxisObserver {
 
     @Override
     public void serviceUpdate(AxisEvent axisEvent, AxisService axisService) {
+
         if (axisEvent.getEventType() == AxisEvent.SERVICE_DEPLOY) {
 
             Policy policy = null;
@@ -228,11 +229,10 @@ public class SecurityDeploymentInterceptor implements AxisObserver {
                 throw new RuntimeException(msg, e);
             }
         }
-
     }
 
-    private void processPolicy (AxisService axisService, String policyId,
-                                PolicyComponent currentPolicyComponent) throws UserStoreException,
+    private void processPolicy(AxisService axisService, String policyId,
+                               PolicyComponent currentPolicyComponent) throws UserStoreException,
             AxisFault {
 
         AxisConfiguration axisConfiguration = null;
@@ -362,6 +362,7 @@ public class SecurityDeploymentInterceptor implements AxisObserver {
 
     private void applySecurityParameters(AxisService service, SecurityScenario secScenario,
                                          Policy policy) {
+
         try {
 
             UserRealm userRealm = (UserRealm) PrivilegedCarbonContext.getThreadLocalCarbonContext()
@@ -389,12 +390,12 @@ public class SecurityDeploymentInterceptor implements AxisObserver {
 
                 Properties cryptoProps = new Properties();
                 cryptoProps.setProperty(ServerCrypto.PROP_ID_PRIVATE_STORE,
-                                        configParams.getPrivateStore());
+                        configParams.getPrivateStore());
                 cryptoProps.setProperty(ServerCrypto.PROP_ID_DEFAULT_ALIAS,
-                                        configParams.getKeyAlias());
+                        configParams.getKeyAlias());
                 if (configParams.getTrustStores() != null) {
                     cryptoProps.setProperty(ServerCrypto.PROP_ID_TRUST_STORES,
-                                            configParams.getTrustStores());
+                            configParams.getTrustStores());
                 }
                 service.addParameter(RahasUtil.getSCTIssuerConfigParameter(
                         ServerCrypto.class.getName(), cryptoProps, -1, null, true, true));
@@ -429,7 +430,7 @@ public class SecurityDeploymentInterceptor implements AxisObserver {
                 if (allowRoles != null) {
                     for (String role : allowRoles) {
                         manager.authorizeRole(role, resourceName,
-                                              UserCoreConstants.INVOKE_SERVICE_PERMISSION);
+                                UserCoreConstants.INVOKE_SERVICE_PERMISSION);
                     }
                 }
             }
@@ -437,7 +438,7 @@ public class SecurityDeploymentInterceptor implements AxisObserver {
             // Password Callback Handler
             ServicePasswordCallbackHandler handler =
                     new ServicePasswordCallbackHandler(configParams, serviceGroupId, serviceName,
-                                                       govRegistry, userRealm);
+                            govRegistry, userRealm);
 
             Parameter param = new Parameter();
             param.setName(WSHandlerConstants.PW_CALLBACK_REF);
@@ -445,8 +446,8 @@ public class SecurityDeploymentInterceptor implements AxisObserver {
             service.addParameter(param);
 
         } catch (Throwable e) {
-        //TODO: Copied from 4.2.2.
-        //TODO: Not sure why we are catching throwable. Need to check error handling is correct
+            //TODO: Copied from 4.2.2.
+            //TODO: Not sure why we are catching throwable. Need to check error handling is correct
             String msg = "Cannot apply security parameters";
             log.error(msg, e);
         }
@@ -459,13 +460,14 @@ public class SecurityDeploymentInterceptor implements AxisObserver {
      * @return security config element
      */
     private OMElement getSecurityConfig(Policy policy) {
+
         Iterator<PolicyComponent> iterator = policy.getPolicyComponents().iterator();
         while (iterator.hasNext()) {
             PolicyComponent component = iterator.next();
             if (component instanceof XmlPrimtiveAssertion) {
                 OMElement value = ((XmlPrimtiveAssertion) component).getValue();
                 if (value != null &&
-                    SecurityConfigParamBuilder.SECURITY_CONFIG_QNAME.equals(value.getQName())) {
+                        SecurityConfigParamBuilder.SECURITY_CONFIG_QNAME.equals(value.getQName())) {
                     if (log.isDebugEnabled()) {
                         log.debug("Carbon Security config found : " + value.toString());
                     }
@@ -517,6 +519,7 @@ public class SecurityDeploymentInterceptor implements AxisObserver {
             unbind = "unsetRegistryService"
     )
     protected void setRegistryService(RegistryService registryService) {
+
         SecurityServiceHolder.setRegistryService(registryService);
     }
 
@@ -528,14 +531,17 @@ public class SecurityDeploymentInterceptor implements AxisObserver {
             unbind = "unsetRealmService"
     )
     protected void setRealmService(RealmService realmService) {
+
         SecurityServiceHolder.setRealmService(realmService);
     }
 
     protected void unsetRealmService(RealmService realmService) {
+
         SecurityServiceHolder.setRealmService(null);
     }
 
     protected void unsetRegistryService(RegistryService registryService) {
+
         SecurityServiceHolder.setRegistryService(null);
     }
 
@@ -546,8 +552,9 @@ public class SecurityDeploymentInterceptor implements AxisObserver {
      * @return whether policyID belongs to a security scenario
      */
     private boolean isSecPolicy(String policyId) {
+
         if ("RMPolicy".equals(policyId) || "WSO2CachingPolicy".equals(policyId)
-            || "WSO2ServiceThrottlingPolicy".equals(policyId)) {
+                || "WSO2ServiceThrottlingPolicy".equals(policyId)) {
             return false;
         }
         if (log.isDebugEnabled()) {
@@ -557,8 +564,8 @@ public class SecurityDeploymentInterceptor implements AxisObserver {
         return true;
     }
 
-    private void removeAuthorization (UserRealm userRealm, String serviceGroupId,
-                                      String serviceName) throws UserStoreException {
+    private void removeAuthorization(UserRealm userRealm, String serviceGroupId,
+                                     String serviceName) throws UserStoreException {
 
         AuthorizationManager manager = userRealm.getAuthorizationManager();
         String resourceName = serviceGroupId + "/" + serviceName;
@@ -574,6 +581,7 @@ public class SecurityDeploymentInterceptor implements AxisObserver {
     }
 
     private void applyPolicyToSTS(AxisService service) throws SecurityConfigException, AxisFault {
+
         try {
             int tenantId = CarbonContext.getThreadLocalCarbonContext().getTenantId();
             Registry configRegistry = SecurityServiceHolder.getRegistryService()
@@ -613,7 +621,6 @@ public class SecurityDeploymentInterceptor implements AxisObserver {
 
         OMElement policyElement = builder.getDocumentElement();
         return PolicyEngine.getPolicy(policyElement);
-
     }
 
     private String getRegistryServicePath(AxisService service) {
@@ -627,11 +634,13 @@ public class SecurityDeploymentInterceptor implements AxisObserver {
     }
 
     public PolicySubject getPolicySubjectFromBindings(AxisService service) {
-      return null;
+
+        return null;
     }
 
     public void addPolicyToAllBindings(AxisService axisService, Policy policy)
             throws ServerException {
+
         try {
             if (policy.getId() == null) {
                 // Generate an ID
@@ -659,6 +668,7 @@ public class SecurityDeploymentInterceptor implements AxisObserver {
     }
 
     private Policy applyPolicyToBindings(AxisService axisService) throws ServerException {
+
         Parameter parameter = axisService.getParameter(APPLY_POLICY_TO_BINDINGS);
         if (parameter != null && "true".equalsIgnoreCase(parameter.getValue().toString()) &&
                 axisService.getPolicySubject() != null && axisService.getPolicySubject().getAttachedPolicyComponents()

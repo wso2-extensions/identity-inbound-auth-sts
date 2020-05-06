@@ -34,7 +34,7 @@ public class ApplicationManagementServiceComponentHolder {
     private static ApplicationManagementServiceComponentHolder instance = new
             ApplicationManagementServiceComponentHolder();
     private static Map<String, AbstractInboundAuthenticatorConfig> inboundAuthenticatorConfigs =
-            new HashMap<String, AbstractInboundAuthenticatorConfig>();
+            new HashMap<>();
 
     private String authnTemplatesJson;
 

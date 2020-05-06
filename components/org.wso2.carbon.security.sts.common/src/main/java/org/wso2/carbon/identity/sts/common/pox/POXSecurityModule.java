@@ -54,6 +54,7 @@ public class POXSecurityModule implements Module {
 
     @Override
     public boolean canSupportAssertion(Assertion assertion) {
+
         return true;
     }
 

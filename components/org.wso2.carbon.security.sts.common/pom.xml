@@ -33,7 +33,6 @@
     <description>A custom wso2 products or solution</description>
     <url>http://wso2.org</url>
 
-
     <dependencies>
         <dependency>
             <groupId>org.wso2.orbit.org.apache.neethi</groupId>
@@ -195,15 +194,18 @@
                             org.wso2.carbon.user.api; version="${carbon.user.api.imp.pkg.version.range}",
                             org.wso2.carbon.registry.core.*;version="${carbon.kernel.registry.imp.pkg.version}",
                             org.wso2.carbon.registry.api;version="${carbon.kernel.registry.imp.pkg.version}",
-                            org.wso2.carbon.identity.provider; version="${identity.inbound.auth.openid.imp.pkg.version.range}",
+                            org.wso2.carbon.identity.provider;
+                            version="${identity.inbound.auth.openid.imp.pkg.version.range}",
                             org.wso2.carbon.identity.core.*; version="${identity.framework.imp.pkg.version.range}",
                             org.wso2.carbon.identity.base; version="${identity.framework.imp.pkg.version.range}",
-                            org.wso2.carbon.identity.application.*; version="${identity.framework.imp.pkg.version.range}",
+                            org.wso2.carbon.identity.application.*;
+                            version="${identity.framework.imp.pkg.version.range}",
                             org.wso2.carbon.security.*; version="${identity.framework.imp.pkg.version.range}"
                         </Import-Package>
                         <Export-Package>
                             !org.wso2.carbon.identity.sts.common.internal,
-                            org.wso2.carbon.identity.sts.common.*; version="${identity.inbound.auth.sts.package.export.version}",
+                            org.wso2.carbon.identity.sts.common.*;
+                            version="${identity.inbound.auth.sts.package.export.version}",
                         </Export-Package>
                         <Axis2RequiredServices>org.apache.axis2.engine.AxisObserver</Axis2RequiredServices>
                     </instructions>

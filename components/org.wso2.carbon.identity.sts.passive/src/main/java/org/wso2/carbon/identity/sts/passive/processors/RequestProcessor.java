@@ -1,20 +1,20 @@
 /*
-*  Copyright (c) 2005-2010, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
-*
-*  WSO2 Inc. licenses this file to you under the Apache License,
-*  Version 2.0 (the "License"); you may not use this file except
-*  in compliance with the License.
-*  You may obtain a copy of the License at
-*
-*    http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing,
-* software distributed under the License is distributed on an
-* "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-* KIND, either express or implied.  See the License for the
-* specific language governing permissions and limitations
-* under the License.
-*/
+ *  Copyright (c) 2005-2010, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ *
+ *  WSO2 Inc. licenses this file to you under the Apache License,
+ *  Version 2.0 (the "License"); you may not use this file except
+ *  in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
 package org.wso2.carbon.identity.sts.passive.processors;
 
 import org.apache.axiom.om.OMAbstractFactory;
@@ -77,6 +77,7 @@ public abstract class RequestProcessor {
      */
     @Deprecated
     protected OMElement getRST(String appliesTo, String attrs, String dialect) throws Exception {
+
         OMFactory factory = null;
         OMElement element = null;
         OMElement claims = null;
@@ -132,6 +133,7 @@ public abstract class RequestProcessor {
      * @throws Exception
      */
     protected OMElement getRST(String appliesTo, String attrs, String dialect, String tokenType) throws Exception {
+
         OMFactory factory = null;
         OMElement element = null;
         OMElement claims = null;
@@ -187,6 +189,7 @@ public abstract class RequestProcessor {
     public abstract ResponseToken process(RequestToken request) throws TrustException;
 
     private void addClaimType(OMElement parent, String uri) {
+
         OMElement element = null;
         element = parent.getOMFactory().createOMElement(
                 new QName("http://schemas.xmlsoap.org/ws/2005/05/identity", "ClaimType", "wsid"),
@@ -195,6 +198,7 @@ public abstract class RequestProcessor {
     }
 
     private KeyStoreData[] getKeyStores(UserRegistry systemRegistry) throws Exception {
+
         KeyStoreAdmin admin = new KeyStoreAdmin(CarbonContext.getThreadLocalCarbonContext()
                 .getTenantId(), systemRegistry);
         boolean isSuperAdmin = MultitenantConstants.SUPER_TENANT_ID == CarbonContext
@@ -203,11 +207,13 @@ public abstract class RequestProcessor {
     }
 
     public static String generateKSNameFromDomainName(String tenantDomain) {
+
         String ksName = tenantDomain.trim().replace(".", "-");
         return ksName + ".jks";
     }
 
     protected SAMLTokenIssuerConfig getSAMLTokenIssuerConfig(AxisService service, boolean isSuperTenant) throws Exception {
+
         UserRegistry systemRegistry;
         String keyAlias;
         String keyPassword;
@@ -327,8 +333,10 @@ public abstract class RequestProcessor {
     }
 
     private String getSuperTenantKeyStoreName() {
+
         String keyStoreFileLocation = ServerConfiguration.getInstance()
                 .getFirstProperty(RegistryResources.SecurityManagement.SERVER_PRIMARY_KEYSTORE_FILE);
         return KeyStoreUtil.getKeyStoreFileName(keyStoreFileLocation);
     }
+
 }

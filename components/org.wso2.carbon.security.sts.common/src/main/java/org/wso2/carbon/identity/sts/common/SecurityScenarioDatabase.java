@@ -27,25 +27,30 @@ import java.util.Map;
  * An in-memory DB which maintains all the security scenarios
  */
 public class SecurityScenarioDatabase {
+
     private static Map<String, SecurityScenario> scenarios =
             new LinkedHashMap<>();
 
-    private SecurityScenarioDatabase(){}
+    private SecurityScenarioDatabase() {
+    }
 
     public static void put(String scenarioId, SecurityScenario scenario) {
+
         scenarios.put(scenarioId, scenario);
     }
 
     public static SecurityScenario get(String scenarioId) {
+
         return scenarios.get(scenarioId);
     }
 
     public static Collection<SecurityScenario> getAllScenarios() {
+
         return scenarios.values();
     }
 
-
     public static SecurityScenario getByWsuId(String wsuIdValue) {
+
         SecurityScenario scenario = null;
         Iterator<SecurityScenario> ite = scenarios.values().iterator();
         while (ite.hasNext()) {
@@ -57,4 +62,5 @@ public class SecurityScenarioDatabase {
         }
         return scenario;
     }
+
 }

@@ -38,6 +38,7 @@ public class IdentityProviderUtil {
     }
 
     public static void setIntial(boolean intial) {
+
         IdentityProviderUtil.intial = intial;
     }
 
@@ -55,6 +56,7 @@ public class IdentityProviderUtil {
 
     public static OMElement createDisplayClaim(OMElement parent, String displayTag,
                                                String displayValue, String uri) {
+
         OMElement claimElem = createOMElement(parent, IdentityConstants.NS,
                 IdentityConstants.LocalNames.DISPLAY_CLAIM, IdentityConstants.PREFIX);
 
@@ -80,7 +82,6 @@ public class IdentityProviderUtil {
     private static OMElement createOMElement(OMElement parent, String ns, String ln, String prefix) {
 
         return parent.getOMFactory().createOMElement(new QName(ns, ln, prefix), parent);
-
     }
 
     /**
@@ -91,6 +92,7 @@ public class IdentityProviderUtil {
      * @throws IdentityProviderException
      */
     public static String getAppliesToHostName(RahasData data) throws IdentityProviderException {
+
         // If there's no applies to then we don't have to encrypt
         if (data.getAppliesToEpr() == null) {
             return null;
@@ -115,4 +117,5 @@ public class IdentityProviderUtil {
         }
         return uri.getHost();
     }
+
 }

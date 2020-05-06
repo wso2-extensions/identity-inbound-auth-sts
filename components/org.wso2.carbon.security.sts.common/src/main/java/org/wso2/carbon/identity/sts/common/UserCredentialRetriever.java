@@ -18,7 +18,6 @@
 
 package org.wso2.carbon.identity.sts.common;
 
-
 /*
 This interface is defined to provide plain text password for username token scenarios where user sends the digested
 password. In default callback handler class uses this class. Usually, this interface is implemented by custom userstore managers.
@@ -32,4 +31,5 @@ public interface UserCredentialRetriever {
      * @throws Exception - throws if failed to provide plain text password.
      */
     String getPassword(String username) throws Exception;
+
 }

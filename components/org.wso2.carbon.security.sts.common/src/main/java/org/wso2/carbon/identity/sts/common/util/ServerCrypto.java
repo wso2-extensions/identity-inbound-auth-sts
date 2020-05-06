@@ -91,12 +91,14 @@ public class ServerCrypto implements Crypto {
     private Boolean useXkms;
 
     public ServerCrypto(Properties prop) throws CredentialException, IOException {
+
         this(prop, ServerCrypto.class.getClassLoader());
     }
 
     public ServerCrypto(Properties prop, ClassLoader loader) throws CredentialException,
             IOException {
-            boolean isSetDoomFalse = false;
+
+        boolean isSetDoomFalse = false;
         try {
 
             int tenantId;
@@ -168,7 +170,6 @@ public class ServerCrypto implements Crypto {
         } finally {
             cacertsIs.close();
         }
-
     }
 
     @Override
@@ -176,6 +177,7 @@ public class ServerCrypto implements Crypto {
      * @see org.apache.ws.security.components.crypto.Crypto#loadCertificate(java.io.InputStream)
      */
     public X509Certificate loadCertificate(InputStream in) throws WSSecurityException {
+
         X509Certificate cert;
         try {
             cert = (X509Certificate) getCertificateFactory().generateCertificate(in);
@@ -192,6 +194,7 @@ public class ServerCrypto implements Crypto {
      */
     public X509Certificate[] getX509Certificates(byte[] data, boolean reverse)
             throws WSSecurityException {
+
         InputStream in = new ByteArrayInputStream(data);
         CertPath path;
         try {
@@ -216,6 +219,7 @@ public class ServerCrypto implements Crypto {
      */
     public byte[] getCertificateData(boolean reverse, X509Certificate[] certs)
             throws WSSecurityException {
+
         List list = new ArrayList();
         for (int i = 0; i < certs.length; i++) {
             if (reverse) {
@@ -242,6 +246,7 @@ public class ServerCrypto implements Crypto {
      * java.lang.String)
      */
     public PrivateKey getPrivateKey(String alias, String password) throws Exception {
+
         if (alias == null) {
             throw new Exception("alias is null");
         }
@@ -332,6 +337,7 @@ public class ServerCrypto implements Crypto {
      * @see org.apache.ws.security.components.crypto.Crypto#getAliasForX509Cert(java.security.cert.Certificate)
      */
     public String getAliasForX509Cert(Certificate cert) throws WSSecurityException {
+
         try {
             String alias = null;
 
@@ -389,6 +395,7 @@ public class ServerCrypto implements Crypto {
     }
 
     private String findAliasForCert(KeyStore ks, Certificate cert) throws KeyStoreException {
+
         Enumeration e = ks.aliases();
         while (e.hasMoreElements()) {
             String alias = (String) e.nextElement();
@@ -405,6 +412,7 @@ public class ServerCrypto implements Crypto {
      * @see org.apache.ws.security.components.crypto.Crypto#getAliasForX509Cert(java.lang.String)
      */
     public String getAliasForX509Cert(String issuer) throws WSSecurityException {
+
         String alias = getAliasForX509Cert(issuer, null, false, this.keystore);
         if (alias == null) {
             Iterator<KeyStore> ite = this.trustStores.iterator();
@@ -427,6 +435,7 @@ public class ServerCrypto implements Crypto {
      */
     public String getAliasForX509Cert(String issuer, BigInteger serialNumber)
             throws WSSecurityException {
+
         String alias = getAliasForX509Cert(issuer, serialNumber, true, this.keystore);
         if (alias == null) {
             Iterator<KeyStore> ite = this.trustStores.iterator();
@@ -446,6 +455,7 @@ public class ServerCrypto implements Crypto {
      * @see org.apache.ws.security.components.crypto.Crypto#getAliasForX509Cert(byte[])
      */
     public String getAliasForX509Cert(byte[] skiBytes) throws WSSecurityException {
+
         try {
 
             Certificate cert;
@@ -477,6 +487,7 @@ public class ServerCrypto implements Crypto {
      * @see org.apache.ws.security.components.crypto.Crypto#getDefaultX509Alias()
      */
     public String getDefaultX509Alias() {
+
         return this.properties.getProperty(PROP_ID_DEFAULT_ALIAS);
     }
 
@@ -485,6 +496,7 @@ public class ServerCrypto implements Crypto {
      * @see org.apache.ws.security.components.crypto.Crypto#getSKIBytesFromCert(java.security.cert.X509Certificate)
      */
     public byte[] getSKIBytesFromCert(X509Certificate cert) throws WSSecurityException {
+
         /*
          * Gets the DER-encoded OCTET string for the extension value (extnValue)
          * identified by the passed-in oid String. The oid string is represented
@@ -530,6 +542,7 @@ public class ServerCrypto implements Crypto {
      * @see org.apache.ws.security.components.crypto.Crypto#getAliasForX509CertThumb(byte[])
      */
     public String getAliasForX509CertThumb(byte[] thumb) throws WSSecurityException {
+
         Certificate cert;
         MessageDigest sha;
         try {
@@ -570,6 +583,7 @@ public class ServerCrypto implements Crypto {
      * @see org.apache.ws.security.components.crypto.Crypto#getKeyStore()
      */
     public KeyStore getKeyStore() {
+
         return this.keystore;
     }
 
@@ -578,6 +592,7 @@ public class ServerCrypto implements Crypto {
      * @see org.apache.ws.security.components.crypto.Crypto#getCertificateFactory()
      */
     public CertificateFactory getCertificateFactory() throws WSSecurityException {
+
         if (certFact == null) {
             try {
                 String provider = properties.getProperty(PROP_ID_CERT_PROVIDER);
@@ -668,6 +683,7 @@ public class ServerCrypto implements Crypto {
 
     private String getAliasForX509Cert(String issuer, BigInteger serialNumber,
                                        boolean useSerialNumber, KeyStore ks) throws WSSecurityException {
+
         Vector issuerRDN = splitAndTrim(issuer);
         X509Certificate x509cert;
         Vector certRDN;
@@ -698,6 +714,7 @@ public class ServerCrypto implements Crypto {
     }
 
     private Vector splitAndTrim(String inString) {
+
         X509NameTokenizer nmTokens = new X509NameTokenizer(inString);
         Vector vr = new Vector();
 
@@ -739,4 +756,5 @@ public class ServerCrypto implements Crypto {
         }
         return true;
     }
+
 }

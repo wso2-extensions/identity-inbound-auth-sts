@@ -18,31 +18,39 @@
 package org.wso2.carbon.identity.sts.common.identity.provider;
 
 public class RequestedClaimData {
+
     private String value;
     private String uri;
     private boolean bOptional;
 
     public String getValue() {
+
         return value;
     }
 
     public void setValue(String value) {
+
         this.value = value;
     }
 
     public String getUri() {
+
         return uri;
     }
 
     public void setUri(String uri) {
+
         this.uri = uri;
     }
 
     public boolean isBOptional() {
+
         return bOptional;
     }
 
     public void setBOptional(boolean optional) {
+
         bOptional = optional;
     }
+
 }

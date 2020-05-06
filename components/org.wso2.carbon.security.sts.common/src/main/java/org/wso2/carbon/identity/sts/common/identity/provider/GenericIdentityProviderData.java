@@ -68,6 +68,7 @@ public class GenericIdentityProviderData {
      * @throws ClassNotFoundException
      */
     public GenericIdentityProviderData(RahasData data) throws IdentityProviderException, ClassNotFoundException {
+
         OMElement rstElem = null;
         OMElement claimElem = null;
 
@@ -84,10 +85,12 @@ public class GenericIdentityProviderData {
     }
 
     public String getRequiredTokenType() {
+
         return requiredTokenType;
     }
 
     public void setRequiredTokenType(String requiredTokenType) {
+
         if (StringUtils.isBlank(requiredTokenType)) {
             this.requiredTokenType = getDefautTokenType();
         } else {
@@ -104,30 +107,37 @@ public class GenericIdentityProviderData {
      * @return Default Token Type
      */
     public String getDefautTokenType() {
+
         return IdentityConstants.SAML10_URL;
     }
 
     public X509Certificate getRpCert() {
+
         return rpCert;
     }
 
     public String getUserIdentifier() {
+
         return null;
     }
 
     public String getCardID() {
+
         return null;
     }
 
     public String getDisplayTokenLang() {
+
         return null;
     }
 
     public String getDisplayName(String uri) {
+
         return null;
     }
 
     public String getTenantDomain() throws IdentityProviderException {
+
         return null;
     }
 
@@ -135,6 +145,7 @@ public class GenericIdentityProviderData {
      * @throws IdentityProviderException
      */
     protected void loadClaims() throws IdentityProviderException {
+
         IdentityClaimManager claimManager = null;
         Claim[] claims = null;
 
@@ -240,6 +251,7 @@ public class GenericIdentityProviderData {
      * @param rahasData
      */
     protected void processUserIdentifier(RahasData rahasData) throws IdentityProviderException {
+
         if (log.isDebugEnabled()) {
             log.debug("Processing user identifier");
         }
@@ -251,6 +263,7 @@ public class GenericIdentityProviderData {
      * @throws IdentityProviderException
      */
     protected void populateClaimValues(RahasData rahasData) throws IdentityProviderException {
+
         UserStoreManager connector = null;
 
         if (log.isDebugEnabled()) {
@@ -376,6 +389,7 @@ public class GenericIdentityProviderData {
     }
 
     protected void readRequestedTokenType(RahasData data) {
+
         requiredTokenType = data.getTokenType();
         if (requiredTokenType == null || requiredTokenType.trim().length() == 0) {
             requiredTokenType = getDefautTokenType();
@@ -390,10 +404,12 @@ public class GenericIdentityProviderData {
      * @param requestedClaims
      */
     public void setRequestedClaims(Map<String, RequestedClaimData> requestedClaims) {
+
         this.requestedClaims = requestedClaims;
     }
 
     protected RequestedClaimData getRequestedClaim() {
+
         return new RequestedClaimData();
     }
 

@@ -26,36 +26,43 @@ public class SecurityConfigData {
     private KerberosConfigData kerberosConfigurations = null;
 
     public String[] getTrustedKeyStores() {
+
         return trustedKeyStores;
     }
 
     public void setTrustedKeyStores(String[] trustedKeyStores) {
+
         this.trustedKeyStores = trustedKeyStores;
     }
 
     public String[] getUserGroups() {
+
         return userGroups;
     }
 
     public void setUserGroups(String[] userGroups) {
+
         this.userGroups = userGroups;
     }
 
     public String getPrivateStore() {
+
         return privateStore;
     }
 
     public void setPrivateStore(String privateStore) {
+
         this.privateStore = privateStore;
     }
 
     public KerberosConfigData getKerberosConfigurations() {
+
         return kerberosConfigurations;
     }
 
     public void setKerberosConfigurations(KerberosConfigData kerberosConfigurations) {
+
         this.kerberosConfigurations = kerberosConfigurations;
     }
-
 
 }

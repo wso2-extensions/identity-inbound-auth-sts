@@ -22,21 +22,24 @@ import java.util.List;
 
 public class IdentityAttributeServiceStore {
 
-    private static List<IdentityAttributeService> attributeServices = new ArrayList<IdentityAttributeService>();
+    private static List<IdentityAttributeService> attributeServices = new ArrayList<>();
 
     private IdentityAttributeServiceStore() {
 
     }
 
     public static void addAttributeService(IdentityAttributeService service) {
+
         attributeServices.add(service);
     }
 
     public static IdentityAttributeService[] getAttributeServices() {
+
         return attributeServices.toArray(new IdentityAttributeService[attributeServices.size()]);
     }
 
     public static void removeAttributeService(IdentityAttributeService service) {
+
         attributeServices.remove(service);
     }
 

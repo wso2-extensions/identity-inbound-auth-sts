@@ -47,6 +47,7 @@ public class XmlConfiguration {
     }
 
     public XmlConfiguration(String xmlFile, String serverNamespace) throws CarbonException {
+
         if (serverNamespace != null) {
             this.serverNamespace = serverNamespace;
         }
@@ -63,6 +64,7 @@ public class XmlConfiguration {
     }
 
     public XmlConfiguration(InputStream xmlFile, String serverNamespace) throws CarbonException {
+
         if (serverNamespace != null) {
             this.serverNamespace = serverNamespace;
         }
@@ -79,6 +81,7 @@ public class XmlConfiguration {
     }
 
     public String getUniqueValue(String xPath) {
+
         SimpleNamespaceContext nsCtx = new SimpleNamespaceContext();
         nsCtx.addNamespace("ns", serverNamespace);
         try {
@@ -99,6 +102,7 @@ public class XmlConfiguration {
     }
 
     public OMElement[] getElements(String xPath) {
+
         SimpleNamespaceContext nsCtx = new SimpleNamespaceContext();
         nsCtx.addNamespace("ns", serverNamespace);
         try {
@@ -114,4 +118,5 @@ public class XmlConfiguration {
         }
         return new OMElement[0];
     }
+
 }

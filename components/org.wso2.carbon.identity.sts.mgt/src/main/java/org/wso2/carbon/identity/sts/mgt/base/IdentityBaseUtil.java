@@ -129,7 +129,6 @@ public class IdentityBaseUtil {
         policy.addAssertion(rampartConfig);
 
         return policy;
-
     }
 
     public static Policy getSignOnlyPolicy() throws IdentityException {
@@ -147,9 +146,6 @@ public class IdentityBaseUtil {
         }
 
         return policy;
-
     }
 
-
 }
-

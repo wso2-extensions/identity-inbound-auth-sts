@@ -130,6 +130,7 @@ public class SecurityConfigAdmin {
     private UserRealm realm = null;
 
     public SecurityConfigAdmin(AxisConfiguration config) throws SecurityConfigException {
+
         this.axisConfig = config;
 
         try {
@@ -143,6 +144,7 @@ public class SecurityConfigAdmin {
     }
 
     public SecurityConfigAdmin(AxisConfiguration config, Registry reg, CallbackHandler cb) {
+
         this.axisConfig = config;
         this.registry = reg;
         this.callback = cb;
@@ -157,6 +159,7 @@ public class SecurityConfigAdmin {
     }
 
     public SecurityConfigAdmin(UserRealm realm, Registry registry, AxisConfiguration config) throws SecurityConfigException {
+
         this.axisConfig = config;
         this.registry = registry;
         this.realm = realm;
@@ -172,6 +175,7 @@ public class SecurityConfigAdmin {
     }
 
     public SecurityScenarioData getSecurityScenario(String sceneId) throws SecurityConfigException {
+
         SecurityScenarioData data = null;
         SecurityScenario scenario = SecurityScenarioDatabase.get(sceneId);
         if (scenario != null) {
@@ -237,6 +241,7 @@ public class SecurityConfigAdmin {
     }
 
     public String[] getRequiredModules(String serviceName, String moduleId) throws Exception {
+
         SecurityScenarioData securityScenarioData = getCurrentScenario(serviceName);
 
         if (securityScenarioData != null) {
@@ -342,6 +347,7 @@ public class SecurityConfigAdmin {
     }
 
     private void removeSecurityPolicy(AxisService service, String scenarioWsId) throws SecurityConfigException {
+
         if (log.isDebugEnabled()) {
             log.debug("Removing security policy for service : " + service.getName() + " , " +
                     "ScenarioWsId :" + scenarioWsId);
@@ -422,6 +428,7 @@ public class SecurityConfigAdmin {
     }
 
     private Map<String, String> getTrustProperties(OMElement carbonSecConfig) {
+
         OMElement trustElement = null;
         if (carbonSecConfig != null) {
             if (log.isDebugEnabled()) {
@@ -434,6 +441,7 @@ public class SecurityConfigAdmin {
     }
 
     private OMElement getCarbonSecConfigs(Policy policy) {
+
         if (log.isDebugEnabled() && policy != null) {
             log.debug("Retrieving carbonSecConfigs from policy id : " + policy.getId());
         }
@@ -457,6 +465,7 @@ public class SecurityConfigAdmin {
     }
 
     private RampartConfig getRampartConfigs(Policy policy) {
+
         if (policy != null) {
             if (log.isDebugEnabled()) {
                 log.debug("Retrieving RampartConfigs from policy with id : " + policy.getId());
@@ -498,7 +507,6 @@ public class SecurityConfigAdmin {
             throws SecurityConfigException {
 
         // TODO Remove
-
     }
 
 
@@ -532,7 +540,6 @@ public class SecurityConfigAdmin {
         } catch (Exception e) {
             throw new SecurityConfigException("Error while persisting policy in registry ", e);
         }
-
     }
 
 
@@ -730,7 +737,6 @@ public class SecurityConfigAdmin {
         String servicePath = getRegistryServicePath(service);
         String policyResourcePath = servicePath + RegistryResources.POLICIES + policyID;
         registry.put(policyResourcePath, resource);
-
     }
 
     private OMElement addUserParameters(OMElement policyElement, String[] trustedStores, String privateStore,
@@ -850,6 +856,7 @@ public class SecurityConfigAdmin {
 
 
     private String getArrayAsString(String[] userGroups) {
+
         StringBuilder groups = new StringBuilder();
         boolean isFirst = true;
         for (String group : userGroups) {
@@ -1072,7 +1079,7 @@ public class SecurityConfigAdmin {
      *
      * @param serviceId          service name
      * @param transportProtocols transport protocols to expose
-     * @throws AxisFault                                        axisfault
+     * @throws AxisFault         axisfault
      * @throws SecurityConfigException ex
      */
     public void setServiceTransports(String serviceId, List<String> transportProtocols)
@@ -1236,6 +1243,7 @@ public class SecurityConfigAdmin {
      * @return Registry path to policy.
      */
     private String getPolicyRegistryPath(String serviceName) {
+
         AxisService service = axisConfig.getServiceForActivation(serviceName);
         // Define an empty string. This will only get executed when a policy is picked from registry. Having an empty
         // string will avoid issues if something went wrong while adding policy path to carbonSecConfig
@@ -1254,6 +1262,7 @@ public class SecurityConfigAdmin {
     }
 
     public SecurityScenario readCurrentScenario(String serviceName) throws SecurityConfigException {
+
         SecurityScenario scenario = null;
         scenario = null;
         AxisService service = axisConfig.getServiceForActivation(serviceName);
@@ -1353,6 +1362,7 @@ public class SecurityConfigAdmin {
      * @param serviceName - name of the service
      */
     public void forceActualServiceDeployment(String serviceName) {
+
         AxisService service = axisConfig.getServiceForActivation(serviceName);
         if (service == null) {
             // try to find it from the transit ghost map
@@ -1373,14 +1383,13 @@ public class SecurityConfigAdmin {
         }
     }
 
-
     /**
      * Returns the default "POX_ENABLED" cache
      */
     private Cache<String, String> getPOXCache() {
+
         CacheManager manager = Caching.getCacheManagerFactory().getCacheManager(POXSecurityHandler.POX_CACHE_MANAGER);
-        Cache<String, String> cache = manager.getCache(POXSecurityHandler.POX_ENABLED);
-        return cache;
+        return manager.getCache(POXSecurityHandler.POX_ENABLED);
     }
 
     private Map<String, String> getProperties(OMElement parentElement) {
@@ -1439,7 +1448,6 @@ public class SecurityConfigAdmin {
 
         OMElement policyElement = builder.getDocumentElement();
         return PolicyEngine.getPolicy(policyElement);
-
     }
 
     private Policy getCurrentPolicy(AxisService service) throws SecurityConfigException {
@@ -1470,6 +1478,7 @@ public class SecurityConfigAdmin {
 
     private void setRahasParameters(AxisService service, OMElement carbonSecConfig)
             throws Exception {
+
         SecurityConfigParams configParams =
                 SecurityConfigParamBuilder.getSecurityParams(carbonSecConfig);
 
@@ -1486,4 +1495,5 @@ public class SecurityConfigAdmin {
                 ServerCrypto.class.getName(), cryptoProps, -1, null, true, true));
         service.addParameter(RahasUtil.getTokenCancelerConfigParameter());
     }
+
 }

@@ -35,7 +35,8 @@ import java.util.Vector;
  */
 public class WSS4JUtil {
 
-    private WSS4JUtil(){}
+    private WSS4JUtil() {
+    }
 
     /**
      * Returns the UsernameTokenPrincipal from the security results.
@@ -74,11 +75,12 @@ public class WSS4JUtil {
         return null;
     }
 
-
     public static Parameter getClientUsernameTokenHandler(String password) {
+
         Parameter param = new Parameter();
         param.setName(WSHandlerConstants.PW_CALLBACK_REF);
         param.setValue(new ClientUserPasswordCallbackHandler(password));
         return param;
     }
+
 }

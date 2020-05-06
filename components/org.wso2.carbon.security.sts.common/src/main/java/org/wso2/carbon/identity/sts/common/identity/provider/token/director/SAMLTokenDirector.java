@@ -45,6 +45,7 @@ public class SAMLTokenDirector {
 
     public SAMLTokenDirector(SAMLTokenBuilder builder, RahasData rData, GenericIdentityProviderData iData)
             throws IdentityProviderException {
+
         this.builder = builder;
         this.rahasData = rData;
         this.ipData = iData;

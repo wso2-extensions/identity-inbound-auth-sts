@@ -45,6 +45,7 @@ public class SecurityScenario {
      * Constructs a new SecurityScenarioDO.
      */
     public SecurityScenario() {
+
         isGeneralPolicy = true;
     }
 
@@ -55,6 +56,7 @@ public class SecurityScenario {
      * @see #setSummary
      */
     public String getSummary() {
+
         return summary;
     }
 
@@ -65,6 +67,7 @@ public class SecurityScenario {
      * @see #getSummary
      */
     public void setSummary(String summary) {
+
         this.summary = summary;
     }
 
@@ -75,6 +78,7 @@ public class SecurityScenario {
      * @see #setDescription
      */
     public String getDescription() {
+
         return description;
     }
 
@@ -85,6 +89,7 @@ public class SecurityScenario {
      * @see #getDescription
      */
     public void setDescription(String description) {
+
         this.description = description;
     }
 
@@ -95,6 +100,7 @@ public class SecurityScenario {
      * @see #setScenarioId
      */
     public String getScenarioId() {
+
         return scenarioId;
     }
 
@@ -105,15 +111,18 @@ public class SecurityScenario {
      * @see #getScenarioId
      */
     public void setScenarioId(String scenarioId) {
+
         this.scenarioId = scenarioId;
     }
 
 
     public void addModule(String module) {
+
         modules.add(module);
     }
 
     public void addService(String service) {
+
         services.add(service);
     }
 
@@ -124,6 +133,7 @@ public class SecurityScenario {
      * @see #setIsCurrentScenario
      */
     public boolean getIsCurrentScenario() {
+
         return isCurrentScenario;
     }
 
@@ -134,54 +144,68 @@ public class SecurityScenario {
      * @see #isCurrentScenario
      */
     public void setIsCurrentScenario(boolean currentScenario) {
+
         isCurrentScenario = currentScenario;
     }
 
     public String getCategory() {
+
         return category;
     }
 
     public void setCategory(String category) {
+
         this.category = category;
     }
 
     public List<String> getModules() {
+
         return modules;
     }
 
     public List<String> getServices() {
+
         return services;
     }
 
     public String getWsuId() {
+
         return wsuId;
     }
 
     public void setWsuId(String wsuId) {
+
         this.wsuId = wsuId;
     }
 
     public boolean isCurrentScenario() {
+
         return isCurrentScenario;
     }
 
     public void setCurrentScenario(boolean currentScenario) {
+
         isCurrentScenario = currentScenario;
     }
 
     public String getType() {
+
         return type;
     }
 
     public void setType(String type) {
+
         this.type = type;
     }
 
     public boolean getGeneralPolicy() {
+
         return isGeneralPolicy;
     }
 
     public void setGeneralPolicy(boolean isGeneralPolicy) {
+
         this.isGeneralPolicy = isGeneralPolicy;
     }
+
 }

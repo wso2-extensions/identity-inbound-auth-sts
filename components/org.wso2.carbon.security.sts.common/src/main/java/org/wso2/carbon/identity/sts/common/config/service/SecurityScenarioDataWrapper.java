@@ -22,22 +22,28 @@ package org.wso2.carbon.identity.sts.common.config.service;
  * Provides the data necessary to render the security scenario wizard
  */
 public class SecurityScenarioDataWrapper {
+
     private SecurityScenarioData[] scenarios;
     private SecurityScenarioData currentScenario;
 
     public SecurityScenarioData getCurrentScenario() {
+
         return currentScenario;
     }
 
     public void setCurrentScenario(SecurityScenarioData currentScenario) {
+
         this.currentScenario = currentScenario;
     }
 
     public SecurityScenarioData[] getScenarios() {
+
         return scenarios;
     }
 
     public void setScenarios(SecurityScenarioData[] scenarios) {
+
         this.scenarios = scenarios;
     }
+
 }

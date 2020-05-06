@@ -20,7 +20,6 @@ package org.wso2.carbon.identity.sts.common;
 
 import org.wso2.carbon.base.ServerConfiguration;
 
-
 /**
  * Hold the information available in Carbon Security configuration element in the Security Policy
  */
@@ -35,7 +34,7 @@ public class SecurityConfigParams {
 
     /**
      * Get the private key store
-     *
+     * <p>
      * If the key store is defined in the Security configuration take it from there otherwise
      * key store is taken from the Server Configuration
      *
@@ -57,6 +56,7 @@ public class SecurityConfigParams {
      * @param privateStore private store
      */
     public void setPrivateStore(String privateStore) {
+
         this.privateStore = privateStore;
     }
 
@@ -66,6 +66,7 @@ public class SecurityConfigParams {
      * @return trusted stores as comma separated value
      */
     public String getTrustStores() {
+
         return trustStores;
     }
 
@@ -75,6 +76,7 @@ public class SecurityConfigParams {
      * @param trustStores trusted stores as comma separated value
      */
     public void setTrustStores(String trustStores) {
+
         this.trustStores = trustStores;
     }
 
@@ -84,6 +86,7 @@ public class SecurityConfigParams {
      * @return authorized roles as a comma separated value
      */
     public String getAllowedRoles() {
+
         return allowedRoles;
     }
 
@@ -93,18 +96,20 @@ public class SecurityConfigParams {
      * @param allowedRoles authorized roles as a comma separated value
      */
     public void setAllowedRoles(String allowedRoles) {
+
         this.allowedRoles = allowedRoles;
     }
 
     /**
      * Get the private key alias
-     *
+     * <p>
      * If the key alias is defined in the Security configuration take it from there otherwise
      * key alias is taken from the Server Configuration
      *
      * @return private key key alias
      */
     public String getKeyAlias() {
+
         if (keyAlias == null) {
             ServerConfiguration serverConfig = ServerConfiguration.getInstance();
             return serverConfig.getFirstProperty("Security.KeyStore.KeyAlias");
@@ -118,6 +123,7 @@ public class SecurityConfigParams {
      * @param keyAlias key alias
      */
     public void setKeyAlias(String keyAlias) {
+
         this.keyAlias = keyAlias;
     }
 
@@ -125,8 +131,9 @@ public class SecurityConfigParams {
      * Get the server principal password for kerberos authentication
      *
      * @return server principal password
-    */
+     */
     public String getServerPrincipalPassword() {
+
         return serverPrincipalPassword;
     }
 
@@ -136,6 +143,7 @@ public class SecurityConfigParams {
      * @param serverPrincipalPassword server principal password
      */
     public void setServerPrincipalPassword(String serverPrincipalPassword) {
+
         this.serverPrincipalPassword = serverPrincipalPassword;
     }
 
@@ -146,6 +154,7 @@ public class SecurityConfigParams {
      * @return whether server principal password is encrypted
      */
     public boolean isServerPrincipalPasswordEncrypted() {
+
         return isServerPrincipalPasswordEncrypted;
     }
 
@@ -155,6 +164,8 @@ public class SecurityConfigParams {
      * @param isServerPrincipalPasswordEncrypted whether server principal password is encrypted
      */
     public void setServerPrincipalPasswordEncrypted(boolean isServerPrincipalPasswordEncrypted) {
+
         this.isServerPrincipalPasswordEncrypted = isServerPrincipalPasswordEncrypted;
     }
+
 }

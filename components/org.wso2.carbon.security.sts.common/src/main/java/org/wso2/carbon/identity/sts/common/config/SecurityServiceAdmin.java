@@ -40,11 +40,12 @@ public class SecurityServiceAdmin {
 
 
     public SecurityServiceAdmin(AxisConfiguration config) throws ServerException {
-        this.axisConfig = config;
 
+        this.axisConfig = config;
     }
 
     public SecurityServiceAdmin(AxisConfiguration config, Registry registry) {
+
         this.axisConfig = config;
     }
 
@@ -58,6 +59,7 @@ public class SecurityServiceAdmin {
      */
     public void addSecurityPolicyToAllBindings(AxisService axisService, Policy policy)
             throws ServerException {
+
         try {
             if (policy.getId() == null) {
                 policy.setId(UUIDGenerator.getUUID());
@@ -86,6 +88,7 @@ public class SecurityServiceAdmin {
 
     public void removeSecurityPolicyFromAllBindings(AxisService axisService, String uuid)
             throws ServerException {
+
         if (log.isDebugEnabled()) {
             log.debug("Removing  security policy from all bindings.");
         }
@@ -102,6 +105,7 @@ public class SecurityServiceAdmin {
 
     public void setServiceParameterElement(String serviceName, Parameter parameter)
             throws AxisFault {
+
         AxisService axisService = axisConfig.getService(serviceName);
 
         if (axisService == null) {
@@ -116,7 +120,6 @@ public class SecurityServiceAdmin {
         } else {
             axisService.addParameter(parameter);
         }
-
     }
 
 }

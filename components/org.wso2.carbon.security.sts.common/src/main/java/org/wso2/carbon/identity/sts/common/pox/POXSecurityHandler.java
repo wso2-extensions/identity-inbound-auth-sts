@@ -1,4 +1,3 @@
-
 /*
  * Copyright (c) 2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
@@ -90,6 +89,7 @@ public class POXSecurityHandler implements Handler {
      * @see org.apache.axis2.engine.Handler#init(org.apache.axis2.description.HandlerDescription)
      */
     public void init(HandlerDescription description) {
+
         this.description = description;
     }
 
@@ -138,12 +138,12 @@ public class POXSecurityHandler implements Handler {
         boolean isBasicAuth = false;
         Parameter configParameter = msgCtx.getConfigurationContext().getAxisConfiguration().getParameter("enableBasicAuth");
         if (configParameter != null && configParameter.getValue() != null) {
-            isBasicAuth  = Boolean.parseBoolean(configParameter.getValue().toString());
+            isBasicAuth = Boolean.parseBoolean(configParameter.getValue().toString());
         }
 
         Parameter serviceParameter = msgCtx.getAxisService().getParameter("enableBasicAuth");
         if (serviceParameter != null && serviceParameter.getValue() != null) {
-            isBasicAuth  = Boolean.parseBoolean(serviceParameter.getValue().toString());
+            isBasicAuth = Boolean.parseBoolean(serviceParameter.getValue().toString());
         }
 
         String isPox = null;
@@ -185,7 +185,7 @@ public class POXSecurityHandler implements Handler {
                         }
                     }
 
-                    if (faultCode != null  && faultCode.contains("FailedAuthentication")) {  // this is standard error code according to the WS-Sec
+                    if (faultCode != null && faultCode.contains("FailedAuthentication")) {  // this is standard error code according to the WS-Sec
                         authenticationError = true;
                     }
 
@@ -340,6 +340,7 @@ public class POXSecurityHandler implements Handler {
     }
 
     private void setAuthHeaders(MessageContext msgCtx) throws IOException {
+
         String serverName = ServerConfiguration.getInstance().getFirstProperty("Name");
 
         if (serverName == null || serverName.trim().length() == 0) {
@@ -376,10 +377,10 @@ public class POXSecurityHandler implements Handler {
                     "BASIC realm=\"" + serverName + "\"");
             msgCtx.setProperty(MessageContext.TRANSPORT_HEADERS, responseHeaders);
         }
-
     }
 
     private String getScenarioId(MessageContext msgCtx, AxisService service) throws SecurityConfigException {
+
         String scenarioID = null;
         boolean scenarioIDSet = false;
         Parameter parameter;
@@ -437,6 +438,7 @@ public class POXSecurityHandler implements Handler {
      * @return true if its a soap message without a security header
      */
     private boolean isSOAPWithoutSecHeader(MessageContext msgCtx) {
+
         //see whether security header present: if so return false
         SOAPHeader soapHeader = msgCtx.getEnvelope().getHeader();
         if (soapHeader == null) {
@@ -462,7 +464,7 @@ public class POXSecurityHandler implements Handler {
                     element = ((OMElement) o).cloneOMElement();
                 }
 
-                if (elem != null &&  WSConstants.WSSE_LN.equals(elem.getLocalName())) {
+                if (elem != null && WSConstants.WSSE_LN.equals(elem.getLocalName())) {
                     return false; // security header already present. invalid request.
                 } else if (element != null && WSConstants.WSSE_LN.equals(element.getLocalName())) {
                     return false;
@@ -504,6 +506,7 @@ public class POXSecurityHandler implements Handler {
      * @see org.apache.axis2.engine.Handler#getHandlerDesc()
      */
     public HandlerDescription getHandlerDesc() {
+
         return this.description;
     }
 
@@ -512,6 +515,7 @@ public class POXSecurityHandler implements Handler {
      * @see org.apache.axis2.engine.Handler#getName()
      */
     public String getName() {
+
         return "REST/POX Security handler";
     }
 
@@ -520,6 +524,7 @@ public class POXSecurityHandler implements Handler {
      * @see org.apache.axis2.engine.Handler#getParameter(java.lang.String)
      */
     public Parameter getParameter(String name) {
+
         return this.description.getParameter(name);
     }
 
@@ -527,8 +532,10 @@ public class POXSecurityHandler implements Handler {
      * Returns the default "POX_ENABLED" cache
      */
     private Cache<String, String> getPOXCache() {
+
         CacheManager manager = Caching.getCacheManagerFactory().getCacheManager(POXSecurityHandler.POX_CACHE_MANAGER);
         Cache<String, String> cache = manager.getCache(POXSecurityHandler.POX_ENABLED);
         return cache;
     }
+
 }

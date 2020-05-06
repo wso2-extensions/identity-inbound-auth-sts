@@ -36,42 +36,53 @@ public class KerberosConfigData {
     private boolean useSubjectCredentialsOnly;
 
     public String getServicePrincipleName() {
+
         return servicePrincipleName;
     }
 
     public void setServicePrincipleName(String servicePrincipleName) {
+
         this.servicePrincipleName = servicePrincipleName;
     }
 
     public String getServicePrinciplePassword() {
+
         return servicePrinciplePassword;
     }
 
     public void setServicePrinciplePassword(String servicePrinciplePassword) {
+
         this.servicePrinciplePassword = servicePrinciplePassword;
     }
 
     public String getRealmName() {
+
         return realmName;
     }
 
     public void setRealmName(String realmName) {
+
         this.realmName = realmName;
     }
 
     public String getKdcAddress() {
+
         return kdcAddress;
     }
 
     public void setKdcAddress(String kdcAddress) {
+
         this.kdcAddress = kdcAddress;
     }
 
     public boolean isUseSubjectCredentialsOnly() {
+
         return useSubjectCredentialsOnly;
     }
 
     public void setUseSubjectCredentialsOnly(boolean useSubjectCredentialsOnly) {
+
         this.useSubjectCredentialsOnly = useSubjectCredentialsOnly;
     }
+
 }

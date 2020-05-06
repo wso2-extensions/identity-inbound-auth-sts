@@ -42,6 +42,7 @@ public class IdentityBaseUtilTest {
 
     @Test
     public void testGetDefaultRampartConfig() throws Exception {
+
         //mock ServerConfiguration
         mockStatic(ServerConfiguration.class);
         when(ServerConfiguration.getInstance()).thenReturn(mockServerConfig);
@@ -54,6 +55,8 @@ public class IdentityBaseUtilTest {
 
     @ObjectFactory
     public IObjectFactory getObjectFactory() {
+
         return new org.powermock.modules.testng.PowerMockObjectFactory();
     }
+
 }

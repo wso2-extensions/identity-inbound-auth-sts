@@ -18,6 +18,5 @@
 
 package org.wso2.carbon.identity.sts.common.util;
 
-public class XKMSCryptoClient { 
+public class XKMSCryptoClient {
 }
-

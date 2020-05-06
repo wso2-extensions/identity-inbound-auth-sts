@@ -37,6 +37,7 @@ public class SecurityDeploymentListener extends AbstractAxis2ConfigurationContex
 
     @Override
     public void createdConfigurationContext(ConfigurationContext configCtx) {
+
         AxisConfiguration axisConfig = configCtx.getAxisConfiguration();
         int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
         //Register SecurityDeploymentInterceptor as an AxisObserver in tenant's AxisConfig.

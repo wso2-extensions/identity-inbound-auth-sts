@@ -33,11 +33,13 @@ public class ClientUserPasswordCallbackHandler implements CallbackHandler {
     private String password;
 
     public ClientUserPasswordCallbackHandler(String password) {
+
         this.password = password;
     }
 
     @Override
     public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
+
         for (int i = 0; i < callbacks.length; i++) {
             if (callbacks[i] instanceof WSPasswordCallback) {
                 WSPasswordCallback passwordCallback = (WSPasswordCallback) callbacks[i];

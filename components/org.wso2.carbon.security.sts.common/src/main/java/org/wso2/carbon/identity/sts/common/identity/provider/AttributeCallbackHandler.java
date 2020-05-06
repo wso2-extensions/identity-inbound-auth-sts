@@ -77,6 +77,7 @@ public class AttributeCallbackHandler implements SAMLCallbackHandler {
 
     @Override
     public void handle(SAMLCallback callback) throws SAMLException {
+
         SAMLAttributeCallback attrCallback = null;
         RahasData data = null;
         OMElement claimElem = null;
@@ -149,7 +150,7 @@ public class AttributeCallbackHandler implements SAMLCallbackHandler {
                             if (StringUtils.isNotBlank(remoteClaimSuffixValue) &&
                                     StringUtils.isNotBlank(remoteClaimPrefixValue)) {
 
-                                if(!authenticatedUser.isFederatedUser()) {
+                                if (!authenticatedUser.isFederatedUser()) {
                                     if (log.isDebugEnabled()) {
                                         log.debug("Loading claim values from local UserStore for user: "
                                                 + authenticatedUser.toString());
@@ -184,6 +185,7 @@ public class AttributeCallbackHandler implements SAMLCallbackHandler {
     }
 
     private Attribute getSAML2Attribute(String name, String value, String namespace) {
+
         XMLObjectBuilderFactory builderFactory = null;
         SAMLObjectBuilder<Attribute> attrBuilder = null;
         Attribute attribute = null;
@@ -211,6 +213,7 @@ public class AttributeCallbackHandler implements SAMLCallbackHandler {
      * @throws IdentityProviderException
      */
     private void loadClaims(OMElement claimsElement, String spTenantDomain) throws IdentityProviderException {
+
         IdentityClaimManager claimManager;
         Claim[] claims;
         String claimDialect = null;
@@ -321,6 +324,7 @@ public class AttributeCallbackHandler implements SAMLCallbackHandler {
 
     protected void populateClaimValues(String userIdentifier, SAMLAttributeCallback callback)
             throws IdentityProviderException {
+
         UserStoreManager connector = null;
         RahasData rahasData = null;
 
@@ -409,7 +413,7 @@ public class AttributeCallbackHandler implements SAMLCallbackHandler {
                             }
                         }
 
-                        List<String> values = new ArrayList<String>();
+                        List<String> values = new ArrayList<>();
 
                         if (claimData.getValue().contains(userAttributeSeparator)) {
                             StringTokenizer st = new StringTokenizer(claimData.getValue(), userAttributeSeparator);
@@ -434,6 +438,7 @@ public class AttributeCallbackHandler implements SAMLCallbackHandler {
     }
 
     protected RequestedClaimData getRequestedClaim() {
+
         return new RequestedClaimData();
     }
 

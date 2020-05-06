@@ -34,6 +34,7 @@ public class InMemoryPasswordCallbackHandlerTest {
 
     @Test
     public void testHandle() throws Exception {
+
         InMemoryPasswordCallbackHandler.addUser("TestUser", "1234ABCD");
         WSPasswordCallback callback = new WSPasswordCallback("TestUser", "TestPW", "TestType", 0);
         InMemoryPasswordCallbackHandler tested = new InMemoryPasswordCallbackHandler();
@@ -43,6 +44,7 @@ public class InMemoryPasswordCallbackHandlerTest {
 
     @Test(expectedExceptions = UnsupportedCallbackException.class)
     public void testHandleInvalidUser() throws Exception {
+
         Callback dummyCallback = new NameCallback("Dummy");
         WSPasswordCallback callback = new WSPasswordCallback("NonExisting", "TestPW", "TestType", 0);
         InMemoryPasswordCallbackHandler tested = new InMemoryPasswordCallbackHandler();

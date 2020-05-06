@@ -72,6 +72,7 @@ public class SAML1TokenBuilder implements SAMLTokenBuilder {
     protected String appilesTo = null;
 
     protected static XMLObject buildXMLObject(QName objectQName) throws IdentityProviderException {
+
         XMLObjectBuilder builder = Configuration.getBuilderFactory().getBuilder(objectQName);
         if (builder == null) {
             throw new IdentityProviderException("Unable to retrieve builder for object QName " + objectQName);
@@ -82,6 +83,7 @@ public class SAML1TokenBuilder implements SAMLTokenBuilder {
     @Override
     public void createStatement(GenericIdentityProviderData ipData, RahasData rahasData)
             throws IdentityProviderException {
+
         if (log.isDebugEnabled()) {
             log.debug("Begin SAML statement creation.");
         }
@@ -132,6 +134,7 @@ public class SAML1TokenBuilder implements SAMLTokenBuilder {
     @Override
     public void createSAMLAssertion(DateTime notAfter, DateTime notBefore, String assertionId)
             throws IdentityProviderException {
+
         assertion = (Assertion) buildXMLObject(Assertion.DEFAULT_ELEMENT_NAME);
         Conditions conditions = (Conditions) buildXMLObject(Conditions.DEFAULT_ELEMENT_NAME);
         conditions.setNotBefore(notBefore);
@@ -161,6 +164,7 @@ public class SAML1TokenBuilder implements SAMLTokenBuilder {
 
     @Override
     public void setSignature(String signatureAlgorithm, X509Credential cred) throws IdentityProviderException {
+
         Signature signature = (Signature) buildXMLObject(Signature.DEFAULT_ELEMENT_NAME);
         signature.setSigningCredential(cred);
         signature.setSignatureAlgorithm(signatureAlgorithm);
@@ -186,6 +190,7 @@ public class SAML1TokenBuilder implements SAMLTokenBuilder {
 
     @Override
     public void marshellAndSign() throws IdentityProviderException {
+
         try {
             MarshallerFactory marshallerFactory = Configuration.getMarshallerFactory();
             Marshaller marshaller = marshallerFactory.getMarshaller(assertion);
@@ -204,6 +209,8 @@ public class SAML1TokenBuilder implements SAMLTokenBuilder {
 
     @Override
     public Element getSAMLasDOM() throws IdentityProviderException {
+
         return signedAssertion;
     }
+
 }

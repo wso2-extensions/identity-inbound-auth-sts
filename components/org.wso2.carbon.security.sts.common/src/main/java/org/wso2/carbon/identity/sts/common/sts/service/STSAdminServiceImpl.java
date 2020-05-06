@@ -52,6 +52,7 @@ public class STSAdminServiceImpl extends AbstractAdmin implements STSAdminServic
     @Override
     public void addTrustedService(String serviceAddress, String certAlias)
             throws SecurityConfigException {
+
         try {
             AxisService stsService = getAxisConfig().getService(ServerConstants.STS_NAME);
             Parameter origParam = stsService.getParameter(SAMLTokenIssuerConfig.SAML_ISSUER_CONFIG
@@ -78,6 +79,7 @@ public class STSAdminServiceImpl extends AbstractAdmin implements STSAdminServic
     }
 
     public void removeTrustedService(String serviceAddress) throws SecurityConfigException {
+
         try {
             AxisService stsService = getAxisConfig().getService(ServerConstants.STS_NAME);
             Parameter origParam = stsService.getParameter(SAMLTokenIssuerConfig.SAML_ISSUER_CONFIG
@@ -103,6 +105,7 @@ public class STSAdminServiceImpl extends AbstractAdmin implements STSAdminServic
 
     @Override
     public TrustedServiceData[] getTrustedServices() throws SecurityConfigException {
+
         try {
             AxisService service = getAxisConfig().getService(ServerConstants.STS_NAME);
             Parameter origParam = service.getParameter(SAMLTokenIssuerConfig.SAML_ISSUER_CONFIG
@@ -133,6 +136,7 @@ public class STSAdminServiceImpl extends AbstractAdmin implements STSAdminServic
 
     @Override
     public String getProofKeyType() throws SecurityConfigException {
+
         try {
             AxisService service = getAxisConfig().getService(ServerConstants.STS_NAME);
             Parameter origParam = service.getParameter(SAMLTokenIssuerConfig.SAML_ISSUER_CONFIG
@@ -154,6 +158,7 @@ public class STSAdminServiceImpl extends AbstractAdmin implements STSAdminServic
 
     @Override
     public void setProofKeyType(String keyType) throws SecurityConfigException {
+
         try {
             AxisService service = getAxisConfig().getService(ServerConstants.STS_NAME);
             Parameter origParam = service.getParameter(SAMLTokenIssuerConfig.SAML_ISSUER_CONFIG
@@ -205,11 +210,13 @@ public class STSAdminServiceImpl extends AbstractAdmin implements STSAdminServic
     }
 
     private void setSTSParameter(SAMLTokenIssuerConfig samlConfig) throws AxisFault {
+
         new SecurityServiceAdmin(getAxisConfig(), getConfigSystemRegistry()).
                 setServiceParameterElement(ServerConstants.STS_NAME, samlConfig.getParameter());
     }
 
     private KeyStoreData[] getKeyStores() throws SecurityConfigException {
+
         KeyStoreAdmin admin = new KeyStoreAdmin(CarbonContext.getThreadLocalCarbonContext().getTenantId(),
                 getGovernanceSystemRegistry());
         boolean isSuperTenant = CarbonContext.getThreadLocalCarbonContext().getTenantId() ==
@@ -218,6 +225,7 @@ public class STSAdminServiceImpl extends AbstractAdmin implements STSAdminServic
     }
 
     private String[] getStoreEntries(String keyStoreName) throws org.wso2.carbon.security.SecurityConfigException {
+
         KeyStoreAdmin admin = new KeyStoreAdmin(CarbonContext.getThreadLocalCarbonContext().getTenantId(),
                 getGovernanceSystemRegistry());
         return admin.getStoreEntries(keyStoreName);
@@ -225,6 +233,7 @@ public class STSAdminServiceImpl extends AbstractAdmin implements STSAdminServic
 
     private void persistTrustedService(String groupName, String serviceName, String trustedService,
                                        String certAlias) throws SecurityConfigException {
+
         Registry registry;
         String resourcePath;
         Resource resource;
@@ -253,6 +262,7 @@ public class STSAdminServiceImpl extends AbstractAdmin implements STSAdminServic
 
     private void removeTrustedService(String groupName, String serviceName, String trustedService)
             throws SecurityConfigException {
+
         Registry registry;
         String resourcePath;
         Resource resource;

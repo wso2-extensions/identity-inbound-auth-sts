@@ -37,6 +37,7 @@ public class SecurityAxis2ConfigurationContextObserver extends
 
     @Override
     public void createdConfigurationContext(ConfigurationContext configurationContext) {
+
         AxisConfiguration axisConfig = configurationContext.getAxisConfiguration();
         AxisModule poxSecModule =
                 axisConfig.getModule("POXSecurityModule");

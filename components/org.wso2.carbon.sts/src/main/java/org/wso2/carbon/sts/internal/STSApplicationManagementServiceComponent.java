@@ -44,11 +44,13 @@ import org.wso2.carbon.utils.ConfigurationContextService;
         immediate = true
 )
 public class STSApplicationManagementServiceComponent {
+
     private static Log log = LogFactory.getLog(STSApplicationManagementServiceComponent.class);
     private static BundleContext bundleContext;
 
     @Activate
     protected void activate(ComponentContext context) {
+
         try {
             bundleContext = context.getBundleContext();
             ServiceRegistration stsApplicationMgtListener = bundleContext.registerService(ApplicationMgtListener
@@ -71,6 +73,7 @@ public class STSApplicationManagementServiceComponent {
 
     @Deactivate
     protected void deactivate(ComponentContext context) {
+
         if (log.isDebugEnabled()) {
             log.debug("Identity STSApplicationManagementComponent bundle is deactivated");
         }
@@ -84,6 +87,7 @@ public class STSApplicationManagementServiceComponent {
             unbind = "unsetRegistryService"
     )
     protected void setRegistryService(RegistryService registryService) {
+
         if (log.isDebugEnabled()) {
             log.debug("RegistryService set in STSApplicationManagementComponent bundle");
         }
@@ -91,6 +95,7 @@ public class STSApplicationManagementServiceComponent {
     }
 
     protected void unsetRegistryService(RegistryService registryService) {
+
         if (log.isDebugEnabled()) {
             log.debug("RegistryService unset in STSApplicationManagementComponent bundle");
         }
@@ -105,6 +110,7 @@ public class STSApplicationManagementServiceComponent {
             unbind = "unsetRealmService"
     )
     protected void setRealmService(RealmService realmService) {
+
         if (log.isDebugEnabled()) {
             log.debug("Setting the Realm Service");
         }
@@ -112,6 +118,7 @@ public class STSApplicationManagementServiceComponent {
     }
 
     protected void unsetRealmService(RealmService realmService) {
+
         if (log.isDebugEnabled()) {
             log.debug("Unsetting the Realm Service");
         }
@@ -126,6 +133,7 @@ public class STSApplicationManagementServiceComponent {
             unbind = "unsetConfigurationContextService"
     )
     protected void setConfigurationContextService(ConfigurationContextService configContextService) {
+
         if (log.isDebugEnabled()) {
             log.debug("Setting the Configuration Context Service");
         }
@@ -133,6 +141,7 @@ public class STSApplicationManagementServiceComponent {
     }
 
     protected void unsetConfigurationContextService(ConfigurationContextService configContextService) {
+
         if (log.isDebugEnabled()) {
             log.debug("Unsetting the Configuration Context Service");
         }
@@ -147,10 +156,12 @@ public class STSApplicationManagementServiceComponent {
             unbind = "unsetInboundAuthenticatorConfig"
     )
     protected void setInboundAuthenticatorConfig(AbstractInboundAuthenticatorConfig authenticator) {
+
         ApplicationManagementServiceComponentHolder.addInboundAuthenticatorConfig(authenticator);
     }
 
     protected void unsetInboundAuthenticatorConfig(AbstractInboundAuthenticatorConfig authenticator) {
+
         ApplicationManagementServiceComponentHolder.removeInboundAuthenticatorConfig(authenticator.getName());
     }
 

@@ -28,7 +28,8 @@ import java.util.Properties;
  */
 public class RampartConfigUtil {
 
-    private RampartConfigUtil(){}
+    private RampartConfigUtil() {
+    }
 
     public static Properties getServerCryptoProperties(String[] trustedCertStores,
                                                        String privateKeyStore,
@@ -50,8 +51,10 @@ public class RampartConfigUtil {
     }
 
     public static String getCarbonSecurityConfigurationPath() {
+
         String carbonConfig = CarbonUtils.getCarbonConfigDirPath();
 
         return carbonConfig + File.separatorChar + "security";
     }
+
 }
