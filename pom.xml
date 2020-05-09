@@ -502,7 +502,7 @@
     </build>
 
     <properties>
-        <identity.framework.version>5.17.70-SNAPSHOT</identity.framework.version>
+        <identity.framework.version>5.17.77-SNAPSHOT</identity.framework.version>
         <identity.inbound.auth.sts.package.export.version>${project.version}
         </identity.inbound.auth.sts.package.export.version>
         <inbound.auth.openid.version>5.4.0</inbound.auth.openid.version>
