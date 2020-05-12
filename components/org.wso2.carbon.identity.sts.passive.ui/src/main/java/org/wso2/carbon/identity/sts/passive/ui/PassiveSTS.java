@@ -40,6 +40,8 @@ import org.wso2.carbon.identity.application.common.model.ServiceProvider;
 import org.wso2.carbon.identity.application.common.util.IdentityApplicationConstants;
 import org.wso2.carbon.identity.application.mgt.ApplicationManagementService;
 import org.wso2.carbon.identity.base.IdentityConstants;
+import org.wso2.carbon.identity.core.ServiceURLBuilder;
+import org.wso2.carbon.identity.core.URLBuilderException;
 import org.wso2.carbon.identity.core.util.IdentityUtil;
 import org.wso2.carbon.identity.sts.passive.stub.types.RequestToken;
 import org.wso2.carbon.identity.sts.passive.stub.types.ResponseToken;
@@ -345,9 +347,21 @@ public class PassiveSTS extends HttpServlet {
     private void sendToAuthenticationFramework(HttpServletRequest request, HttpServletResponse response,
                                                String sessionDataKey, SessionDTO sessionDTO) throws IOException {
 
-        String commonAuthURL = IdentityUtil.getServerURL(FrameworkConstants.COMMONAUTH, false, true);
+        String commonAuthURL;
+        try {
+            commonAuthURL = ServiceURLBuilder.create().addPath(FrameworkConstants.COMMONAUTH).build()
+                    .getAbsolutePublicURL();
+        } catch (URLBuilderException e) {
+            throw new IOException("Error occurred while building the commonauth URL during login.", e);
+        }
 
-        String selfPath = request.getRequestURI();
+        String selfPath;
+        try {
+            selfPath = ServiceURLBuilder.create().addPath(request.getRequestURI()).build().getRelativeInternalURL();
+        } catch (URLBuilderException e) {
+            throw new IOException("Error occurred while building the commonauth caller path URL during login.", e);
+        }
+
         //Authentication context keeps data which should be sent to commonAuth endpoint
         AuthenticationRequest authenticationRequest = new AuthenticationRequest();
         authenticationRequest.setRelyingParty(sessionDTO.getRealm());
