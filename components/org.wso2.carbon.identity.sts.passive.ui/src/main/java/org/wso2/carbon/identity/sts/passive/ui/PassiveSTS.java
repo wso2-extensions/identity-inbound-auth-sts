@@ -175,15 +175,22 @@ public class PassiveSTS extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-
         String sessionDataKey = req.getParameter(SESSION_DATA_KEY);
         if (sessionDataKey != null) {
             handleResponseFromAuthenticationFramework(req, resp);
             FrameworkUtils.removeAuthenticationResultFromCache(sessionDataKey);
         } else if ("wsignout1.0".equals(getAttribute(req.getParameterMap(), PassiveRequestorConstants.ACTION))) {
-            handleLogoutRequest(req, resp);
+            try {
+                handleLogoutRequest(req, resp);
+            } catch (PassiveSTSException e) {
+                log.error("Error occurred while handling the Passive STS logout request.", e);
+            }
         } else {
-            handleAuthenticationRequest(req, resp);
+            try {
+                handleAuthenticationRequest(req, resp);
+            } catch (PassiveSTSException e) {
+                log.error("Error occurred while handling the Passive STS authentication request.", e);
+            }
         }
     }
 
@@ -345,22 +352,18 @@ public class PassiveSTS extends HttpServlet {
     }
 
     private void sendToAuthenticationFramework(HttpServletRequest request, HttpServletResponse response,
-                                               String sessionDataKey, SessionDTO sessionDTO) throws IOException {
+                                               String sessionDataKey, SessionDTO sessionDTO)
+            throws IOException, PassiveSTSException {
 
         String commonAuthURL;
         try {
             commonAuthURL = ServiceURLBuilder.create().addPath(FrameworkConstants.COMMONAUTH).build()
                     .getAbsolutePublicURL();
         } catch (URLBuilderException e) {
-            throw new IOException("Error occurred while building the commonauth URL during login.", e);
+            throw new PassiveSTSException("Error occurred while building the commonauth URL during login.", e);
         }
 
-        String selfPath;
-        try {
-            selfPath = ServiceURLBuilder.create().addPath(request.getRequestURI()).build().getRelativeInternalURL();
-        } catch (URLBuilderException e) {
-            throw new IOException("Error occurred while building the commonauth caller path URL during login.", e);
-        }
+        String selfPath = request.getRequestURI();
 
         //Authentication context keeps data which should be sent to commonAuth endpoint
         AuthenticationRequest authenticationRequest = new AuthenticationRequest();
@@ -480,7 +483,8 @@ public class PassiveSTS extends HttpServlet {
         }
     }
 
-    private void handleLogoutRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    private void handleLogoutRequest(HttpServletRequest request, HttpServletResponse response)
+            throws IOException, PassiveSTSException {
 
         // wreply parameter is optional for the logout request. So we are setting that value from the service
         // provider configuration in case it is not available in the request.
@@ -553,7 +557,9 @@ public class PassiveSTS extends HttpServlet {
         }
     }
 
-    private void sendFrameworkForLogout(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    private void sendFrameworkForLogout(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException, PassiveSTSException {
+
         Map paramMap = request.getParameterMap();
         SessionDTO sessionDTO = new SessionDTO();
         sessionDTO.setAction(getAttribute(paramMap, PassiveRequestorConstants.ACTION));
@@ -569,7 +575,13 @@ public class PassiveSTS extends HttpServlet {
 
         String sessionDataKey = UUIDGenerator.generateUUID();
         addSessionDataToCache(sessionDataKey, sessionDTO);
-        String commonAuthURL = IdentityUtil.getServerURL(FrameworkConstants.COMMONAUTH, false, true);
+        String commonAuthURL;
+        try {
+            commonAuthURL = ServiceURLBuilder.create().addPath(FrameworkConstants.COMMONAUTH).build()
+                    .getAbsolutePublicURL();
+        } catch (URLBuilderException e) {
+            throw new PassiveSTSException("Error occurred while building the commonauth URL during logout.", e);
+        }
 
         String selfPath = request.getRequestURI();
         AuthenticationRequest authenticationRequest = new AuthenticationRequest();
@@ -598,7 +610,7 @@ public class PassiveSTS extends HttpServlet {
     }
 
     private void handleAuthenticationRequest(HttpServletRequest request, HttpServletResponse response)
-            throws IOException, ServletException {
+            throws IOException, ServletException, PassiveSTSException {
 
         Map paramMap = request.getParameterMap();
 
