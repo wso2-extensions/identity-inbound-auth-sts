@@ -568,7 +568,7 @@ public class PassiveSTS extends HttpServlet {
     private void sendFrameworkForLogout(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException, PassiveSTSException {
 
-        Map paramMap = request.getParameterMap();
+        Map<String, String[]> paramMap = request.getParameterMap();
         String tenantDomain = resolveTenantDomain(paramMap);
         SessionDTO sessionDTO = buildSessionDTO(paramMap, tenantDomain, request.getQueryString());
 
@@ -618,7 +618,7 @@ public class PassiveSTS extends HttpServlet {
     private void handleAuthenticationRequest(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException, PassiveSTSException {
 
-        Map paramMap = request.getParameterMap();
+        Map<String, String[]> paramMap = request.getParameterMap();
         String tenantDomain = resolveTenantDomain(paramMap);
         SessionDTO sessionDTO = buildSessionDTO(paramMap, tenantDomain, request.getQueryString());
 
@@ -628,27 +628,25 @@ public class PassiveSTS extends HttpServlet {
         sendToAuthenticationFramework(request, response, sessionDataKey, sessionDTO, tenantDomain);
     }
 
-    private String resolveTenantDomain(Map paramMap) {
+    private String resolveTenantDomain(Map<String, String[]> paramMap) {
 
-        String tenantDomain = null;
+        String tenantDomain;
         if (IdentityTenantUtil.isTenantQualifiedUrlsEnabled()) {
             tenantDomain = IdentityTenantUtil.getTenantDomainFromContext();
             if (log.isDebugEnabled()) {
                 log.debug("Tenant domain from context: " + tenantDomain);
             }
+            return tenantDomain;
         }
 
-        if (StringUtils.isBlank(tenantDomain)) {
-            tenantDomain = getAttribute(paramMap, MultitenantConstants.TENANT_DOMAIN);
-            if (log.isDebugEnabled()) {
-                log.debug("Tenant domain not available in context. Tenant domain from query param: " +
-                        tenantDomain);
-            }
+        tenantDomain = getAttribute(paramMap, MultitenantConstants.TENANT_DOMAIN);
+        if (log.isDebugEnabled()) {
+            log.debug("Tenant domain from query param: " + tenantDomain);
         }
         return tenantDomain;
     }
 
-    private SessionDTO buildSessionDTO(Map paramMap, String tenantDomain, String queryString) {
+    private SessionDTO buildSessionDTO(Map<String, String[]> paramMap, String tenantDomain, String queryString) {
 
         SessionDTO sessionDTO = new SessionDTO();
         sessionDTO.setAction(getAttribute(paramMap, PassiveRequestorConstants.ACTION));
