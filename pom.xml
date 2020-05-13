@@ -279,12 +279,6 @@
                 <version>${carbon.kernel.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.wso2.carbon.identity.framework</groupId>
-                <artifactId>org.wso2.carbon.identity.application.authentication.endpoint</artifactId>
-                <version>${identity.framework.version}</version>
-                <type>war</type>
-            </dependency>
-            <dependency>
                 <groupId>org.apache.cxf</groupId>
                 <artifactId>cxf-core</artifactId>
                 <version>${cxf-bundle.version}</version>
@@ -436,7 +430,7 @@
     </build>
 
     <properties>
-        <identity.framework.version>5.14.67</identity.framework.version>
+        <identity.framework.version>5.17.77</identity.framework.version>
         <identity.inbound.auth.sts.package.export.version>${project.version}
         </identity.inbound.auth.sts.package.export.version>
         <inbound.auth.openid.version>5.4.0</inbound.auth.openid.version>
