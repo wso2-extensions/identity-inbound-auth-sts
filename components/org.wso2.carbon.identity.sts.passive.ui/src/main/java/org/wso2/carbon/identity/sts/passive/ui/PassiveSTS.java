@@ -40,6 +40,9 @@ import org.wso2.carbon.identity.application.common.model.ServiceProvider;
 import org.wso2.carbon.identity.application.common.util.IdentityApplicationConstants;
 import org.wso2.carbon.identity.application.mgt.ApplicationManagementService;
 import org.wso2.carbon.identity.base.IdentityConstants;
+import org.wso2.carbon.identity.core.ServiceURLBuilder;
+import org.wso2.carbon.identity.core.URLBuilderException;
+import org.wso2.carbon.identity.core.util.IdentityTenantUtil;
 import org.wso2.carbon.identity.core.util.IdentityUtil;
 import org.wso2.carbon.identity.sts.passive.stub.types.RequestToken;
 import org.wso2.carbon.identity.sts.passive.stub.types.ResponseToken;
@@ -105,6 +108,7 @@ public class PassiveSTS extends HttpServlet {
     private static final String HTTPS = "https";
     private static final String PASSIVE_STS_CLIENT_TYPE = "passivests";
     private static final String PASSIVE_STS_W_REPLY_PROPERTY = "passiveSTSWReply";
+    private static final String PASSIVE_STS_EP_URL = "/passivests";
 
     /**
      * This method reads Passive STS Html Redirect file content.
@@ -173,15 +177,22 @@ public class PassiveSTS extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-
         String sessionDataKey = req.getParameter(SESSION_DATA_KEY);
         if (sessionDataKey != null) {
             handleResponseFromAuthenticationFramework(req, resp);
             FrameworkUtils.removeAuthenticationResultFromCache(sessionDataKey);
         } else if ("wsignout1.0".equals(getAttribute(req.getParameterMap(), PassiveRequestorConstants.ACTION))) {
-            handleLogoutRequest(req, resp);
+            try {
+                handleLogoutRequest(req, resp);
+            } catch (PassiveSTSException e) {
+                log.error("Error occurred while handling the Passive STS logout request.", e);
+            }
         } else {
-            handleAuthenticationRequest(req, resp);
+            try {
+                handleAuthenticationRequest(req, resp);
+            } catch (PassiveSTSException e) {
+                log.error("Error occurred while handling the Passive STS authentication request.", e);
+            }
         }
     }
 
@@ -343,17 +354,31 @@ public class PassiveSTS extends HttpServlet {
     }
 
     private void sendToAuthenticationFramework(HttpServletRequest request, HttpServletResponse response,
-                                               String sessionDataKey, SessionDTO sessionDTO) throws IOException {
+                                               String sessionDataKey, SessionDTO sessionDTO, String tenantDomain)
+            throws IOException, PassiveSTSException {
 
-        String commonAuthURL = IdentityUtil.getServerURL(FrameworkConstants.COMMONAUTH, false, true);
+        String commonAuthURL;
+        try {
+            commonAuthURL = ServiceURLBuilder.create().addPath(FrameworkConstants.COMMONAUTH).build()
+                    .getAbsolutePublicURL();
+        } catch (URLBuilderException e) {
+            throw new PassiveSTSException("Error occurred while building the commonauth URL during login.", e);
+        }
 
-        String selfPath = request.getRequestURI();
+        String selfPath;
+        try {
+            selfPath = ServiceURLBuilder.create().addPath(PASSIVE_STS_EP_URL).build().getRelativeInternalURL();
+        } catch (URLBuilderException e) {
+            throw new PassiveSTSException("Error occurred while building commonauth caller path URL during login.", e);
+        }
+
         //Authentication context keeps data which should be sent to commonAuth endpoint
         AuthenticationRequest authenticationRequest = new AuthenticationRequest();
         authenticationRequest.setRelyingParty(sessionDTO.getRealm());
         authenticationRequest.setCommonAuthCallerPath(selfPath);
         authenticationRequest.setForceAuth(false);
         authenticationRequest.setRequestQueryParams(request.getParameterMap());
+        authenticationRequest.setTenantDomain(tenantDomain);
 
         //adding headers in out going request to authentication request context
         for (Enumeration e = request.getHeaderNames(); e.hasMoreElements(); ) {
@@ -466,7 +491,8 @@ public class PassiveSTS extends HttpServlet {
         }
     }
 
-    private void handleLogoutRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    private void handleLogoutRequest(HttpServletRequest request, HttpServletResponse response)
+            throws IOException, PassiveSTSException {
 
         // wreply parameter is optional for the logout request. So we are setting that value from the service
         // provider configuration in case it is not available in the request.
@@ -539,31 +565,37 @@ public class PassiveSTS extends HttpServlet {
         }
     }
 
-    private void sendFrameworkForLogout(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        Map paramMap = request.getParameterMap();
-        SessionDTO sessionDTO = new SessionDTO();
-        sessionDTO.setAction(getAttribute(paramMap, PassiveRequestorConstants.ACTION));
-        sessionDTO.setAttributes(getAttribute(paramMap, PassiveRequestorConstants.ATTRIBUTE));
-        sessionDTO.setContext(getAttribute(paramMap, PassiveRequestorConstants.CONTEXT));
-        sessionDTO.setReplyTo(getAttribute(paramMap, PassiveRequestorConstants.REPLY_TO));
-        sessionDTO.setPseudo(getAttribute(paramMap, PassiveRequestorConstants.PSEUDO));
-        sessionDTO.setRealm(getAttribute(paramMap, PassiveRequestorConstants.REALM));
-        sessionDTO.setRequest(getAttribute(paramMap, PassiveRequestorConstants.REQUEST));
-        sessionDTO.setRequestPointer(getAttribute(paramMap, PassiveRequestorConstants.REQUEST_POINTER));
-        sessionDTO.setPolicy(getAttribute(paramMap, PassiveRequestorConstants.POLCY));
-        sessionDTO.setReqQueryString(request.getQueryString());
+    private void sendFrameworkForLogout(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException, PassiveSTSException {
+
+        Map<String, String[]> paramMap = request.getParameterMap();
+        String tenantDomain = resolveTenantDomain(paramMap);
+        SessionDTO sessionDTO = buildSessionDTO(paramMap, tenantDomain, request.getQueryString());
 
         String sessionDataKey = UUIDGenerator.generateUUID();
         addSessionDataToCache(sessionDataKey, sessionDTO);
-        String commonAuthURL = IdentityUtil.getServerURL(FrameworkConstants.COMMONAUTH, false, true);
+        String commonAuthURL;
+        try {
+            commonAuthURL = ServiceURLBuilder.create().addPath(FrameworkConstants.COMMONAUTH).build()
+                    .getAbsolutePublicURL();
+        } catch (URLBuilderException e) {
+            throw new PassiveSTSException("Error occurred while building the commonauth URL during logout.", e);
+        }
 
-        String selfPath = request.getRequestURI();
+        String selfPath;
+        try {
+            selfPath = ServiceURLBuilder.create().addPath(PASSIVE_STS_EP_URL).build().getRelativeInternalURL();
+        } catch (URLBuilderException e) {
+            throw new PassiveSTSException("Error occurred while building commonauth caller path URL during logout.", e);
+        }
+
         AuthenticationRequest authenticationRequest = new AuthenticationRequest();
         authenticationRequest.addRequestQueryParam(FrameworkConstants.RequestParams.LOGOUT,
                 new String[]{Boolean.TRUE.toString()});
         authenticationRequest.setRequestQueryParams(request.getParameterMap());
         authenticationRequest.setCommonAuthCallerPath(selfPath);
         authenticationRequest.appendRequestQueryParams(request.getParameterMap());
+        authenticationRequest.setTenantDomain(tenantDomain);
         // According to ws-federation-1.2-spec; 'wtrealm' will not be sent in the Passive STS Logout Request.
         if (sessionDTO.getRealm() == null || sessionDTO.getRealm().trim().length() == 0) {
             authenticationRequest.setRelyingParty(new String());
@@ -584,9 +616,37 @@ public class PassiveSTS extends HttpServlet {
     }
 
     private void handleAuthenticationRequest(HttpServletRequest request, HttpServletResponse response)
-            throws IOException, ServletException {
+            throws IOException, ServletException, PassiveSTSException {
 
-        Map paramMap = request.getParameterMap();
+        Map<String, String[]> paramMap = request.getParameterMap();
+        String tenantDomain = resolveTenantDomain(paramMap);
+        SessionDTO sessionDTO = buildSessionDTO(paramMap, tenantDomain, request.getQueryString());
+
+        String sessionDataKey = UUIDGenerator.generateUUID();
+        addSessionDataToCache(sessionDataKey, sessionDTO);
+
+        sendToAuthenticationFramework(request, response, sessionDataKey, sessionDTO, tenantDomain);
+    }
+
+    private String resolveTenantDomain(Map<String, String[]> paramMap) {
+
+        String tenantDomain;
+        if (IdentityTenantUtil.isTenantQualifiedUrlsEnabled()) {
+            tenantDomain = IdentityTenantUtil.getTenantDomainFromContext();
+            if (log.isDebugEnabled()) {
+                log.debug("Tenant domain from context: " + tenantDomain);
+            }
+            return tenantDomain;
+        }
+
+        tenantDomain = getAttribute(paramMap, MultitenantConstants.TENANT_DOMAIN);
+        if (log.isDebugEnabled()) {
+            log.debug("Tenant domain from query param: " + tenantDomain);
+        }
+        return tenantDomain;
+    }
+
+    private SessionDTO buildSessionDTO(Map<String, String[]> paramMap, String tenantDomain, String queryString) {
 
         SessionDTO sessionDTO = new SessionDTO();
         sessionDTO.setAction(getAttribute(paramMap, PassiveRequestorConstants.ACTION));
@@ -598,13 +658,10 @@ public class PassiveSTS extends HttpServlet {
         sessionDTO.setRequest(getAttribute(paramMap, PassiveRequestorConstants.REQUEST));
         sessionDTO.setRequestPointer(getAttribute(paramMap, PassiveRequestorConstants.REQUEST_POINTER));
         sessionDTO.setPolicy(getAttribute(paramMap, PassiveRequestorConstants.POLCY));
-        sessionDTO.setTenantDomain(getAttribute(paramMap, MultitenantConstants.TENANT_DOMAIN));
-        sessionDTO.setReqQueryString(request.getQueryString());
+        sessionDTO.setTenantDomain(tenantDomain);
+        sessionDTO.setReqQueryString(queryString);
 
-        String sessionDataKey = UUIDGenerator.generateUUID();
-        addSessionDataToCache(sessionDataKey, sessionDTO);
-
-        sendToAuthenticationFramework(request, response, sessionDataKey, sessionDTO);
+        return sessionDTO;
     }
 
     private void addSessionDataToCache(String sessionDataKey, SessionDTO sessionDTO) {
