@@ -17,7 +17,7 @@
 */
 package org.wso2.carbon.identity.sts.passive;
 
-import org.wso2.carbon.identity.sts.passive.processors.AttributeRequestProcessor;
+//import org.wso2.carbon.identity.sts.passive.processors.AttributeRequestProcessor;
 import org.wso2.carbon.identity.sts.passive.processors.PseudonymRequestProcessor;
 import org.wso2.carbon.identity.sts.passive.processors.RequestProcessor;
 import org.wso2.carbon.identity.sts.passive.processors.SigningRequestProcessor;
@@ -45,7 +45,7 @@ public class RequestProcessorFactory {
         }
 
         if (PassiveRequestorConstants.REQUESTOR_ACTION_ATTRIBUTES_10.equals(action)) {
-            return new AttributeRequestProcessor();
+//            return new AttributeRequestProcessor();
         }
 
         if (PassiveRequestorConstants.REQUESTOR_ACTION_PSEUDONYM_10.equals(action)) {

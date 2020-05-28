@@ -17,21 +17,22 @@
  */
 package org.wso2.carbon.identity.sts.passive.processors;
 
-import org.apache.axiom.om.OMAbstractFactory;
+//import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.OMFactory;
-import org.apache.axis2.context.MessageContext;
+//import org.apache.axiom.om.OMFactory;
+//import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.rahas.RahasConstants;
-import org.apache.rahas.RahasData;
-import org.apache.rahas.TrustException;
-import org.apache.rahas.TrustUtil;
-import org.apache.rahas.client.STSClient;
-import org.apache.rahas.impl.SAMLTokenIssuerConfig;
-import org.apache.rahas.impl.TokenIssuerUtil;
-import org.apache.ws.secpolicy.Constants;
+//import org.apache.rahas.RahasConstants;
+//import org.apache.rahas.RahasData;
+//import org.apache.rahas.TrustException;
+//import org.apache.rahas.TrustUtil;
+//import org.apache.rahas.client.STSClient;
+//import org.apache.rahas.impl.SAMLTokenIssuerConfig;
+//import org.apache.rahas.impl.TokenIssuerUtil;
+//import org.apache.ws.secpolicy.Constants;
+import org.apache.cxf.ws.security.sts.provider.STSException;
 import org.wso2.carbon.base.ServerConfiguration;
 import org.wso2.carbon.context.CarbonContext;
 import org.wso2.carbon.context.PrivilegedCarbonContext;
@@ -45,9 +46,9 @@ import org.wso2.carbon.identity.application.common.util.IdentityApplicationConst
 import org.wso2.carbon.identity.application.common.util.IdentityApplicationManagementUtil;
 import org.wso2.carbon.identity.base.IdentityConstants;
 import org.wso2.carbon.identity.core.util.IdentityUtil;
-import org.wso2.carbon.identity.sts.common.identity.provider.AttributeCallbackHandler;
-import org.wso2.carbon.identity.sts.common.util.RampartConfigUtil;
-import org.wso2.carbon.identity.sts.common.util.ServerCrypto;
+//import org.wso2.carbon.identity.sts.common.identity.provider.AttributeCallbackHandler;
+//import org.wso2.carbon.identity.sts.common.util.RampartConfigUtil;
+//import org.wso2.carbon.identity.sts.common.util.ServerCrypto;
 import org.wso2.carbon.identity.sts.passive.RequestToken;
 import org.wso2.carbon.identity.sts.passive.ResponseToken;
 import org.wso2.carbon.identity.sts.passive.internal.IdentityPassiveSTSServiceComponent;
@@ -57,12 +58,12 @@ import org.wso2.carbon.registry.core.session.UserRegistry;
 import org.wso2.carbon.registry.core.utils.RegistryUtils;
 import org.wso2.carbon.security.keystore.KeyStoreAdmin;
 import org.wso2.carbon.security.keystore.service.KeyStoreData;
-import org.wso2.carbon.user.core.UserCoreConstants;
+//import org.wso2.carbon.user.core.UserCoreConstants;
 import org.wso2.carbon.utils.ServerConstants;
 import org.wso2.carbon.utils.multitenancy.MultitenantConstants;
 
 import java.util.Iterator;
-import java.util.List;
+//import java.util.List;
 import java.util.Map.Entry;
 import java.util.Properties;
 import javax.xml.namespace.QName;
@@ -70,123 +71,123 @@ import javax.xml.namespace.QName;
 public abstract class RequestProcessor {
 
     private static final Log log = LogFactory.getLog(RequestProcessor.class);
-    protected RahasData rahasData = null;
+//    protected RahasData rahasData = null;
 
-    /**
-     * @deprecated As of release 5.2.0 replaced by {@link #getRST(String, String, String, String)}
-     */
+//    /**
+//     * @deprecated As of release 5.2.0 replaced by {@link #getRST(String, String, String, String)}
+//     */
     @Deprecated
-    protected OMElement getRST(String appliesTo, String attrs, String dialect) throws Exception {
+//    protected OMElement getRST(String appliesTo, String attrs, String dialect) throws Exception {
+//
+//        OMFactory factory = null;
+//        OMElement element = null;
+//        OMElement claims = null;
+//        STSClient client = null;
+//        String[] attributes = null;
+//        String requestType;
+//
+//        if (dialect == null) {
+//            dialect = UserCoreConstants.DEFAULT_CARBON_DIALECT;
+//        }
+//
+//        if (attrs != null) {
+//            if (attrs.contains("#CODE#")) {
+//                attributes = attrs.split("#CODE#");
+//            } else {
+//                attributes = attrs.split(",");
+//            }
+//        }
+//
+//        requestType = TrustUtil.getWSTNamespaceForRSTRequestTye(RahasConstants.VERSION_05_12)
+//                + RahasConstants.REQ_TYPE_ISSUE;
+//
+//        factory = OMAbstractFactory.getOMFactory();
+//        element = factory.createOMElement(Constants.RST_TEMPLATE);
+//        TrustUtil.createTokenTypeElement(RahasConstants.VERSION_05_12, element).setText(
+//                RahasConstants.TOK_TYPE_SAML_10);
+//        TrustUtil.createKeyTypeElement(RahasConstants.VERSION_05_12, element,
+//                RahasConstants.KEY_TYPE_SYMM_KEY);
+//        TrustUtil.createKeySizeElement(RahasConstants.VERSION_05_12, element, 256);
+//
+//        if (attributes != null && attributes.length > 0) {
+//            claims = TrustUtil.createClaims(RahasConstants.VERSION_05_12, element,
+//                    dialect);
+//            for (int i = 0; i < attributes.length; i++) {
+//                addClaimType(claims, attributes[i]);
+//            }
+//        }
+//
+//        client = new STSClient(MessageContext.getCurrentMessageContext().getConfigurationContext());
+//        client.setVersion(RahasConstants.VERSION_05_12);
+//        client.setRstTemplate(element);
+//        return client.createIssueRequest(requestType, appliesTo);
+//    }
+//
+//    /**
+//     * Method to get the RST
+//     *
+//     * @param appliesTo
+//     * @param attrs
+//     * @param dialect
+//     * @param tokenType Requested token type. If null SAML 1.1 RST will be generated.
+//     * @return
+//     * @throws Exception
+//     */
+//    protected OMElement getRST(String appliesTo, String attrs, String dialect, String tokenType) throws Exception {
+//
+//        OMFactory factory = null;
+//        OMElement element = null;
+//        OMElement claims = null;
+//        STSClient client = null;
+//        String[] attributes = null;
+//        String requestType;
+//
+//        if (dialect == null) {
+//            dialect = UserCoreConstants.DEFAULT_CARBON_DIALECT;
+//        }
+//
+//        if (attrs != null) {
+//            if (attrs.contains("#CODE#")) {
+//                attributes = attrs.split("#CODE#");
+//            } else {
+//                attributes = attrs.split(",");
+//            }
+//        }
+//
+//        requestType = TrustUtil.getWSTNamespaceForRSTRequestTye(RahasConstants.VERSION_05_12)
+//                + RahasConstants.REQ_TYPE_ISSUE;
+//
+//        factory = OMAbstractFactory.getOMFactory();
+//        element = factory.createOMElement(Constants.RST_TEMPLATE);
+//        if (RahasConstants.TOK_TYPE_SAML_10.equalsIgnoreCase(tokenType)) {
+//            TrustUtil.createTokenTypeElement(RahasConstants.VERSION_05_12,
+//                    element).setText(RahasConstants.TOK_TYPE_SAML_10);
+//        } else if (RahasConstants.TOK_TYPE_SAML_20.equalsIgnoreCase(tokenType)) {
+//            TrustUtil.createTokenTypeElement(RahasConstants.VERSION_05_12,
+//                    element).setText(RahasConstants.TOK_TYPE_SAML_20);
+//        } else {
+//            TrustUtil.createTokenTypeElement(RahasConstants.VERSION_05_12,
+//                    element).setText(RahasConstants.TOK_TYPE_SAML_10);
+//        }
+//        TrustUtil.createKeyTypeElement(RahasConstants.VERSION_05_12, element,
+//                RahasConstants.KEY_TYPE_SYMM_KEY);
+//        TrustUtil.createKeySizeElement(RahasConstants.VERSION_05_12, element, 256);
+//
+//        if (attributes != null && attributes.length > 0) {
+//            claims = TrustUtil.createClaims(RahasConstants.VERSION_05_12, element,
+//                    dialect);
+//            for (int i = 0; i < attributes.length; i++) {
+//                addClaimType(claims, attributes[i]);
+//            }
+//        }
+//
+//        client = new STSClient(MessageContext.getCurrentMessageContext().getConfigurationContext());
+//        client.setVersion(RahasConstants.VERSION_05_12);
+//        client.setRstTemplate(element);
+//        return client.createIssueRequest(requestType, appliesTo);
+//    }
 
-        OMFactory factory = null;
-        OMElement element = null;
-        OMElement claims = null;
-        STSClient client = null;
-        String[] attributes = null;
-        String requestType;
-
-        if (dialect == null) {
-            dialect = UserCoreConstants.DEFAULT_CARBON_DIALECT;
-        }
-
-        if (attrs != null) {
-            if (attrs.contains("#CODE#")) {
-                attributes = attrs.split("#CODE#");
-            } else {
-                attributes = attrs.split(",");
-            }
-        }
-
-        requestType = TrustUtil.getWSTNamespaceForRSTRequestTye(RahasConstants.VERSION_05_12)
-                + RahasConstants.REQ_TYPE_ISSUE;
-
-        factory = OMAbstractFactory.getOMFactory();
-        element = factory.createOMElement(Constants.RST_TEMPLATE);
-        TrustUtil.createTokenTypeElement(RahasConstants.VERSION_05_12, element).setText(
-                RahasConstants.TOK_TYPE_SAML_10);
-        TrustUtil.createKeyTypeElement(RahasConstants.VERSION_05_12, element,
-                RahasConstants.KEY_TYPE_SYMM_KEY);
-        TrustUtil.createKeySizeElement(RahasConstants.VERSION_05_12, element, 256);
-
-        if (attributes != null && attributes.length > 0) {
-            claims = TrustUtil.createClaims(RahasConstants.VERSION_05_12, element,
-                    dialect);
-            for (int i = 0; i < attributes.length; i++) {
-                addClaimType(claims, attributes[i]);
-            }
-        }
-
-        client = new STSClient(MessageContext.getCurrentMessageContext().getConfigurationContext());
-        client.setVersion(RahasConstants.VERSION_05_12);
-        client.setRstTemplate(element);
-        return client.createIssueRequest(requestType, appliesTo);
-    }
-
-    /**
-     * Method to get the RST
-     *
-     * @param appliesTo
-     * @param attrs
-     * @param dialect
-     * @param tokenType Requested token type. If null SAML 1.1 RST will be generated.
-     * @return
-     * @throws Exception
-     */
-    protected OMElement getRST(String appliesTo, String attrs, String dialect, String tokenType) throws Exception {
-
-        OMFactory factory = null;
-        OMElement element = null;
-        OMElement claims = null;
-        STSClient client = null;
-        String[] attributes = null;
-        String requestType;
-
-        if (dialect == null) {
-            dialect = UserCoreConstants.DEFAULT_CARBON_DIALECT;
-        }
-
-        if (attrs != null) {
-            if (attrs.contains("#CODE#")) {
-                attributes = attrs.split("#CODE#");
-            } else {
-                attributes = attrs.split(",");
-            }
-        }
-
-        requestType = TrustUtil.getWSTNamespaceForRSTRequestTye(RahasConstants.VERSION_05_12)
-                + RahasConstants.REQ_TYPE_ISSUE;
-
-        factory = OMAbstractFactory.getOMFactory();
-        element = factory.createOMElement(Constants.RST_TEMPLATE);
-        if (RahasConstants.TOK_TYPE_SAML_10.equalsIgnoreCase(tokenType)) {
-            TrustUtil.createTokenTypeElement(RahasConstants.VERSION_05_12,
-                    element).setText(RahasConstants.TOK_TYPE_SAML_10);
-        } else if (RahasConstants.TOK_TYPE_SAML_20.equalsIgnoreCase(tokenType)) {
-            TrustUtil.createTokenTypeElement(RahasConstants.VERSION_05_12,
-                    element).setText(RahasConstants.TOK_TYPE_SAML_20);
-        } else {
-            TrustUtil.createTokenTypeElement(RahasConstants.VERSION_05_12,
-                    element).setText(RahasConstants.TOK_TYPE_SAML_10);
-        }
-        TrustUtil.createKeyTypeElement(RahasConstants.VERSION_05_12, element,
-                RahasConstants.KEY_TYPE_SYMM_KEY);
-        TrustUtil.createKeySizeElement(RahasConstants.VERSION_05_12, element, 256);
-
-        if (attributes != null && attributes.length > 0) {
-            claims = TrustUtil.createClaims(RahasConstants.VERSION_05_12, element,
-                    dialect);
-            for (int i = 0; i < attributes.length; i++) {
-                addClaimType(claims, attributes[i]);
-            }
-        }
-
-        client = new STSClient(MessageContext.getCurrentMessageContext().getConfigurationContext());
-        client.setVersion(RahasConstants.VERSION_05_12);
-        client.setRstTemplate(element);
-        return client.createIssueRequest(requestType, appliesTo);
-    }
-
-    public abstract ResponseToken process(RequestToken request) throws TrustException;
+    public abstract ResponseToken process(RequestToken request) throws STSException;
 
     private void addClaimType(OMElement parent, String uri) {
 
@@ -212,7 +213,7 @@ public abstract class RequestProcessor {
         return ksName + ".jks";
     }
 
-    protected SAMLTokenIssuerConfig getSAMLTokenIssuerConfig(AxisService service, boolean isSuperTenant) throws Exception {
+    protected Object getSAMLTokenIssuerConfig(AxisService service, boolean isSuperTenant) throws Exception {
 
         UserRegistry systemRegistry;
         String keyAlias;
@@ -281,30 +282,30 @@ public abstract class RequestProcessor {
 
         if (privateKeyAlias != null) {
 
-            String cryptoProvider = ServerCrypto.class.getName();
-
-            Properties props = RampartConfigUtil.getServerCryptoProperties(
-                    new String[]{keyStoreName}, keyStoreName, privateKeyAlias);
-
-            SAMLTokenIssuerConfig stsSamlConfig = new SAMLTokenIssuerConfig(issuerName,
-                    cryptoProvider, props);
-            stsSamlConfig.setIssuerKeyAlias(keyAlias);
-            stsSamlConfig.setIssuerKeyPassword(keyPassword);
-            stsSamlConfig.setAddRequestedAttachedRef(true);
-            stsSamlConfig.setAddRequestedUnattachedRef(true);
-            stsSamlConfig.setKeyComputation(2);
-            stsSamlConfig.setProofKeyType(TokenIssuerUtil.BINARY_SECRET);
-            stsSamlConfig.setCallbackHandlerName(AttributeCallbackHandler.class.getName());
-            if (ttl != null && ttl.length() > 0) {
-                try {
-                    stsSamlConfig.setTtl(Long.parseLong(ttl));
-                    if (log.isDebugEnabled()) {
-                        log.debug("STSTimeToLive read from carbon.xml in passive STS " + ttl);
-                    }
-                } catch (NumberFormatException e) {
-                    log.error("Error while reading STSTimeToLive from carbon.xml", e);
-                }
-            }
+//            String cryptoProvider = ServerCrypto.class.getName();
+//
+//            Properties props = RampartConfigUtil.getServerCryptoProperties(
+//                    new String[]{keyStoreName}, keyStoreName, privateKeyAlias);
+//
+//            SAMLTokenIssuerConfig stsSamlConfig = new SAMLTokenIssuerConfig(issuerName,
+//                    cryptoProvider, props);
+//            stsSamlConfig.setIssuerKeyAlias(keyAlias);
+//            stsSamlConfig.setIssuerKeyPassword(keyPassword);
+//            stsSamlConfig.setAddRequestedAttachedRef(true);
+//            stsSamlConfig.setAddRequestedUnattachedRef(true);
+//            stsSamlConfig.setKeyComputation(2);
+//            stsSamlConfig.setProofKeyType(TokenIssuerUtil.BINARY_SECRET);
+//            stsSamlConfig.setCallbackHandlerName(AttributeCallbackHandler.class.getName());
+//            if (ttl != null && ttl.length() > 0) {
+//                try {
+//                    stsSamlConfig.setTtl(Long.parseLong(ttl));
+//                    if (log.isDebugEnabled()) {
+//                        log.debug("STSTimeToLive read from carbon.xml in passive STS " + ttl);
+//                    }
+//                } catch (NumberFormatException e) {
+//                    log.error("Error while reading STSTimeToLive from carbon.xml", e);
+//                }
+//            }
             String resourcePath = null;
             resourcePath = RegistryResources.SERVICE_GROUPS + ServerConstants.STS_NAME
                     + RegistryResources.SERVICES + ServerConstants.STS_NAME + "/trustedServices";
@@ -321,13 +322,13 @@ public abstract class RequestProcessor {
                         if (RegistryUtils.isHiddenProperty(entry.getKey().toString())) {
                             continue;
                         }
-                        stsSamlConfig.addTrustedServiceEndpointAddress((String) entry.getKey(),
-                                (String) ((List) entry.getValue()).get(0));
+//                        stsSamlConfig.addTrustedServiceEndpointAddress((String) entry.getKey(),
+//                                (String) ((List) entry.getValue()).get(0));
                     }
                 }
             }
 
-            return stsSamlConfig;
+//            return stsSamlConfig;
         }
         return null;
     }
