@@ -26,7 +26,6 @@ import org.apache.wss4j.common.saml.bean.AttributeBean;
 import org.apache.wss4j.common.saml.bean.AttributeStatementBean;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -41,54 +40,23 @@ public class CustomAttributeProvider implements AttributeStatementProvider {
      * @return AttributeStatementBean containing the attribute list.
      */
     public AttributeStatementBean getStatement(TokenProviderParameters providerParameters) {
+
         List<AttributeBean> attributeList = new ArrayList<>();
 
         TokenRequirements tokenRequirements = providerParameters.getTokenRequirements();
         String tokenType = tokenRequirements.getTokenType();
 
-        // Handle Claims
+        // Handle Claims.
         ProcessedClaimCollection retrievedClaims = ClaimsUtils.processClaims(providerParameters);
 
         AttributeStatementBean attrBean = new AttributeStatementBean();
-        Iterator<ProcessedClaim> claimIterator = retrievedClaims.iterator();
-        if (!claimIterator.hasNext()) {
-            // If no Claims have been processed then create a default attribute
-            AttributeBean attributeBean = createDefaultAttribute(tokenType);
-            attributeList.add(attributeBean);
-        }
-
-        while (claimIterator.hasNext()) {
-            ProcessedClaim claim = claimIterator.next();
+        for (ProcessedClaim claim : retrievedClaims) {
             AttributeBean attributeBean = createAttributeFromClaim(claim, tokenType);
             attributeList.add(attributeBean);
         }
-
         attrBean.setSamlAttributes(attributeList);
 
         return attrBean;
-    }
-
-    /**
-     * Create a default attribute.
-     *
-     * @param tokenType Type of the token SAML1.1/SAML2.0.
-     * @return Attribute bean containing the default attribute.
-     */
-    private AttributeBean createDefaultAttribute(String tokenType) {
-        AttributeBean attributeBean = new AttributeBean();
-
-        if (WSS4JConstants.WSS_SAML2_TOKEN_TYPE.equals(tokenType)
-                || WSS4JConstants.SAML2_NS.equals(tokenType)) {
-            attributeBean.setQualifiedName("http://wso2.org/claims/username");
-            attributeBean.setNameFormat("http://wso2.org/claims/username");
-        } else {
-            attributeBean.setSimpleName("username");
-            attributeBean.setQualifiedName("http://wso2.org/claims/username");
-        }
-
-        attributeBean.addAttributeValue("admin");
-
-        return attributeBean;
     }
 
     /**
@@ -99,12 +67,13 @@ public class CustomAttributeProvider implements AttributeStatementProvider {
      * @return Attribute bean created with the help of the claim.
      */
     private AttributeBean createAttributeFromClaim(ProcessedClaim claim, String tokenType) {
+
         AttributeBean attributeBean = new AttributeBean();
         if (WSS4JConstants.WSS_SAML2_TOKEN_TYPE.equals(tokenType)
                 || WSS4JConstants.SAML2_NS.equals(tokenType)) {
             attributeBean.setQualifiedName(claim.getClaimType());
         } else {
-            attributeBean.setSimpleName(claim.getClaimType());
+            attributeBean.setQualifiedName(claim.getClaimType());
         }
         attributeBean.setAttributeValues(claim.getValues());
 
