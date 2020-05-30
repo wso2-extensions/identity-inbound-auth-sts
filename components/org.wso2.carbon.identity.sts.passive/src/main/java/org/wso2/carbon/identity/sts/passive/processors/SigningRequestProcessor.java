@@ -60,9 +60,6 @@ public class SigningRequestProcessor extends RequestProcessor {
 
     private static final Log log = LogFactory.getLog(SigningRequestProcessor.class);
 
-    public static final String STS_SIGNATURE_ALGORITHM = "Security.STSSignatureAlgorithm";
-    public static final String STS_DIGEST_ALGORITHM = "Security.STSDigestAlgorithm";
-
     public ResponseToken process(RequestToken request) throws STSException {
 
         ResponseToken responseToken;

@@ -23,6 +23,7 @@ import org.apache.cxf.message.MessageImpl;
 import org.apache.cxf.security.SecurityContext;
 import org.apache.cxf.sts.STSConstants;
 import org.apache.cxf.sts.STSPropertiesMBean;
+import org.apache.cxf.sts.SignatureProperties;
 import org.apache.cxf.sts.StaticSTSProperties;
 import org.apache.cxf.sts.operation.TokenIssueOperation;
 import org.apache.cxf.sts.service.ServiceMBean;
@@ -61,6 +62,9 @@ import java.util.Properties;
 public class RequestProcessorUtil {
 
     private static final Log log = LogFactory.getLog(RequestProcessorUtil.class);
+    private static final String STS_TIME_TO_LIVE_KEY = "STSTimeToLive";
+    private static final String STS_SIGNATURE_ALGORITHM_KEY = "Security.STSSignatureAlgorithm";
+    private static final String STS_DIGEST_ALGORITHM_KEY = "Security.STSDigestAlgorithm";
 
     /**
      * Sets the SAML token provider to the issue operation.
@@ -82,7 +86,7 @@ public class RequestProcessorUtil {
 
         DefaultConditionsProvider conditionsProvider = new DefaultConditionsProvider();
         conditionsProvider.setAcceptClientLifetime(true);
-        String lifeTime = ServerConfiguration.getInstance().getFirstProperty("STSTimeToLive");
+        String lifeTime = ServerConfiguration.getInstance().getFirstProperty(STS_TIME_TO_LIVE_KEY);
         if (lifeTime != null && lifeTime.length() > 0) {
             try {
                 conditionsProvider.setLifetime(Long.parseLong(lifeTime));
@@ -163,6 +167,10 @@ public class RequestProcessorUtil {
      */
     public static void addSTSProperties(TokenIssueOperation issueOperation, String issuer) throws WSSecurityException {
 
+        ServerConfiguration serverConfig = ServerConfiguration.getInstance();
+        String signatureAlgorithm = serverConfig.getFirstProperty(STS_SIGNATURE_ALGORITHM_KEY);
+        String digestAlgorithm = serverConfig.getFirstProperty(STS_DIGEST_ALGORITHM_KEY);
+
         STSPropertiesMBean stsProperties = new StaticSTSProperties();
         Crypto crypto = CryptoFactory.getInstance(getEncryptionProperties());
 
@@ -172,6 +180,13 @@ public class RequestProcessorUtil {
         stsProperties.setSignatureUsername("mystskey");
         stsProperties.setCallbackHandler(new PasswordCallbackHandler());
         stsProperties.setIssuer(issuer);
+
+        SignatureProperties signatureProperties = new SignatureProperties();
+        signatureProperties.setAcceptedSignatureAlgorithms(Collections.singletonList(signatureAlgorithm));
+        signatureProperties.setSignatureAlgorithm(signatureAlgorithm);
+        signatureProperties.setDigestAlgorithm(digestAlgorithm);
+
+        stsProperties.setSignatureProperties(signatureProperties);
 
         issueOperation.setStsProperties(stsProperties);
     }
