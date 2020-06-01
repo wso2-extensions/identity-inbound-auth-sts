@@ -92,24 +92,6 @@
         </file>
         <file>
             <source>
-                ../org.wso2.carbon.identity.sts.passive/target/org.wso2.carbon.identity.sts.passive-${project.version}.jar
-            </source>
-            <outputDirectory>wso2is-sts-connector-${project.version}/dropins/</outputDirectory>
-        </file>
-        <file>
-            <source>
-                ../org.wso2.carbon.identity.sts.passive.stub/target/org.wso2.carbon.identity.sts.passive.stub-${project.version}.jar
-            </source>
-            <outputDirectory>wso2is-sts-connector-${project.version}/dropins/</outputDirectory>
-        </file>
-        <file>
-            <source>
-                ../org.wso2.carbon.identity.sts.passive.ui/target/org.wso2.carbon.identity.sts.passive.ui-${project.version}.jar
-            </source>
-            <outputDirectory>wso2is-sts-connector-${project.version}/dropins/</outputDirectory>
-        </file>
-        <file>
-            <source>
                 ../org.wso2.carbon.identity.sts.store/target/org.wso2.carbon.identity.sts.store-${project.version}.jar
             </source>
             <outputDirectory>wso2is-sts-connector-${project.version}/dropins/</outputDirectory>
@@ -155,12 +137,6 @@
                 ../../features/org.wso2.carbon.mex.feature/resources/metadata.xml
             </source>
             <outputDirectory>wso2is-sts-connector-${project.version}/deployment-server-webapps/</outputDirectory>
-        </file>
-        <file>
-            <source>
-                ../../features/org.wso2.carbon.identity.sts.passive.server.feature/resources/sts_response.html
-            </source>
-            <outputDirectory>wso2is-sts-connector-${project.version}/other-files/</outputDirectory>
         </file>
         <file>
             <source>
