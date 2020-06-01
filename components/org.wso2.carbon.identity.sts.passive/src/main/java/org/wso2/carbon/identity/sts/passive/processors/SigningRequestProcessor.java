@@ -21,7 +21,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.cxf.sts.QNameConstants;
-import org.apache.cxf.sts.claims.ClaimsManager;
 import org.apache.cxf.sts.operation.TokenIssueOperation;
 import org.apache.cxf.ws.security.sts.provider.STSException;
 import org.apache.cxf.ws.security.sts.provider.model.RequestSecurityTokenResponseCollectionType;
@@ -32,7 +31,6 @@ import org.w3c.dom.Element;
 import org.wso2.carbon.context.PrivilegedCarbonContext;
 import org.wso2.carbon.identity.sts.passive.RequestToken;
 import org.wso2.carbon.identity.sts.passive.ResponseToken;
-import org.wso2.carbon.identity.sts.passive.custom.handler.CustomClaimsHandler;
 import org.wso2.carbon.identity.sts.passive.internal.IdentityPassiveSTSServiceComponent;
 import org.wso2.carbon.identity.sts.passive.utils.PassiveSTSUtil;
 import org.wso2.carbon.user.api.UserStoreException;
@@ -42,7 +40,6 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import java.io.StringWriter;
-import java.util.Collections;
 import java.util.Map;
 
 import static org.wso2.carbon.identity.sts.passive.utils.RequestProcessorUtil.addSTSProperties;
@@ -51,8 +48,7 @@ import static org.wso2.carbon.identity.sts.passive.utils.RequestProcessorUtil.ad
 import static org.wso2.carbon.identity.sts.passive.utils.RequestProcessorUtil.changeNamespaces;
 import static org.wso2.carbon.identity.sts.passive.utils.RequestProcessorUtil.createAppliesToElement;
 import static org.wso2.carbon.identity.sts.passive.utils.RequestProcessorUtil.createSecondaryParameters;
-import static org.wso2.carbon.identity.sts.passive.utils.RequestProcessorUtil.getClaimURIs;
-import static org.wso2.carbon.identity.sts.passive.utils.RequestProcessorUtil.getFormattedClaims;
+import static org.wso2.carbon.identity.sts.passive.utils.RequestProcessorUtil.handleClaims;
 import static org.wso2.carbon.identity.sts.passive.utils.RequestProcessorUtil.issueToken;
 import static org.wso2.carbon.identity.sts.passive.utils.RequestProcessorUtil.setupMessageContext;
 
@@ -78,7 +74,7 @@ public class SigningRequestProcessor extends RequestProcessor {
             TokenIssueOperation issueOperation = new TokenIssueOperation();
             addTokenProvider(issueOperation, request);
             addService(issueOperation, request.getRealm());
-            addSTSProperties(issueOperation);
+            addSTSProperties(issueOperation, true);
             // Set the ClaimsManager to the issue operation.
             handleClaims(request, issueOperation);
 
@@ -140,23 +136,5 @@ public class SigningRequestProcessor extends RequestProcessor {
         }
 
         return responseToken;
-    }
-
-    /**
-     * Handles the claim related logic. For example setting the known URIs.
-     *
-     * @param requestToken Request sent by the client to obtain the security token.
-     * @param issueOperation The issue operation which the claim manager should be set into.
-     */
-    private static void handleClaims(RequestToken requestToken, TokenIssueOperation issueOperation) {
-
-        CustomClaimsHandler customClaimsHandler = new CustomClaimsHandler();
-        CustomClaimsHandler.setKnownURIs(getClaimURIs(requestToken));
-        customClaimsHandler.setClaimsKeyValuePair(getFormattedClaims(requestToken));
-
-        ClaimsManager claimsManager = new ClaimsManager();
-        claimsManager.setClaimHandlers(Collections.singletonList(customClaimsHandler));
-
-        issueOperation.setClaimsManager(claimsManager);
     }
 }

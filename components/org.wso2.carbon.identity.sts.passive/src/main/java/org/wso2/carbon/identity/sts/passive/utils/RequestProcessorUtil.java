@@ -25,6 +25,7 @@ import org.apache.cxf.sts.STSConstants;
 import org.apache.cxf.sts.STSPropertiesMBean;
 import org.apache.cxf.sts.SignatureProperties;
 import org.apache.cxf.sts.StaticSTSProperties;
+import org.apache.cxf.sts.claims.ClaimsManager;
 import org.apache.cxf.sts.operation.TokenIssueOperation;
 import org.apache.cxf.sts.service.ServiceMBean;
 import org.apache.cxf.sts.service.StaticService;
@@ -53,6 +54,7 @@ import org.wso2.carbon.identity.application.common.util.IdentityApplicationManag
 import org.wso2.carbon.identity.base.IdentityConstants;
 import org.wso2.carbon.identity.core.util.IdentityUtil;
 import org.wso2.carbon.identity.sts.passive.RequestToken;
+import org.wso2.carbon.identity.sts.passive.custom.handler.CustomClaimsHandler;
 import org.wso2.carbon.identity.sts.passive.custom.handler.PasswordCallbackHandler;
 import org.wso2.carbon.identity.sts.passive.custom.provider.CustomAttributeProvider;
 import org.wso2.carbon.identity.sts.passive.custom.provider.CustomAuthenticationProvider;
@@ -85,7 +87,7 @@ public class RequestProcessorUtil {
         List<TokenProvider> providerList = new ArrayList<>();
         SAMLTokenProvider samlTokenProvider = new SAMLTokenProvider();
 
-        if (getFormattedClaims(requestToken).size() > 0) {
+        if (getFormattedClaims(requestToken.getAttributes()).size() > 0) {
             List<AttributeStatementProvider> customProviderList =
                     new ArrayList<>();
             customProviderList.add(new CustomAttributeProvider());
@@ -127,13 +129,12 @@ public class RequestProcessorUtil {
     /**
      * Get a formatted HashMap of claims containing the URI as the key and attribute value as the value.
      *
-     * @param requestToken Request sent by the client to obtain the security token.
+     * @param attributes Attributes sent by the client in the request..
      * @return Formatted HashMap containing the claims.
      */
-    public static HashMap<String, String> getFormattedClaims(RequestToken requestToken) {
+    private static HashMap<String, String> getFormattedClaims(String attributes) {
 
         HashMap<String, String> formattedClaims = new HashMap<>();
-        String attributes = requestToken.getAttributes();
         String[] formattedAttributes;
 
         if (attributes != null) {
@@ -174,7 +175,7 @@ public class RequestProcessorUtil {
      * @throws Exception If an error occurs while getting an instance from the CryptoFactory
      *                   or while getting the issuer name.
      */
-    public static void addSTSProperties(TokenIssueOperation issueOperation) throws Exception {
+    public static void addSTSProperties(TokenIssueOperation issueOperation, boolean isSignInRequest) throws Exception {
 
         ServerConfiguration serverConfig = ServerConfiguration.getInstance();
         String signatureAlgorithm = serverConfig.getFirstProperty(STS_SIGNATURE_ALGORITHM_KEY);
@@ -190,12 +191,14 @@ public class RequestProcessorUtil {
         stsProperties.setCallbackHandler(new PasswordCallbackHandler());
         stsProperties.setIssuer(getIssuerName());
 
-        SignatureProperties signatureProperties = new SignatureProperties();
-        signatureProperties.setAcceptedSignatureAlgorithms(Collections.singletonList(signatureAlgorithm));
-        signatureProperties.setSignatureAlgorithm(signatureAlgorithm);
-        signatureProperties.setDigestAlgorithm(digestAlgorithm);
+        if (isSignInRequest) {
+            SignatureProperties signatureProperties = new SignatureProperties();
+            signatureProperties.setAcceptedSignatureAlgorithms(Collections.singletonList(signatureAlgorithm));
+            signatureProperties.setSignatureAlgorithm(signatureAlgorithm);
+            signatureProperties.setDigestAlgorithm(digestAlgorithm);
 
-        stsProperties.setSignatureProperties(signatureProperties);
+            stsProperties.setSignatureProperties(signatureProperties);
+        }
 
         issueOperation.setStsProperties(stsProperties);
     }
@@ -264,6 +267,24 @@ public class RequestProcessorUtil {
     }
 
     /**
+     * Handles the claim related logic. For example setting the known URIs.
+     *
+     * @param requestToken Request sent by the client to obtain the security token.
+     * @param issueOperation The issue operation which the claim manager should be set into.
+     */
+    public static void handleClaims(RequestToken requestToken, TokenIssueOperation issueOperation) {
+
+        CustomClaimsHandler customClaimsHandler = new CustomClaimsHandler();
+        CustomClaimsHandler.setKnownURIs(getClaimURIs(requestToken.getAttributes()));
+        customClaimsHandler.setClaimsKeyValuePair(getFormattedClaims(requestToken.getAttributes()));
+
+        ClaimsManager claimsManager = new ClaimsManager();
+        claimsManager.setClaimHandlers(Collections.singletonList(customClaimsHandler));
+
+        issueOperation.setClaimsManager(claimsManager);
+    }
+
+    /**
      * Mock up a SecondaryParameters DOM Element containing some claims.
      *
      * @param requestToken Request sent by the client to obtain the security token.
@@ -278,7 +299,7 @@ public class RequestProcessorUtil {
         Element claims = doc.createElementNS(STSConstants.WST_NS_05_12, "Claims");
         claims.setAttributeNS(null, "Dialect", STSConstants.IDT_NS_05_05);
 
-        List<String> requestedClaimURIs = getClaimURIs(requestToken);
+        List<String> requestedClaimURIs = getClaimURIs(requestToken.getAttributes());
 
         // Iterates through the claims and inserts them.
         for (String claimURI : requestedClaimURIs) {
@@ -291,15 +312,15 @@ public class RequestProcessorUtil {
     }
 
     /**
-     * Obtain the claim URIs with the help of method getFormattedClaims(RequestToken requestToken).
+     * Obtain the claim URIs with the help of method getFormattedClaims(String attributes).
      *
-     * @param requestToken Request sent by the client to obtain the security token.
+     * @param attributes Attributes sent by the client in the request.
      * @return List of claim URIs.
      */
-    public static List<String> getClaimURIs(RequestToken requestToken) {
+    private static List<String> getClaimURIs(String attributes) {
 
         List<String> claimURIs = new ArrayList<>();
-        HashMap<String, String> formattedClaims = getFormattedClaims(requestToken);
+        HashMap<String, String> formattedClaims = getFormattedClaims(attributes);
 
         for (Map.Entry claim : formattedClaims.entrySet()) {
             claimURIs.add(claim.getKey().toString());
