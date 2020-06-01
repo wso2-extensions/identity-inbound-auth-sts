@@ -39,16 +39,24 @@ import org.apache.cxf.ws.security.sts.provider.model.RequestSecurityTokenType;
 import org.apache.wss4j.common.WSS4JConstants;
 import org.apache.wss4j.common.crypto.Crypto;
 import org.apache.wss4j.common.crypto.CryptoFactory;
-import org.apache.wss4j.common.ext.WSSecurityException;
 import org.apache.wss4j.common.principal.CustomTokenPrincipal;
 import org.apache.wss4j.common.saml.builder.SAML1Constants;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.wso2.carbon.base.ServerConfiguration;
+import org.wso2.carbon.context.PrivilegedCarbonContext;
+import org.wso2.carbon.identity.application.common.model.FederatedAuthenticatorConfig;
+import org.wso2.carbon.identity.application.common.model.IdentityProvider;
+import org.wso2.carbon.identity.application.common.model.Property;
+import org.wso2.carbon.identity.application.common.util.IdentityApplicationConstants;
+import org.wso2.carbon.identity.application.common.util.IdentityApplicationManagementUtil;
+import org.wso2.carbon.identity.base.IdentityConstants;
+import org.wso2.carbon.identity.core.util.IdentityUtil;
 import org.wso2.carbon.identity.sts.passive.RequestToken;
 import org.wso2.carbon.identity.sts.passive.custom.handler.PasswordCallbackHandler;
 import org.wso2.carbon.identity.sts.passive.custom.provider.CustomAttributeProvider;
 import org.wso2.carbon.identity.sts.passive.custom.provider.CustomAuthenticationProvider;
+import org.wso2.carbon.idp.mgt.IdentityProviderManager;
 
 import java.net.URI;
 import java.security.Principal;
@@ -163,9 +171,10 @@ public class RequestProcessorUtil {
      * Sets the required STS properties to the issue operation.
      *
      * @param issueOperation The issue operation which the STS properties should be set into.
-     * @throws WSSecurityException If an error occurs while getting an instance from the CryptoFactory.
+     * @throws Exception If an error occurs while getting an instance from the CryptoFactory
+     *                   or while getting the issuer name.
      */
-    public static void addSTSProperties(TokenIssueOperation issueOperation, String issuer) throws WSSecurityException {
+    public static void addSTSProperties(TokenIssueOperation issueOperation) throws Exception {
 
         ServerConfiguration serverConfig = ServerConfiguration.getInstance();
         String signatureAlgorithm = serverConfig.getFirstProperty(STS_SIGNATURE_ALGORITHM_KEY);
@@ -179,7 +188,7 @@ public class RequestProcessorUtil {
         stsProperties.setEncryptionUsername("myservicekey");
         stsProperties.setSignatureUsername("mystskey");
         stsProperties.setCallbackHandler(new PasswordCallbackHandler());
-        stsProperties.setIssuer(issuer);
+        stsProperties.setIssuer(getIssuerName());
 
         SignatureProperties signatureProperties = new SignatureProperties();
         signatureProperties.setAcceptedSignatureAlgorithms(Collections.singletonList(signatureAlgorithm));
@@ -206,6 +215,52 @@ public class RequestProcessorUtil {
         properties.put("org.apache.wss4j.crypto.merlin.keystore.file", "keys/stsstore.jks");
 
         return properties;
+    }
+
+
+    /**
+     * Get the name of the issuer of the request.
+     *
+     * @return Name of the issuer.
+     * @throws Exception If there is an error in retrieving the resident identity provider.
+     */
+    private static String getIssuerName() throws Exception {
+
+        IdentityProvider identityProvider;
+        String issuerName;
+        String idPEntityId = null;
+        String tenantDomain = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantDomain();
+
+        try {
+            identityProvider = IdentityProviderManager.getInstance().getResidentIdP(tenantDomain);
+        } catch (Exception exception) {
+            throw new Exception(
+                    "Error occurred while retrieving Resident Identity Provider information for tenant "
+                            + tenantDomain, exception);
+        }
+
+        FederatedAuthenticatorConfig config = IdentityApplicationManagementUtil
+                .getFederatedAuthenticator(identityProvider.getFederatedAuthenticatorConfigs(),
+                        IdentityApplicationConstants.Authenticator.PassiveSTS.NAME);
+        Property property = IdentityApplicationManagementUtil.getProperty(config.getProperties(),
+                IdentityApplicationConstants.Authenticator.PassiveSTS.IDENTITY_PROVIDER_ENTITY_ID);
+
+        if (property != null) {
+            idPEntityId = property.getValue();
+        }
+
+        if (idPEntityId == null) {
+            idPEntityId = IdentityUtil.getProperty(IdentityConstants.ServerConfig.ENTITY_ID);
+        }
+
+        issuerName = idPEntityId;
+
+        if (issuerName == null) {
+            // HostName not set.
+            issuerName = "Identity-passive-sts";
+        }
+
+        return issuerName;
     }
 
     /**

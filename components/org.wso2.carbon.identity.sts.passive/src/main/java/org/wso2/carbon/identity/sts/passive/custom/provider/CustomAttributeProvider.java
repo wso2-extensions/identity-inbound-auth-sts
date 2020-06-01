@@ -72,6 +72,7 @@ public class CustomAttributeProvider implements AttributeStatementProvider {
         if (WSS4JConstants.WSS_SAML2_TOKEN_TYPE.equals(tokenType)
                 || WSS4JConstants.SAML2_NS.equals(tokenType)) {
             attributeBean.setQualifiedName(claim.getClaimType());
+            attributeBean.setNameFormat(claim.getClaimType());
         } else {
             attributeBean.setQualifiedName(claim.getClaimType());
         }

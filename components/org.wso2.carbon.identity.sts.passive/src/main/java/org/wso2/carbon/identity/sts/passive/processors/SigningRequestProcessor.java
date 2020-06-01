@@ -78,7 +78,7 @@ public class SigningRequestProcessor extends RequestProcessor {
             TokenIssueOperation issueOperation = new TokenIssueOperation();
             addTokenProvider(issueOperation, request);
             addService(issueOperation, request.getRealm());
-            addSTSProperties(issueOperation, "localhost");
+            addSTSProperties(issueOperation);
             // Set the ClaimsManager to the issue operation.
             handleClaims(request, issueOperation);
 
@@ -117,7 +117,7 @@ public class SigningRequestProcessor extends RequestProcessor {
             try {
                 JAXBContext jaxbContext = JAXBContext.newInstance(RequestSecurityTokenResponseCollectionType.class);
                 Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
-                jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+                jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.FALSE);
                 jaxbMarshaller.marshal(jaxbResponse, sw);
             } catch (JAXBException exception) {
                 log.error(exception.getMessage(), exception);
