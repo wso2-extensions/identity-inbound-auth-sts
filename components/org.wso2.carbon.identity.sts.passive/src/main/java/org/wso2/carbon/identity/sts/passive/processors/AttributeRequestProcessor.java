@@ -78,7 +78,7 @@ public class AttributeRequestProcessor extends RequestProcessor {
             TokenIssueOperation issueOperation = new TokenIssueOperation();
             addTokenProvider(issueOperation, request);
             addService(issueOperation, request.getRealm());
-            addSTSProperties(issueOperation, false);
+            addSTSProperties(issueOperation);
             // Set the ClaimsManager to the issue operation.
             handleClaims(request, issueOperation);
 

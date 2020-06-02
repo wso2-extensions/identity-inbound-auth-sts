@@ -175,7 +175,7 @@ public class RequestProcessorUtil {
      * @throws Exception If an error occurs while getting an instance from the CryptoFactory
      *                   or while getting the issuer name.
      */
-    public static void addSTSProperties(TokenIssueOperation issueOperation, boolean isSignInRequest) throws Exception {
+    public static void addSTSProperties(TokenIssueOperation issueOperation) throws Exception {
 
         ServerConfiguration serverConfig = ServerConfiguration.getInstance();
         String signatureAlgorithm = serverConfig.getFirstProperty(STS_SIGNATURE_ALGORITHM_KEY);
@@ -191,14 +191,14 @@ public class RequestProcessorUtil {
         stsProperties.setCallbackHandler(new PasswordCallbackHandler());
         stsProperties.setIssuer(getIssuerName());
 
-        if (isSignInRequest) {
-            SignatureProperties signatureProperties = new SignatureProperties();
+        SignatureProperties signatureProperties = new SignatureProperties();
+        if (!signatureProperties.getAcceptedSignatureAlgorithms().contains(signatureAlgorithm)) {
             signatureProperties.setAcceptedSignatureAlgorithms(Collections.singletonList(signatureAlgorithm));
-            signatureProperties.setSignatureAlgorithm(signatureAlgorithm);
-            signatureProperties.setDigestAlgorithm(digestAlgorithm);
-
-            stsProperties.setSignatureProperties(signatureProperties);
         }
+        signatureProperties.setSignatureAlgorithm(signatureAlgorithm);
+        signatureProperties.setDigestAlgorithm(digestAlgorithm);
+
+        stsProperties.setSignatureProperties(signatureProperties);
 
         issueOperation.setStsProperties(stsProperties);
     }
