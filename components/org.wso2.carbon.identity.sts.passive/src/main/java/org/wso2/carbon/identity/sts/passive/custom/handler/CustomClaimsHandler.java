@@ -22,7 +22,6 @@ import org.apache.cxf.sts.claims.ClaimsParameters;
 import org.apache.cxf.sts.claims.ProcessedClaim;
 import org.apache.cxf.sts.claims.ProcessedClaimCollection;
 
-import java.security.Principal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -33,12 +32,12 @@ import java.util.List;
 public class CustomClaimsHandler implements ClaimsHandler {
 
     private static List<String> knownURIs = new ArrayList<>();
-    private HashMap<String, String> claimsKeyValuePair = new HashMap<>();
+    private HashMap<String, String> requestedClaims = new HashMap<>();
 
     /**
      * Create a processed claim collection using the claim values and params provided.
      *
-     * @param claims The unprocessed claims.
+     * @param claims     The unprocessed claims.
      * @param parameters The claim parameters.
      * @return The processed claims.
      */
@@ -51,8 +50,8 @@ public class CustomClaimsHandler implements ClaimsHandler {
                 ProcessedClaim claim = new ProcessedClaim();
                 claim.setClaimType(requestClaim.getClaimType());
                 if (knownURIs.contains(requestClaim.getClaimType()) &&
-                        claimsKeyValuePair.containsKey(requestClaim.getClaimType())) {
-                    claim.addValue(claimsKeyValuePair.get(requestClaim.getClaimType()));
+                        requestedClaims.containsKey(requestClaim.getClaimType())) {
+                    claim.addValue(requestedClaims.get(requestClaim.getClaimType()));
                 }
                 claimCollection.add(claim);
             }
@@ -60,11 +59,6 @@ public class CustomClaimsHandler implements ClaimsHandler {
         }
 
         return null;
-    }
-
-    private boolean isUserInRole(Principal principal, String requestedRole) {
-
-        return true;
     }
 
     /**
@@ -92,18 +86,18 @@ public class CustomClaimsHandler implements ClaimsHandler {
      *
      * @return HashMap containing the claim URIs and values.
      */
-    public HashMap<String, String> getClaimsKeyValuePair() {
+    public HashMap<String, String> getRequestedClaims() {
 
-        return claimsKeyValuePair;
+        return requestedClaims;
     }
 
     /**
      * Set claim key value pair(the URI and value).
      *
-     * @param claimsKeyValuePair The new HashMap of claims key value pair.
+     * @param requestedClaims The new HashMap of claims key value pair.
      */
-    public void setClaimsKeyValuePair(HashMap<String, String> claimsKeyValuePair) {
+    public void setRequestedClaims(HashMap<String, String> requestedClaims) {
 
-        this.claimsKeyValuePair = claimsKeyValuePair;
+        this.requestedClaims = requestedClaims;
     }
 }

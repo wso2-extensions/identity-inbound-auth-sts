@@ -269,14 +269,14 @@ public class RequestProcessorUtil {
     /**
      * Handles the claim related logic. For example setting the known URIs.
      *
-     * @param requestToken Request sent by the client to obtain the security token.
+     * @param requestToken   Request sent by the client to obtain the security token.
      * @param issueOperation The issue operation which the claim manager should be set into.
      */
     public static void handleClaims(RequestToken requestToken, TokenIssueOperation issueOperation) {
 
         CustomClaimsHandler customClaimsHandler = new CustomClaimsHandler();
         CustomClaimsHandler.setKnownURIs(getClaimURIs(requestToken.getAttributes()));
-        customClaimsHandler.setClaimsKeyValuePair(getFormattedClaims(requestToken.getAttributes()));
+        customClaimsHandler.setRequestedClaims(getFormattedClaims(requestToken.getAttributes()));
 
         ClaimsManager claimsManager = new ClaimsManager();
         claimsManager.setClaimHandlers(Collections.singletonList(customClaimsHandler));
