@@ -65,14 +65,15 @@ import java.util.Map;
 import java.util.StringTokenizer;
 
 import static org.wso2.carbon.identity.application.authentication.framework.util.FrameworkConstants.AUTHENTICATED_USER;
+import static org.wso2.carbon.user.core.UserCoreConstants.DEFAULT_PROFILE;
 import static org.wso2.carbon.utils.multitenancy.MultitenantConstants.SUPER_TENANT_DOMAIN_NAME;
 
 public class AttributeCallbackHandler implements SAMLCallbackHandler {
 
     private static final Log log = LogFactory.getLog(AttributeCallbackHandler.class);
-    protected Map<String, RequestedClaimData> requestedClaims = new HashMap<String, RequestedClaimData>();
-    protected Map<String, String> requestedClaimValues = new HashMap<String, String>();
-    protected Map<String, Claim> supportedClaims = new HashMap<String, Claim>();
+    protected Map<String, RequestedClaimData> requestedClaims = new HashMap<>();
+    protected Map<String, String> requestedClaimValues = new HashMap<>();
+    protected Map<String, Claim> supportedClaims = new HashMap<>();
     private String userAttributeSeparator = IdentityCoreConstants.MULTI_ATTRIBUTE_SEPARATOR_DEFAULT;
 
     @Override
@@ -149,15 +150,19 @@ public class AttributeCallbackHandler implements SAMLCallbackHandler {
 
                             if (StringUtils.isNotBlank(remoteClaimSuffixValue) &&
                                     StringUtils.isNotBlank(remoteClaimPrefixValue)) {
-
-                                if (!authenticatedUser.isFederatedUser()) {
+                                // WS trust flow does not set the authenticated user property.
+                                if (isHandlerCalledFromWSTrustSTSFlow(attrCallback)) {
+                                    localClaimValue = IdentityProviderSTSServiceComponent.getRealmService().
+                                            getBootstrapRealm().getUserStoreManager().
+                                            getUserClaimValue(userIdentifier, localClaimUri, DEFAULT_PROFILE);
+                                } else if (!authenticatedUser.isFederatedUser()) {
                                     if (log.isDebugEnabled()) {
                                         log.debug("Loading claim values from local UserStore for user: "
                                                 + authenticatedUser.toString());
                                     }
                                     localClaimValue = IdentityProviderSTSServiceComponent.getRealmService().
                                             getBootstrapRealm().getUserStoreManager().
-                                            getUserClaimValue(userIdentifier, localClaimUri, "default");
+                                            getUserClaimValue(userIdentifier, localClaimUri, DEFAULT_PROFILE);
                                 }
 
                                 if (StringUtils.isEmpty(localClaimValue)) {
@@ -179,7 +184,6 @@ public class AttributeCallbackHandler implements SAMLCallbackHandler {
                 } catch (org.wso2.carbon.user.core.UserStoreException e) {
                     throw new SAMLException("Error while loading claims of the user", e);
                 }
-
             }
         }
     }
@@ -357,7 +361,8 @@ public class AttributeCallbackHandler implements SAMLCallbackHandler {
         try {
             if (MapUtils.isEmpty(requestedClaimValues)) {
                 try {
-                    if (authenticatedUser == null) {
+                    // WS trust flow does not set the authenticated user property.
+                    if (isHandlerCalledFromWSTrustSTSFlow(callback)) {
                         connector = IdentityTenantUtil.getRealm(null, userId).
                                 getUserStoreManager();
                         mapValues = connector.getUserClaimValues(MultitenantUtils.getTenantAwareUsername(userId),
@@ -405,7 +410,7 @@ public class AttributeCallbackHandler implements SAMLCallbackHandler {
                         } else {
                             nameSpace = claimData.getUri();
                             if (nameSpace.contains("/") && nameSpace.length() > (nameSpace.lastIndexOf("/") + 1)) {
-                                // Custom claim uri should be in a format of http(s)://nameSpace/name
+                                // Custom claim uri should be in a format of http(s)://nameSpace/name.
                                 name = nameSpace.substring(nameSpace.lastIndexOf("/") + 1);
                                 nameSpace = nameSpace.substring(0, nameSpace.lastIndexOf("/"));
                             } else {
@@ -442,4 +447,13 @@ public class AttributeCallbackHandler implements SAMLCallbackHandler {
         return new RequestedClaimData();
     }
 
+    private boolean isHandlerCalledFromWSTrustSTSFlow(SAMLAttributeCallback attributeCallback) {
+
+        /*
+        Authenticated user property is properly set during a passive STS flow. It is not done in the WS Trust based
+        flow.
+         */
+        return !(attributeCallback.getData().getInMessageContext().getProperty(AUTHENTICATED_USER) instanceof
+                AuthenticatedUser);
+    }
 }
