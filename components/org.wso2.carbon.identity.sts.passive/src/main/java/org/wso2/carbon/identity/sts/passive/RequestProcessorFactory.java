@@ -38,17 +38,22 @@ public class RequestProcessorFactory {
 
     public RequestProcessor getRequestProcessor(String action) {
 
-        switch (action) {
-            case PassiveRequestorConstants.REQUESTOR_ACTION_SIGNIN_10:
-                return new SigningRequestProcessor();
-            case PassiveRequestorConstants.REQUESTOR_ACTION_SIGNOUT_10:
-                return new SignoutRequestProcessor();
-            case PassiveRequestorConstants.REQUESTOR_ACTION_ATTRIBUTES_10:
-                return new AttributeRequestProcessor();
-            case PassiveRequestorConstants.REQUESTOR_ACTION_PSEUDONYM_10:
-                return new PseudonymRequestProcessor();
-            default:
-                return null;
+        if (PassiveRequestorConstants.REQUESTOR_ACTION_SIGNIN_10.equals(action)) {
+            return new SigningRequestProcessor();
         }
+
+        if (PassiveRequestorConstants.REQUESTOR_ACTION_SIGNOUT_10.equals(action)) {
+            return new SignoutRequestProcessor();
+        }
+
+        if (PassiveRequestorConstants.REQUESTOR_ACTION_ATTRIBUTES_10.equals(action)) {
+            return new AttributeRequestProcessor();
+        }
+
+        if (PassiveRequestorConstants.REQUESTOR_ACTION_PSEUDONYM_10.equals(action)) {
+            return new PseudonymRequestProcessor();
+        }
+
+        return null;
     }
 }
