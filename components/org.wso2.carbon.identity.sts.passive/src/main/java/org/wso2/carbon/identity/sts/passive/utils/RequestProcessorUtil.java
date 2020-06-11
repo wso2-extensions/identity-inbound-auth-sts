@@ -285,7 +285,7 @@ public class RequestProcessorUtil {
     }
 
     /**
-     * Mock up a SecondaryParameters DOM Element containing some claims.
+     * Create a SecondaryParameters DOM Element containing the required claims.
      *
      * @param requestToken Request sent by the client to obtain the security token.
      * @return Element containing the created secondary parameters.
@@ -348,7 +348,7 @@ public class RequestProcessorUtil {
     }
 
     /**
-     * Mock up an AppliesTo element using the supplied address.
+     * Create an AppliesTo element using the supplied address.
      *
      * @param addressUrl The address url or the realm in our case.
      * @return AppliesTo element which is created.

@@ -85,7 +85,7 @@ public class AttributeRequestProcessor extends RequestProcessor {
             // Obtain the type of token, whether it is a SAML1.1 or SAML2 token.
             String requestedTokenType = PassiveSTSUtil.extractTokenType(request);
 
-            // Mock up an issue request.
+            // Build up an issue request.
             JAXBElement<String> tokenType;
             RequestSecurityTokenType issueTokenRequest = new RequestSecurityTokenType();
             if (!WSS4JConstants.WSS_SAML2_TOKEN_TYPE.equals(requestedTokenType)) {
