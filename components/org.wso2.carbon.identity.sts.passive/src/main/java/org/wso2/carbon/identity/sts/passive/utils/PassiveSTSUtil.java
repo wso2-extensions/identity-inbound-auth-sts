@@ -18,8 +18,6 @@
 
 package org.wso2.carbon.identity.sts.passive.utils;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.cxf.ws.security.sts.provider.STSException;
 
 import javax.xml.namespace.QName;
@@ -31,8 +29,6 @@ import org.wso2.carbon.identity.sts.passive.PassiveRequestorConstants;
 import org.wso2.carbon.identity.sts.passive.RequestToken;
 
 public class PassiveSTSUtil {
-
-    private static final Log log = LogFactory.getLog(PassiveSTSUtil.class);
 
     public static String extractTokenType(RequestToken token) throws STSException {
 
