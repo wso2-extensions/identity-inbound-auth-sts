@@ -496,7 +496,7 @@
     </build>
 
     <properties>
-        <identity.framework.version>5.17.102-SNAPSHOT</identity.framework.version>
+        <identity.framework.version>5.17.110-SNAPSHOT</identity.framework.version>
         <identity.inbound.auth.sts.package.export.version>${project.version}
         </identity.inbound.auth.sts.package.export.version>
         <inbound.auth.openid.version>5.5.2-SNAPSHOT</inbound.auth.openid.version>
