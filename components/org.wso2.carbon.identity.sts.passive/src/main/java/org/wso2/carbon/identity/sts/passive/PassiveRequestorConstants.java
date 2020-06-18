@@ -27,6 +27,16 @@ public class PassiveRequestorConstants {
 
     public final static String REQUESTOR_ACTION_PSEUDONYM_10 = "wpseudo1.0";
 
+    public static final String STS_TIME_TO_LIVE_KEY = "STSTimeToLive";
+
+    public static final String STS_SIGNATURE_ALGORITHM_KEY = "Security.STSSignatureAlgorithm";
+
+    public static final String STS_DIGEST_ALGORITHM_KEY = "Security.STSDigestAlgorithm";
+
+    public static final String KEY_ALIAS_KEY = "Security.KeyStore.KeyAlias";
+
+    public static final String KEY_STORE_PASSWORD_KEY = "Security.KeyStore.KeyPassword";
+
     public final static String ACTION = "wa";
 
     public final static String REPLY_TO = "wreply";

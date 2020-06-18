@@ -16,6 +16,9 @@
 package org.wso2.carbon.identity.sts.passive.custom.handler;
 
 import org.apache.wss4j.common.ext.WSPasswordCallback;
+import org.wso2.carbon.base.ServerConfiguration;
+import org.wso2.carbon.context.PrivilegedCarbonContext;
+import org.wso2.carbon.identity.sts.passive.utils.RequestProcessorUtil;
 
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
@@ -29,6 +32,21 @@ public class PasswordCallbackHandler implements CallbackHandler {
 
     public void handle(Callback[] callbacks) throws IOException,
             UnsupportedCallbackException {
+
+        ServerConfiguration serverConfig = ServerConfiguration.getInstance();
+        String tenantDomain = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantDomain();
+        int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
+
+        String[] aliasAndPassword;
+        try {
+            aliasAndPassword = RequestProcessorUtil
+                    .getKeyStoreAliasAndKeyStorePassword(serverConfig, tenantId, tenantDomain);
+        } catch (Exception exception) {
+            throw new IOException(exception);
+        }
+        String keyAlias = aliasAndPassword[0];
+        String keyStorePassword = aliasAndPassword[1];
+
         for (Callback callback : callbacks) {
             if (callback instanceof WSPasswordCallback) { // CXF
                 WSPasswordCallback pc = (WSPasswordCallback) callback;
@@ -38,8 +56,8 @@ public class PasswordCallbackHandler implements CallbackHandler {
                 } else if ("bob".equals(pc.getIdentifier())) {
                     pc.setPassword("trombone");
                     break;
-                } else if ("mystskey".equals(pc.getIdentifier())) {
-                    pc.setPassword("stskpass");
+                } else if (keyAlias.equals(pc.getIdentifier())) {
+                    pc.setPassword(keyStorePassword);
                     break;
                 } else if ("myservicekey".equals(pc.getIdentifier())) {
                     pc.setPassword("skpass");

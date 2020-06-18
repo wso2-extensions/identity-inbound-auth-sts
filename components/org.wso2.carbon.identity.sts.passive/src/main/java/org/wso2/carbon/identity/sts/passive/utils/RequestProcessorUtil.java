@@ -35,6 +35,7 @@ import org.apache.cxf.sts.token.provider.DefaultConditionsProvider;
 import org.apache.cxf.sts.token.provider.DefaultSubjectProvider;
 import org.apache.cxf.sts.token.provider.SAMLTokenProvider;
 import org.apache.cxf.sts.token.provider.TokenProvider;
+import org.apache.cxf.ws.security.sts.provider.STSException;
 import org.apache.cxf.ws.security.sts.provider.model.RequestSecurityTokenResponseCollectionType;
 import org.apache.cxf.ws.security.sts.provider.model.RequestSecurityTokenType;
 import org.apache.wss4j.common.WSS4JConstants;
@@ -44,8 +45,11 @@ import org.apache.wss4j.common.principal.CustomTokenPrincipal;
 import org.apache.wss4j.common.saml.builder.SAML1Constants;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.wso2.carbon.base.MultitenantConstants;
 import org.wso2.carbon.base.ServerConfiguration;
 import org.wso2.carbon.context.PrivilegedCarbonContext;
+import org.wso2.carbon.core.RegistryResources;
+import org.wso2.carbon.core.util.KeyStoreManager;
 import org.wso2.carbon.identity.application.common.model.FederatedAuthenticatorConfig;
 import org.wso2.carbon.identity.application.common.model.IdentityProvider;
 import org.wso2.carbon.identity.application.common.model.Property;
@@ -69,12 +73,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import static org.wso2.carbon.identity.sts.passive.PassiveRequestorConstants.KEY_ALIAS_KEY;
+import static org.wso2.carbon.identity.sts.passive.PassiveRequestorConstants.KEY_STORE_PASSWORD_KEY;
+import static org.wso2.carbon.identity.sts.passive.PassiveRequestorConstants.STS_DIGEST_ALGORITHM_KEY;
+import static org.wso2.carbon.identity.sts.passive.PassiveRequestorConstants.STS_SIGNATURE_ALGORITHM_KEY;
+import static org.wso2.carbon.identity.sts.passive.PassiveRequestorConstants.STS_TIME_TO_LIVE_KEY;
+
 public class RequestProcessorUtil {
 
     private static final Log log = LogFactory.getLog(RequestProcessorUtil.class);
-    private static final String STS_TIME_TO_LIVE_KEY = "STSTimeToLive";
-    private static final String STS_SIGNATURE_ALGORITHM_KEY = "Security.STSSignatureAlgorithm";
-    private static final String STS_DIGEST_ALGORITHM_KEY = "Security.STSDigestAlgorithm";
 
     /**
      * Sets the SAML token provider to the issue operation.
@@ -172,28 +179,52 @@ public class RequestProcessorUtil {
      * Sets the required STS properties to the issue operation.
      *
      * @param issueOperation The issue operation which the STS properties should be set into.
-     * @throws Exception If an error occurs while getting an instance from the CryptoFactory
-     *                   or while getting the issuer name.
+     * @throws Exception If an error occurs while getting an instance from the CryptoFactory,
+     *                   while obtaining the keystore password, if the key alias is null or
+     *                   while obtaining the issuer name.
      */
     public static void addSTSProperties(TokenIssueOperation issueOperation) throws Exception {
 
         ServerConfiguration serverConfig = ServerConfiguration.getInstance();
+
+        String tenantDomain = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantDomain();
+        int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
+
+        String[] aliasAndPassword = getKeyStoreAliasAndKeyStorePassword(serverConfig, tenantId, tenantDomain);
+        String keyAlias = aliasAndPassword[0];
+        String keyStorePassword = aliasAndPassword[1];
+        String keyStoreFileLocation = serverConfig
+                .getFirstProperty(RegistryResources.SecurityManagement.SERVER_PRIMARY_KEYSTORE_FILE);
+        String keyStoreName = null;
+
         String signatureAlgorithm = serverConfig.getFirstProperty(STS_SIGNATURE_ALGORITHM_KEY);
         String digestAlgorithm = serverConfig.getFirstProperty(STS_DIGEST_ALGORITHM_KEY);
 
-        STSPropertiesMBean stsProperties = new StaticSTSProperties();
-        Crypto crypto = CryptoFactory.getInstance(getEncryptionProperties());
 
+        if (keyAlias == null) {
+            throw new STSException("Private key alias cannot be null.");
+        }
+
+        if (MultitenantConstants.SUPER_TENANT_ID != tenantId) {
+            keyStoreName = generateKSNameFromDomainName(tenantDomain);
+        }
+
+        Crypto crypto = CryptoFactory
+                .getInstance(getEncryptionProperties(keyStoreFileLocation,
+                        keyStorePassword, tenantId, keyStoreName));
+
+        STSPropertiesMBean stsProperties = new StaticSTSProperties();
         stsProperties.setEncryptionCrypto(crypto);
         stsProperties.setSignatureCrypto(crypto);
-        stsProperties.setEncryptionUsername("myservicekey");
-        stsProperties.setSignatureUsername("mystskey");
+        stsProperties.setEncryptionUsername(keyAlias);
+        stsProperties.setSignatureUsername(keyAlias);
         stsProperties.setCallbackHandler(new PasswordCallbackHandler());
         stsProperties.setIssuer(getIssuerName());
 
         SignatureProperties signatureProperties = new SignatureProperties();
         if (!signatureProperties.getAcceptedSignatureAlgorithms().contains(signatureAlgorithm)) {
-            signatureProperties.setAcceptedSignatureAlgorithms(Collections.singletonList(signatureAlgorithm));
+            signatureProperties.setAcceptedSignatureAlgorithms(
+                    Collections.singletonList(signatureAlgorithm));
         }
         signatureProperties.setSignatureAlgorithm(signatureAlgorithm);
         signatureProperties.setDigestAlgorithm(digestAlgorithm);
@@ -204,18 +235,74 @@ public class RequestProcessorUtil {
     }
 
     /**
+     * Get the keystore alias and the key store password.
+     *
+     * @param tenantId     The tenant Id.
+     * @param tenantDomain The tenant domain.
+     * @return aliasAndPassword A string array which contains the keystore
+     * alias and password.
+     * @throws Exception If there is an error while obtaining the keystore password.
+     */
+    public static String[] getKeyStoreAliasAndKeyStorePassword(
+            ServerConfiguration serverConfig, int tenantId, String tenantDomain) throws Exception {
+
+        String[] aliasAndPassword = new String[2];
+
+        String keyStorePassword;
+        String keyAlias;
+
+        boolean isSuperTenantDomain = (MultitenantConstants.SUPER_TENANT_ID == tenantId);
+        if (isSuperTenantDomain) {
+            keyAlias = serverConfig.getFirstProperty(KEY_ALIAS_KEY);
+            keyStorePassword = serverConfig.getFirstProperty(KEY_STORE_PASSWORD_KEY);
+        } else {
+            String keyStoreName = generateKSNameFromDomainName(tenantDomain);
+            keyAlias = tenantDomain;
+            keyStorePassword = KeyStoreManager.getInstance(tenantId).getKeyStorePassword(keyStoreName);
+        }
+
+        aliasAndPassword[0] = keyAlias;
+        aliasAndPassword[1] = keyStorePassword;
+
+        return aliasAndPassword;
+    }
+
+    /**
+     * Generate a key store name from the given domain name.
+     *
+     * @param tenantDomain The tenant domain.
+     * @return The name of the key store.
+     */
+    private static String generateKSNameFromDomainName(String tenantDomain) {
+
+        String ksName = tenantDomain.trim().replace(".", "-");
+        return ksName + ".jks";
+    }
+
+    /**
      * Set the encryption properties to a properties object and return it.
      *
+     * @param keyStoreFileLocation Location of the key store file.
+     * @param keyStorePassword     Password of the key store.
+     * @param tenantId             Id of the tenant(Needed for the tenant flow).
+     * @param keyStoreName         Name of the key store(Needed for the tenant flow).
      * @return Properties object containing the encryption properties.
      */
-    private static Properties getEncryptionProperties() {
+    private static Properties getEncryptionProperties(String keyStoreFileLocation,
+                                                      String keyStorePassword,
+                                                      int tenantId, String keyStoreName) {
 
         Properties properties = new Properties();
         properties.put(
-                "org.apache.wss4j.crypto.provider", "org.apache.wss4j.common.crypto.Merlin"
+                "org.apache.wss4j.crypto.provider", "org.wso2.carbon.identity.sts.passive.custom.provider.CustomCryptoProvider"
         );
-        properties.put("org.apache.wss4j.crypto.merlin.keystore.password", "stsspass");
-        properties.put("org.apache.wss4j.crypto.merlin.keystore.file", "keys/stsstore.jks");
+        properties.put("org.apache.wss4j.crypto.merlin.keystore.password", keyStorePassword);
+        properties.put("org.apache.wss4j.crypto.merlin.keystore.file", keyStoreFileLocation);
+
+        if (keyStoreName != null) {
+            properties.put("org.apache.wss4j.crypto.merlin.keystore.tenant.id", tenantId);
+            properties.put("org.apache.wss4j.crypto.merlin.keystore.name", keyStoreName);
+        }
 
         return properties;
     }
@@ -430,6 +517,7 @@ public class RequestProcessorUtil {
      */
     public static String changeNamespaces(String response) {
 
+        // TODO - Improve this logic since the namespaces get scrambled time to time.
         return response.
                 replaceAll("ns2", "wst").
                 replaceAll("ns3", "wsu").
