@@ -307,7 +307,6 @@ public class RequestProcessorUtil {
         return properties;
     }
 
-
     /**
      * Get the name of the issuer of the request.
      *
