@@ -56,6 +56,7 @@ import org.wso2.carbon.identity.application.common.model.Property;
 import org.wso2.carbon.identity.application.common.util.IdentityApplicationConstants;
 import org.wso2.carbon.identity.application.common.util.IdentityApplicationManagementUtil;
 import org.wso2.carbon.identity.base.IdentityConstants;
+import org.wso2.carbon.identity.core.util.IdentityTenantUtil;
 import org.wso2.carbon.identity.core.util.IdentityUtil;
 import org.wso2.carbon.identity.sts.passive.RequestToken;
 import org.wso2.carbon.identity.sts.passive.custom.handler.CustomClaimsHandler;
@@ -120,7 +121,7 @@ public class RequestProcessorUtil {
         samlTokenProvider.setConditionsProvider(conditionsProvider);
 
         DefaultSubjectProvider subjectProvider = new DefaultSubjectProvider();
-        // The constant is same for SAML1.1 and SAML2.
+        // The constant is same for SAML1.1 and SAML2.0.
         subjectProvider.setSubjectNameIDFormat(SAML1Constants.NAMEID_FORMAT_EMAIL_ADDRESS);
         samlTokenProvider.setSubjectProvider(subjectProvider);
 
@@ -207,6 +208,7 @@ public class RequestProcessorUtil {
 
         if (MultitenantConstants.SUPER_TENANT_ID != tenantId) {
             keyStoreName = generateKSNameFromDomainName(tenantDomain);
+            tenantId = IdentityTenantUtil.getTenantId(tenantDomain);
         }
 
         Crypto crypto = CryptoFactory
@@ -299,8 +301,10 @@ public class RequestProcessorUtil {
         properties.put("org.apache.wss4j.crypto.merlin.keystore.password", keyStorePassword);
         properties.put("org.apache.wss4j.crypto.merlin.keystore.file", keyStoreFileLocation);
 
+        /* This if block will execute in a tenant scenario and the purpose is to set the key store
+           manually since it does not have a specific location. Refer CustomCryptoProvider class. */
         if (keyStoreName != null) {
-            properties.put("org.apache.wss4j.crypto.merlin.keystore.tenant.id", tenantId);
+            properties.put("org.apache.wss4j.crypto.merlin.keystore.tenant.id", String.valueOf(tenantId));
             properties.put("org.apache.wss4j.crypto.merlin.keystore.name", keyStoreName);
         }
 
@@ -345,7 +349,7 @@ public class RequestProcessorUtil {
         issuerName = idPEntityId;
 
         if (issuerName == null) {
-            // HostName not set.
+            // If the host name is not set.
             issuerName = "Identity-passive-sts";
         }
 
