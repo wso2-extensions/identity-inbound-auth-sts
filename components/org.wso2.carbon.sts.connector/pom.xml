@@ -30,8 +30,8 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>org.wso2.carbon.sts.connector</artifactId>
     <packaging>jar</packaging>
-    <name>WSO2 Carbon - STS Components</name>
-    <description>A custom wso2 products or solution</description>
+    <name>WSO2 Carbon - WS-Trust Connector</name>
+    <description>WS-Trust connector components</description>
     <url>http://wso2.org</url>
 
     <dependencies>
