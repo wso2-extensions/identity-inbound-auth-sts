@@ -23,7 +23,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.component.ComponentContext;
-import org.wso2.carbon.identity.provider.IdentityProviderUtil;
+import org.wso2.carbon.identity.sts.common.identity.provider.IdentityProviderUtil;
 import org.wso2.carbon.identity.sts.mgt.STSConfigurationContextObserver;
 import org.wso2.carbon.identity.sts.mgt.STSObserver;
 import org.wso2.carbon.identity.sts.mgt.admin.STSConfigAdmin;
@@ -33,15 +33,17 @@ import org.wso2.carbon.registry.core.ResourceImpl;
 import org.wso2.carbon.registry.core.jdbc.utils.Transaction;
 import org.wso2.carbon.registry.core.service.RegistryService;
 import org.wso2.carbon.security.SecurityConstants;
-import org.wso2.carbon.security.SecurityScenario;
-import org.wso2.carbon.security.SecurityScenarioDatabase;
-import org.wso2.carbon.security.config.SecurityConfigAdmin;
-import org.wso2.carbon.security.util.XmlConfiguration;
+import org.wso2.carbon.identity.sts.common.SecurityScenario;
+import org.wso2.carbon.identity.sts.common.SecurityScenarioDatabase;
+import org.wso2.carbon.identity.sts.common.config.SecurityConfigAdmin;
+import org.wso2.carbon.identity.sts.common.util.XmlConfiguration;
 import org.wso2.carbon.user.core.service.RealmService;
 import org.wso2.carbon.utils.Axis2ConfigurationContextObserver;
 import org.wso2.carbon.utils.ConfigurationContextService;
+
 import java.net.URL;
 import java.util.Iterator;
+
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
@@ -50,8 +52,8 @@ import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 
 @Component(
-         name = "identity.sts.mgt.component", 
-         immediate = true)
+        name = "identity.sts.mgt.component",
+        immediate = true)
 public class IdentitySTSMgtServiceComponent {
 
     private static final Log log = LogFactory.getLog(IdentitySTSMgtServiceComponent.class);
@@ -68,10 +70,12 @@ public class IdentitySTSMgtServiceComponent {
     }
 
     public static ConfigurationContext getConfigurationContext() {
+
         return configContext;
     }
 
     public static RegistryService getRegistryService() {
+
         return registryService;
     }
 
@@ -79,12 +83,13 @@ public class IdentitySTSMgtServiceComponent {
      * @param registryService
      */
     @Reference(
-             name = "registry.service", 
-             service = org.wso2.carbon.registry.core.service.RegistryService.class, 
-             cardinality = ReferenceCardinality.MANDATORY, 
-             policy = ReferencePolicy.DYNAMIC, 
-             unbind = "unsetRegistryService")
+            name = "registry.service",
+            service = org.wso2.carbon.registry.core.service.RegistryService.class,
+            cardinality = ReferenceCardinality.MANDATORY,
+            policy = ReferencePolicy.DYNAMIC,
+            unbind = "unsetRegistryService")
     protected void setRegistryService(RegistryService registryService) {
+
         if (log.isDebugEnabled()) {
             log.info("RegistryService set in Identity STS Mgt bundle");
         }
@@ -96,20 +101,23 @@ public class IdentitySTSMgtServiceComponent {
     }
 
     public static RealmService getRealmService() {
+
         return realmService;
     }
 
     @Reference(
-             name = "user.realmservice.default", 
-             service = org.wso2.carbon.user.core.service.RealmService.class, 
-             cardinality = ReferenceCardinality.MANDATORY, 
-             policy = ReferencePolicy.DYNAMIC, 
-             unbind = "unsetRealmService")
+            name = "user.realmservice.default",
+            service = org.wso2.carbon.user.core.service.RealmService.class,
+            cardinality = ReferenceCardinality.MANDATORY,
+            policy = ReferencePolicy.DYNAMIC,
+            unbind = "unsetRealmService")
     protected void setRealmService(RealmService realmService) {
+
         this.realmService = realmService;
     }
 
     public static BundleContext getBundleContext() {
+
         return bundleContext;
     }
 
@@ -118,6 +126,7 @@ public class IdentitySTSMgtServiceComponent {
      */
     @Activate
     protected void activate(ComponentContext ctxt) {
+
         if (log.isDebugEnabled()) {
             log.info("Identity STS Mgt bundle is activated");
         }
@@ -134,6 +143,7 @@ public class IdentitySTSMgtServiceComponent {
      */
     @Deactivate
     protected void deactivate(ComponentContext ctxt) {
+
         if (log.isDebugEnabled()) {
             log.info("Identity STS Mgt bundle is deactivated");
         }
@@ -143,6 +153,7 @@ public class IdentitySTSMgtServiceComponent {
      * @param registryService
      */
     protected void unsetRegistryService(RegistryService registryService) {
+
         if (log.isDebugEnabled()) {
             log.info("RegistryService set in Identity STS Mgt bundle");
         }
@@ -153,12 +164,13 @@ public class IdentitySTSMgtServiceComponent {
      * @param contextService
      */
     @Reference(
-             name = "config.context.service", 
-             service = org.wso2.carbon.utils.ConfigurationContextService.class, 
-             cardinality = ReferenceCardinality.MANDATORY, 
-             policy = ReferencePolicy.DYNAMIC, 
-             unbind = "unsetConfigurationContextService")
+            name = "config.context.service",
+            service = org.wso2.carbon.utils.ConfigurationContextService.class,
+            cardinality = ReferenceCardinality.MANDATORY,
+            policy = ReferencePolicy.DYNAMIC,
+            unbind = "unsetConfigurationContextService")
     protected void setConfigurationContextService(ConfigurationContextService contextService) {
+
         if (log.isDebugEnabled()) {
             log.info("ConfigurationContextService set in Identity STS Mgt bundle");
         }
@@ -169,6 +181,7 @@ public class IdentitySTSMgtServiceComponent {
      * @param contextService
      */
     protected void unsetConfigurationContextService(ConfigurationContextService contextService) {
+
         if (log.isDebugEnabled()) {
             log.info("ConfigurationContextService unset in Identity STS Mgt bundle");
         }
@@ -179,12 +192,13 @@ public class IdentitySTSMgtServiceComponent {
      * @param providerUtil
      */
     @Reference(
-             name = "identity.provider.service", 
-             service = org.wso2.carbon.identity.provider.IdentityProviderUtil.class, 
-             cardinality = ReferenceCardinality.MANDATORY, 
-             policy = ReferencePolicy.DYNAMIC, 
-             unbind = "unsetIdentityProviderAdminUtil")
+            name = "identity.provider.sts.service",
+            service = IdentityProviderUtil.class,
+            cardinality = ReferenceCardinality.MANDATORY,
+            policy = ReferencePolicy.DYNAMIC,
+            unbind = "unsetIdentityProviderAdminUtil")
     protected void setIdentityProviderAdminUtil(IdentityProviderUtil providerUtil) {
+
         if (log.isDebugEnabled()) {
             log.info("IdentityProviderUtil set in Identity STS Mgt bundle");
         }
@@ -194,12 +208,14 @@ public class IdentitySTSMgtServiceComponent {
      * @param providerUtil
      */
     protected void unsetIdentityProviderAdminUtil(IdentityProviderUtil providerUtil) {
+
         if (log.isDebugEnabled()) {
             log.info("IdentityProviderUtil unset in Identity STS Mgt bundle");
         }
     }
 
     protected void unsetRealmService(RealmService realmService) {
+
         this.realmService = null;
     }
 
@@ -207,12 +223,13 @@ public class IdentitySTSMgtServiceComponent {
      * @param securityConfig
      */
     @Reference(
-             name = "security.config.service", 
-             service = org.wso2.carbon.security.config.SecurityConfigAdmin.class, 
-             cardinality = ReferenceCardinality.MANDATORY, 
-             policy = ReferencePolicy.DYNAMIC, 
-             unbind = "unsetSecurityConfigAdminService")
+            name = "security.config.service",
+            service = SecurityConfigAdmin.class,
+            cardinality = ReferenceCardinality.MANDATORY,
+            policy = ReferencePolicy.DYNAMIC,
+            unbind = "unsetSecurityConfigAdminService")
     protected void setSecurityConfigAdminService(SecurityConfigAdmin securityConfig) {
+
         if (log.isDebugEnabled()) {
             log.info("SecurityConfigAdmin set in Identity STS Mgt bundle");
         }
@@ -222,6 +239,7 @@ public class IdentitySTSMgtServiceComponent {
      * @param securityConfig
      */
     protected void unsetSecurityConfigAdminService(SecurityConfigAdmin securityConfig) {
+
         if (log.isDebugEnabled()) {
             log.info("SecurityConfigAdmin unset in Identity STS Mgt bundle");
         }
@@ -231,6 +249,7 @@ public class IdentitySTSMgtServiceComponent {
      * @throws Exception
      */
     private void initialize() throws Exception {
+
         // Register a Axis2ConfigurationContextObserver to activate on loading tenants.
         bundleContext.registerService(Axis2ConfigurationContextObserver.class.getName(), new STSConfigurationContextObserver(), null);
         log.debug("Registered STSConfigurationContextObserver to configure STS service for tenants.");
@@ -246,6 +265,7 @@ public class IdentitySTSMgtServiceComponent {
      * @throws Exception
      */
     private void loadSecurityScenarios() throws Exception {
+
         Registry registry = registryService.getConfigSystemRegistry();
         try {
             // Scenarios are listed in resources/scenario-config.xml

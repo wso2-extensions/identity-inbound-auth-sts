@@ -22,7 +22,7 @@
         <groupId>org.wso2.carbon.identity.inbound.auth.sts</groupId>
         <artifactId>identity-inbound-auth-sts</artifactId>
         <relativePath>../../pom.xml</relativePath>
-        <version>5.5.5-SNAPSHOT</version>
+        <version>5.6.0-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -34,10 +34,6 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.apache.ws.security.wso2</groupId>
-            <artifactId>wss4j</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.apache.axis2.wso2</groupId>
             <artifactId>axis2</artifactId>
         </dependency>
@@ -46,28 +42,21 @@
             <artifactId>org.wso2.carbon.identity.core</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.wso2.carbon.identity.inbound.auth.openid</groupId>
-            <artifactId>org.wso2.carbon.identity.provider</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.wso2.carbon</groupId>
             <artifactId>org.wso2.carbon.core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.rampart.wso2</groupId>
-            <artifactId>rampart-trust</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.rampart.wso2</groupId>
-            <artifactId>rampart-policy</artifactId>
         </dependency>
         <dependency>
             <groupId>org.wso2.carbon.identity.framework</groupId>
             <artifactId>org.wso2.carbon.security.mgt</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.wso2.orbit.joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.wso2.orbit.org.opensaml</groupId>
             <artifactId>opensaml</artifactId>
+            <version>3.3.1.wso2v1</version>
         </dependency>
         <dependency>
             <groupId>org.ops4j.pax.logging</groupId>
@@ -94,6 +83,79 @@
             <groupId>org.wso2.carbon.identity.framework</groupId>
             <artifactId>org.wso2.carbon.identity.application.authentication.framework</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.apache.wss4j</groupId>
+            <artifactId>wss4j-ws-security-common</artifactId>
+            <version>2.2.5</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.wss4j</groupId>
+            <artifactId>wss4j-ws-security-dom</artifactId>
+            <version>2.2.5</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-core</artifactId>
+            <version>3.3.6</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.cxf.services.sts</groupId>
+            <artifactId>cxf-services-sts-core</artifactId>
+            <version>3.3.6</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.cxf</groupId>
+                    <artifactId>cxf-rt-ws-security</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.wss4j</groupId>
+                    <artifactId>wss4j-ws-security-common</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.cxf</groupId>
+                    <artifactId>cxf-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.cxf</groupId>
+                    <artifactId>cxf-rt-security</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.wss4j</groupId>
+                    <artifactId>wss4j-ws-security-dom</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-security</artifactId>
+            <version>3.3.6</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-ws-security</artifactId>
+            <version>3.3.6</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-frontend-jaxws</artifactId>
+            <version>3.3.6</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-jdk14</artifactId>
+            <version>1.7.30</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jcl-over-slf4j</artifactId>
+            <version>1.7.30</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.santuario</groupId>
+            <artifactId>xmlsec</artifactId>
+            <version>2.1.5</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -114,14 +176,15 @@
                             javax.xml.stream; version="${equinox.osgi.stax-api.imp.pkg.version.range}",
                             javax.servlet.http; version="${imp.pkg.version.javax.servlet}",
 
+                            <!--org.opensaml.*; version="${opensaml3.wso2.osgi.version.range}",-->
                             org.apache.axiom.*; version="${axiom.osgi.version.range}",
                             org.apache.axis2.*; version="${axis2.osgi.version.range}",
-                            org.apache.rahas.*; version="${rampart.wso2.osgi.version.range}",
-                            org.apache.ws.secpolicy; version="${rampart.wso2.osgi.version.range}",
-                            org.apache.ws.security.*; version="${wss4j.ws.security.imp.pkg.version.range}",
+                            <!--org.apache.wss4j.common.*; version="${org.apache.wss4j.version.range}",-->
+                            <!--org.apache.cxf.*; version="${org.apache.cxf.version.range}",-->
                             org.apache.commons.logging; version="${commons-logging.osgi.version.range}",
                             org.apache.commons.lang; version="${commons-lang.wso2.osgi.version.range}",
 
+                            org.osgi.framework; version="${osgi.framework.imp.pkg.version.range}",
                             org.osgi.service.component; version="${osgi.service.component.imp.pkg.version.range}",
 
                             org.wso2.carbon.context; version="${carbon.kernel.package.import.version.range}",
@@ -146,16 +209,32 @@
                             version="${identity.framework.imp.pkg.version.range}",
                             org.wso2.carbon.security.util;
                             version="${identity.framework.imp.pkg.version.range}",
+                            org.wso2.carbon.security.sts.service;
+                            version="${identity.framework.imp.pkg.version.range}",
                             org.wso2.carbon.identity.core.*;
                             version="${identity.framework.imp.pkg.version.range}",
                             org.wso2.carbon.identity.application.authentication.framework.*;
-                            version="${identity.framework.imp.pkg.version.range}"
+                            version="${identity.framework.imp.pkg.version.range}",
+                            <!--org.apache.xml.security.*; version="${xmlsec.version.imp.pkg.version.range}",-->
                         </Import-Package>
                         <Export-Package>
                             !org.wso2.carbon.identity.sts.passive.internal,
                             org.wso2.carbon.identity.sts.passive.*;
                             version="${identity.inbound.auth.sts.package.export.version}",
                         </Export-Package>
+                        <Embed-Dependency>
+                            xmlsec; inline=false,
+                            opensaml; inline=false,
+                            joda-time; inline=false,
+                            wss4j-ws-security-common; inline=false,
+                            wss4j-ws-security-dom; inline=false,
+                            cxf-core; inline=false,
+                            cxf-services-sts-core;inline=false,
+                            cxf-rt-security; inline=false,
+                            cxf-rt-ws-security; inline=false,
+                            cxf-rt-frontend-jaxws; inline=false
+                        </Embed-Dependency>
+                        <Embed-Transitive>true</Embed-Transitive>
                     </instructions>
                 </configuration>
             </plugin>

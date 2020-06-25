@@ -32,7 +32,7 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.rahas.TrustException;
+import org.apache.cxf.ws.security.sts.provider.STSException;
 import org.wso2.carbon.context.CarbonContext;
 import org.wso2.carbon.identity.application.common.IdentityApplicationManagementException;
 import org.wso2.carbon.identity.application.common.model.InboundAuthenticationRequestConfig;
@@ -66,7 +66,7 @@ public class PassiveSTSService {
             if (processor != null) {
                 try {
                     responseToken = processor.process(request);
-                } catch (TrustException e) {
+                } catch (STSException e) {
                     log.error(e);
                     soapfault = genFaultResponse(MessageContext.getCurrentMessageContext(), "Sender",
                             "InvalidRequest", e.getMessage(), "none").toStringWithConsume();

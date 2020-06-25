@@ -17,13 +17,13 @@
 */
 package org.wso2.carbon.identity.sts.passive.processors;
 
-import org.apache.rahas.TrustException;
+import org.apache.cxf.ws.security.sts.provider.STSException;
 import org.wso2.carbon.identity.sts.passive.RequestToken;
 import org.wso2.carbon.identity.sts.passive.ResponseToken;
 
 public class PseudonymRequestProcessor extends RequestProcessor {
 
-    public ResponseToken process(RequestToken request) throws TrustException {
+    public ResponseToken process(RequestToken request) throws STSException {
         // TODO Auto-generated method stub
         return null;
     }
