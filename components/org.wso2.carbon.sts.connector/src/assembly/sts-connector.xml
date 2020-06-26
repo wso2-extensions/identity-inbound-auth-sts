@@ -55,19 +55,6 @@
             </includes>
         </dependencySet>
         <dependencySet>
-            <outputDirectory>wso2is-sts-connector-${project.version}/dropins/</outputDirectory>
-            <includes>
-                <include>org.wso2.carbon:org.wso2.carbon.xfer</include>
-            </includes>
-        </dependencySet>
-        <dependencySet>
-            <outputDirectory>wso2is-sts-connector-${project.version}/deployment-server-webapps/</outputDirectory>
-            <outputFileNameMapping>mexut.war</outputFileNameMapping>
-            <includes>
-                <include>org.wso2.carbon.identity.inbound.auth.sts:org.wso2.carbon.mex.endpoint</include>
-            </includes>
-        </dependencySet>
-        <dependencySet>
             <outputDirectory>wso2is-sts-connector-${project.version}/deployment-client-modules/</outputDirectory>
             <includes>
                 <include>org.apache.rampart:rampart</include>
@@ -101,18 +88,6 @@
         </file>
         <file>
             <source>
-                ../org.wso2.carbon.mex/target/org.wso2.carbon.mex-${project.version}.jar
-            </source>
-            <outputDirectory>wso2is-sts-connector-${project.version}/dropins/</outputDirectory>
-        </file>
-        <file>
-            <source>
-                ../org.wso2.carbon.mex2/target/org.wso2.carbon.mex2-${project.version}.jar
-            </source>
-            <outputDirectory>wso2is-sts-connector-${project.version}/dropins/</outputDirectory>
-        </file>
-        <file>
-            <source>
                 ../org.wso2.carbon.sts/target/org.wso2.carbon.sts-${project.version}.jar
             </source>
             <outputDirectory>wso2is-sts-connector-${project.version}/dropins/</outputDirectory>
@@ -134,12 +109,6 @@
                 ../org.wso2.carbon.security.sts.common/target/org.wso2.carbon.identity.sts.common-${project.version}.jar
             </source>
             <outputDirectory>wso2is-sts-connector-${project.version}/dropins/</outputDirectory>
-        </file>
-        <file>
-            <source>
-                ../../features/org.wso2.carbon.mex.feature/resources/metadata.xml
-            </source>
-            <outputDirectory>wso2is-sts-connector-${project.version}/deployment-server-webapps/</outputDirectory>
         </file>
         <file>
             <source>
