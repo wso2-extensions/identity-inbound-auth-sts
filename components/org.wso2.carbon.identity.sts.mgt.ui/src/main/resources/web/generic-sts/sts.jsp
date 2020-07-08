@@ -22,7 +22,7 @@
 <%@page import="org.wso2.carbon.CarbonConstants" %>
 <%@ page import="org.wso2.carbon.base.MultitenantConstants" %>
 <%@ page import="org.wso2.carbon.identity.sts.mgt.stub.service.util.xsd.TrustedServiceData" %>
-
+<%@ page import="org.wso2.carbon.identity.core.util.IdentityTenantUtil" %>
 
 <%@page import="org.wso2.carbon.identity.sts.mgt.ui.client.CarbonSTSClient" %>
 <%@ page import="org.wso2.carbon.ui.CarbonUIUtil" %>
@@ -110,8 +110,12 @@
 
     ConfigurationContext configurationContext = (ConfigurationContext) config.getServletContext().getAttribute(CarbonConstants.CONFIGURATION_CONTEXT);
     try {
-    	
-    	String tenantDomain = (String) session.getAttribute(MultitenantConstants.TENANT_DOMAIN);
+        String tenantDomain;
+        if (IdentityTenantUtil.isTenantQualifiedUrlsEnabled()) {
+            tenantDomain = IdentityTenantUtil.getTenantDomainFromContext();
+        } else {
+    	    tenantDomain = (String) session.getAttribute(MultitenantConstants.TENANT_DOMAIN);
+        }
     	String tenantContext =  "";
 
     	
