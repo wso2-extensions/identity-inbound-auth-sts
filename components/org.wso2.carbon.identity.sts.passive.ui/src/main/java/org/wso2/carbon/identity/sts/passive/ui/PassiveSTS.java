@@ -378,7 +378,9 @@ public class PassiveSTS extends HttpServlet {
         authenticationRequest.setCommonAuthCallerPath(selfPath);
         authenticationRequest.setForceAuth(false);
         authenticationRequest.setRequestQueryParams(request.getParameterMap());
-        authenticationRequest.setTenantDomain(tenantDomain);
+        if (!IdentityTenantUtil.isTenantQualifiedUrlsEnabled()) {
+            authenticationRequest.setTenantDomain(tenantDomain);
+        }
 
         //adding headers in out going request to authentication request context
         for (Enumeration e = request.getHeaderNames(); e.hasMoreElements(); ) {
@@ -465,7 +467,9 @@ public class PassiveSTS extends HttpServlet {
         reqToken.setPolicy(sessionDTO.getPolicy());
         reqToken.setPseudo(session.getId());
         reqToken.setUserName(authnResult.getSubject().getAuthenticatedSubjectIdentifier());
-        reqToken.setTenantDomain(sessionDTO.getTenantDomain());
+        if (!IdentityTenantUtil.isTenantQualifiedUrlsEnabled()) {
+            reqToken.setTenantDomain(sessionDTO.getTenantDomain());
+        }
 
         String serverURL = CarbonUIUtil.getServerURL(session.getServletContext(), session);
         ConfigurationContext configContext =
@@ -525,7 +529,12 @@ public class PassiveSTS extends HttpServlet {
     private void setWReplyUrl(PassiveSTSHttpServletRequestWrapper request) {
 
         String wtrealm = getAttribute(request.getParameterMap(), PassiveRequestorConstants.REALM);
-        String tenantDomain = getAttribute(request.getParameterMap(), MultitenantConstants.TENANT_DOMAIN);
+        String tenantDomain;
+        if (IdentityTenantUtil.isTenantQualifiedUrlsEnabled()) {
+            tenantDomain = IdentityTenantUtil.getTenantDomainFromContext();
+        } else {
+            tenantDomain = getAttribute(request.getParameterMap(), MultitenantConstants.TENANT_DOMAIN);
+        }
         if (StringUtils.isBlank(tenantDomain)) {
             tenantDomain = MultitenantConstants.SUPER_TENANT_DOMAIN_NAME;
         }
@@ -595,7 +604,9 @@ public class PassiveSTS extends HttpServlet {
         authenticationRequest.setRequestQueryParams(request.getParameterMap());
         authenticationRequest.setCommonAuthCallerPath(selfPath);
         authenticationRequest.appendRequestQueryParams(request.getParameterMap());
-        authenticationRequest.setTenantDomain(tenantDomain);
+        if (!IdentityTenantUtil.isTenantQualifiedUrlsEnabled()) {
+            authenticationRequest.setTenantDomain(tenantDomain);
+        }
         // According to ws-federation-1.2-spec; 'wtrealm' will not be sent in the Passive STS Logout Request.
         if (sessionDTO.getRealm() == null || sessionDTO.getRealm().trim().length() == 0) {
             authenticationRequest.setRelyingParty(new String());

@@ -40,6 +40,7 @@ import org.wso2.carbon.identity.application.common.model.Property;
 import org.wso2.carbon.identity.application.common.model.ServiceProvider;
 import org.wso2.carbon.identity.application.common.util.IdentityApplicationConstants;
 import org.wso2.carbon.identity.application.mgt.ApplicationManagementService;
+import org.wso2.carbon.identity.core.util.IdentityTenantUtil;
 import org.wso2.carbon.identity.sts.passive.internal.RegistryBasedTrustedServiceStore;
 import org.wso2.carbon.identity.sts.passive.processors.RequestProcessor;
 
@@ -212,8 +213,13 @@ public class PassiveSTSService {
         }
         ServiceProvider sp = null;
         try {
-            String tenantDomain = request.getTenantDomain();
-            if (tenantDomain ==null || tenantDomain.trim().length() == 0) {
+            String tenantDomain;
+            if (IdentityTenantUtil.isTenantQualifiedUrlsEnabled()) {
+                tenantDomain = IdentityTenantUtil.getTenantDomainFromContext();
+            } else {
+                tenantDomain = request.getTenantDomain();
+            }
+            if (StringUtils.isBlank(tenantDomain)) {
                 tenantDomain = CarbonContext.getThreadLocalCarbonContext().getTenantDomain();
                 request.setTenantDomain(tenantDomain);
             }

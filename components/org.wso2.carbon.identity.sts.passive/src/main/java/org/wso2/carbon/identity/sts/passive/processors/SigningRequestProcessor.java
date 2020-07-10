@@ -29,6 +29,7 @@ import org.apache.wss4j.common.WSS4JConstants;
 import org.apache.wss4j.common.principal.CustomTokenPrincipal;
 import org.w3c.dom.Element;
 import org.wso2.carbon.context.PrivilegedCarbonContext;
+import org.wso2.carbon.identity.core.util.IdentityTenantUtil;
 import org.wso2.carbon.identity.sts.passive.RequestToken;
 import org.wso2.carbon.identity.sts.passive.ResponseToken;
 import org.wso2.carbon.identity.sts.passive.internal.IdentityPassiveSTSServiceComponent;
@@ -62,7 +63,11 @@ public class SigningRequestProcessor extends RequestProcessor {
         String tenantDomain = null;
 
         try {
-            tenantDomain = request.getTenantDomain();
+            if (IdentityTenantUtil.isTenantQualifiedUrlsEnabled()) {
+                tenantDomain = IdentityTenantUtil.getTenantDomainFromContext();
+            } else {
+                tenantDomain = request.getTenantDomain();
+            }
             int tenantId = IdentityPassiveSTSServiceComponent.getRealmService().getTenantManager()
                     .getTenantId(tenantDomain);
             if (StringUtils.isNotEmpty(tenantDomain)) {
