@@ -549,7 +549,7 @@
         <commons-collections.wso2.osgi.version.range>[3.2.0,4.0.0)</commons-collections.wso2.osgi.version.range>
         <encoder.wso2.imp.pkg.version.range>[1.2.0.wso2v1, 2.0.0)</encoder.wso2.imp.pkg.version.range>
         <carbon.consent.mgt.imp.pkg.version.range>[1.0.0, 3.0.0)</carbon.consent.mgt.imp.pkg.version.range>
-        <cxf-bundle.version>3.2.8</cxf-bundle.version>
+        <cxf-bundle.version>3.3.7</cxf-bundle.version>
         <javax.ws.rs-api.version>2.1.1</javax.ws.rs-api.version>
 
         <joda.wso2.version>2.9.4.wso2v1</joda.wso2.version>
