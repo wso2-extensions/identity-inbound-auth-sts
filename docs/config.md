@@ -3,24 +3,25 @@ WSO2 Identity Server uses the security token service (STS) as the WS-Trust imple
 SAML 1.1 and 2.0 security tokens and has a SOAP/XML API for token issuance. This section provides the instructions to 
 configure WS-Trust Security Token Service with WSO2 Identity Server. 
 
-## Installing the Connector
+## Installing the connector
    1. Download the connector from [WSO2 Connector Store](https://store.wso2.com/store/assets/isconnector/list).
-   2. Navigate to the PRODUCT_HOME and paste the `wso2is-sts-connector-x.x.x.zip` file downloaded from the WSO2 
-Connector Store and extract it.
-   3. If you are using MacOS/Ubuntu, navigate to the extracted folder and execute the following commands.
+   2. Navigate to the `<PRODUCT_HOME>`, paste the `wso2is-sts-connector-x.x.x.zip` file downloaded from the WSO2 
+   Connector Store and extract it. The extracted folder will be referred to as `<CONNECTOR_HOME>` in the rest of this
+    document.
+   3. If you are using MacOS/Ubuntu, navigate to `<CONNECTOR_HOME>` and execute the following commands.
             
             chmod u+r+x setup_sts.sh
             ./setup_sts.sh 
             
       Else,
-        - Navigate to the `extracted_folder/dropins` and copy the jars in that location to 
-        `PRODUCT_HOME/repository/components/dropins`.
-        - Navigate to the `extracted_folder/deployment-client-modules` and copy the .mar file in that location to 
-        `PRODUCT_HOME/repository/deployment/client/modules`.
-   4. Navigate back to the PRODUCT_HOME and delete the extracted_folder. Now you have successfully installed the 
+        - Navigate to `<CONNECTOR_HOME>/dropins` and copy the jars in that location to 
+        `<PRODUCT_HOME>/repository/components/dropins`.
+        - Navigate to `<CONNECTOR_HOME>/deployment-client-modules` and copy the .mar file in that location to 
+        `<PRODUCT_HOME>/repository/deployment/client/modules`.
+   4. Navigate back to `<PRODUCT_HOME>` and delete `<CONNECTOR_HOME>` folder. Now you have successfully installed the 
    connector.
    
-## Configuration Steps
+## Configuration steps
 
 #### Securing the Security Token Service
 According to the Trust Brokering model defined in the WS-Trust specification, the users should authenticate 
@@ -98,9 +99,9 @@ The next step is to add a service provider to consume the STS.
     
     To register a service provider:
 	    1. Sign in to WSO2 Identity Server Management Console as an admin.
-	    2. On the Main menu, click Identity > Service Providers > Add.
+	    2. On the Main menu, click "Identity" > "Service Providers" > "Add".
 	    3. Enter a service provider name.
-	    4. Click Register. The Service Provider Details page appears.
+	    4. Click "Register". The Service Provider Details page appears.
 	    
    1. Under the **Inbound Authentication Configuration** section, click **WS-Trust Security Token Service 
    Configuration** **\>** **Configure**. The STS Configuration page appears. 
@@ -125,7 +126,7 @@ The next step is to add a service provider to consume the STS.
                           <p>The endpoint must be used as the service <code>                  URL                 </code> to which the token gets delivered by the STS client. Then select the public certificate imported. Tokens issued are encrypted using the public certificate of the trusted relying party. Therefore, the consumer who obtains this token, to invoke the RP service, will not be able to see the token.</p> 
                            <div class="admonition note">
                             <p class="admonition-title"><strong>Note</strong></p>
-                                 Make sure to upload the certificate of the relying party to the truststore. For instructions, see <a href="https://docs.wso2.com/display/ADMIN44x/Creating+New+Keystores#CreatingNewKeystores-ca_certificateAddingCA-signedcertificatestokeystores">Adding CA-signed certificates to keystores</a>.</div>
+                                 Make sure to upload the certificate of the relying party to the truststore. For instructions, see <a href="https://is.docs.wso2.com/en/latest/administer/creating-new-keystores/#adding-ca-signed-certificates-to-keystores">Adding CA-signed certificates to keystores</a>.</div>
                           <br/>
                        </div>
                     </div>
@@ -147,8 +148,8 @@ The following sample demonstrates the steps required to run a Security Token Ser
 the service of issuing a security token to authenticate a user for your client application, using WS-Trust protocols.
 
    1. The code for the sample can be checked out from the [GitHub repository](https://github.com/wso2/samples-is).
-   2. Once downloaded the identity server samples, go inside to `SAMPLES-IS/sts/sts-client` directory to build the STS 
-   client.
+   2. Once downloaded the identity server samples, go inside the `<SAMPLES-IS>/sts/sts-client` directory to build the 
+   STS client.
    3. Build the client using `mvn install`.
    4. Once the client is built successfully, run the `sts-client.sh` file in Unix or `sts-client.bat` in Windows. You
     can see that the SAML token issued from the STS is being printed by the client.
