@@ -27,7 +27,7 @@
     <groupId>org.wso2.carbon.identity.inbound.auth.sts</groupId>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>identity-inbound-auth-sts</artifactId>
-    <version>5.5.1</version>
+    <version>5.6.8-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>WSO2 Carbon - Identity STS Management</name>
     <description>
@@ -40,7 +40,7 @@
         <developerConnection>scm:git:https://github.com/wso2-extensions/identity-inbound-auth-sts.git
         </developerConnection>
         <connection>scm:git:https://github.com/wso2-extensions/identity-inbound-auth-sts.git</connection>
-        <tag>v5.5.1</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <repositories>
@@ -130,9 +130,19 @@
                 <version>${inbound.auth.openid.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.apache.santuario</groupId>
+                <artifactId>xmlsec</artifactId>
+                <version>${xmlsec.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.apache.ws.security.wso2</groupId>
                 <artifactId>wss4j</artifactId>
                 <version>${wss4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.rampart.wso2</groupId>
+                <artifactId>rampart-core</artifactId>
+                <version>${rampart.wso2.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.rampart.wso2</groupId>
@@ -145,9 +155,20 @@
                 <version>${rampart.wso2.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.apache.rampart</groupId>
+                <artifactId>rampart</artifactId>
+                <type>mar</type>
+                <version>${rampart.wso2.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.wso2.orbit.org.opensaml</groupId>
                 <artifactId>opensaml</artifactId>
                 <version>${opensaml2.wso2.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.orbit.joda-time</groupId>
+                <artifactId>joda-time</artifactId>
+                <version>${joda.wso2.version}</version>
             </dependency>
             <dependency>
                 <groupId>commons-fileupload.wso2</groupId>
@@ -156,12 +177,37 @@
             </dependency>
             <dependency>
                 <groupId>org.wso2.carbon.identity.inbound.auth.sts</groupId>
+                <artifactId>org.wso2.carbon.identity.sts.mgt</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.identity.inbound.auth.sts</groupId>
                 <artifactId>org.wso2.carbon.identity.sts.mgt.stub</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.wso2.carbon.identity.inbound.auth.sts</groupId>
+                <artifactId>org.wso2.carbon.identity.sts.mgt.ui</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.identity.inbound.auth.sts</groupId>
                 <artifactId>org.wso2.carbon.sts</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.identity.inbound.auth.sts</groupId>
+                <artifactId>org.wso2.carbon.sts.stub</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.identity.inbound.auth.sts</groupId>
+                <artifactId>org.wso2.carbon.sts.ui</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.identity.inbound.auth.sts</groupId>
+                <artifactId>org.wso2.carbon.identity.sts.store</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -179,6 +225,11 @@
                 <artifactId>org.wso2.carbon.mex.endpoint</artifactId>
                 <version>${project.version}</version>
                 <type>war</type>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.identity.inbound.auth.sts</groupId>
+                <artifactId>org.wso2.carbon.identity.sts.common</artifactId>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.axis2.wso2</groupId>
@@ -269,6 +320,21 @@
                 </exclusions>
             </dependency>
             <dependency>
+                <groupId>backport-util-concurrent.wso2</groupId>
+                <artifactId>backport-util-concurrent</artifactId>
+                <version>${orbit.version.backport.util}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.orbit.org.apache.neethi</groupId>
+                <artifactId>neethi</artifactId>
+                <version>${neethi.osgi.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-lang.wso2</groupId>
+                <artifactId>commons-lang</artifactId>
+                <version>${commons-lang.wso2.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>commons-collections.wso2</groupId>
                 <artifactId>commons-collections</artifactId>
                 <version>${commons-collections.version}</version>
@@ -277,12 +343,6 @@
                 <groupId>org.wso2.carbon</groupId>
                 <artifactId>org.wso2.carbon.registry.core</artifactId>
                 <version>${carbon.kernel.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.wso2.carbon.identity.framework</groupId>
-                <artifactId>org.wso2.carbon.identity.application.authentication.endpoint</artifactId>
-                <version>${identity.framework.version}</version>
-                <type>war</type>
             </dependency>
             <dependency>
                 <groupId>org.apache.cxf</groupId>
@@ -405,8 +465,8 @@
                 <inherited>true</inherited>
                 <configuration>
                     <encoding>UTF-8</encoding>
-                    <source>1.7</source>
-                    <target>1.7</target>
+                    <source>1.8</source>
+                    <target>1.8</target>
                 </configuration>
             </plugin>
             <plugin>
@@ -436,49 +496,64 @@
     </build>
 
     <properties>
-        <identity.framework.version>5.14.67</identity.framework.version>
+        <identity.framework.version>5.18.8</identity.framework.version>
         <identity.inbound.auth.sts.package.export.version>${project.version}
         </identity.inbound.auth.sts.package.export.version>
-        <inbound.auth.openid.version>5.4.0</inbound.auth.openid.version>
+        <inbound.auth.openid.version>5.6.0</inbound.auth.openid.version>
 
         <carbon.kernel.version>4.6.0</carbon.kernel.version>
         <carbon.kernel.feature.version>4.6.0</carbon.kernel.feature.version>
         <carbon.xfer.package.version>4.2.0</carbon.xfer.package.version>
-        <wss4j.version>1.5.11.wso2v16</wss4j.version>
+        <xmlsec.version>1.4.8</xmlsec.version>
+        <xmlsec.version.imp.pkg.version.range>[1.4.4,2.2.0)</xmlsec.version.imp.pkg.version.range>
+        <wss4j.version>1.5.11-wso2v21</wss4j.version>
         <rampart.wso2.version>1.6.1-wso2v43</rampart.wso2.version>
-        <opensaml2.wso2.version>2.6.6.wso2v3</opensaml2.wso2.version>
+        <opensaml2.wso2.version>2.6.6.wso2v4</opensaml2.wso2.version>
         <commons-fileupload.wso2.version>1.2.2.wso2v1</commons-fileupload.wso2.version>
         <carbon.p2.plugin.version>1.5.3</carbon.p2.plugin.version>
         <commons-collections.version>3.2.0.wso2v1</commons-collections.version>
         <maven.buildnumber.plugin.version>1.4</maven.buildnumber.plugin.version>
         <axis2.wso2.version>1.6.1-wso2v37</axis2.wso2.version>
+        <commons-lang.wso2.version>2.6.0.wso2v1</commons-lang.wso2.version>
+        <orbit.version.backport.util>3.1.0.wso2v1</orbit.version.backport.util>
 
+        <neethi.osgi.version>2.0.4.wso2v5</neethi.osgi.version>
         <neethi.osgi.version.range>[2.0.4.wso2v4,3.0.0)</neethi.osgi.version.range>
 
         <identity.framework.imp.pkg.version.range>[5.14.0, 6.0.0)</identity.framework.imp.pkg.version.range>
         <identity.inbound.auth.openid.imp.pkg.version.range>[5.4.0, 6.0.0)
         </identity.inbound.auth.openid.imp.pkg.version.range>
         <identity.inbound.auth.sts.imp.pkg.version.range>[5.4.0, 6.0.0)</identity.inbound.auth.sts.imp.pkg.version.range>
+        <carbon.user.api.imp.pkg.version.range>[1.0.1, 2.0.0)</carbon.user.api.imp.pkg.version.range>
 
         <opensaml2.wso2.osgi.version.range>[2.6.0,3.0.0)</opensaml2.wso2.osgi.version.range>
+        <opensaml3.wso2.osgi.version.range>[3.3.1,3.4.0)</opensaml3.wso2.osgi.version.range>
+        <org.apache.wss4j.version.range>[2.2.5,3.0.0)</org.apache.wss4j.version.range>
+        <org.apache.cxf.version.range>[3.3.6,4.0.0)</org.apache.cxf.version.range>
         <rampart.wso2.osgi.version.range>[1.6.1,2.0.0)</rampart.wso2.osgi.version.range>
         <wss4j.ws.security.imp.pkg.version.range>[1.5.11,2.0.0)</wss4j.ws.security.imp.pkg.version.range>
         <equinox.osgi.stax-api.imp.pkg.version.range>[1.0.1,2.0.0)</equinox.osgi.stax-api.imp.pkg.version.range>
         <axiom.osgi.version.range>[1.2.11, 2.0.0)</axiom.osgi.version.range>
+        <axiom.org.jaxen.imp.pkg.version.range>[1.1.1, 2.0.0)</axiom.org.jaxen.imp.pkg.version.range>
         <axis2.osgi.version.range>[1.6.1.wso2v12, 2.0.0)</axis2.osgi.version.range>
         <commons-logging.osgi.version.range>[1.2.0, 2.0.0)</commons-logging.osgi.version.range>
         <commons-lang.wso2.osgi.version.range>[2.6.0,3.0.0)</commons-lang.wso2.osgi.version.range>
         <osgi.framework.imp.pkg.version.range>[1.7.0, 2.0.0)</osgi.framework.imp.pkg.version.range>
         <osgi.service.component.imp.pkg.version.range>[1.2.0, 2.0.0)</osgi.service.component.imp.pkg.version.range>
         <carbon.kernel.package.import.version.range>[4.5.0, 5.0.0)</carbon.kernel.package.import.version.range>
+        <carbon.user.api.imp.pkg.version.range>[1.0.1, 2.0.0)</carbon.user.api.imp.pkg.version.range>
         <carbon.base.imp.pkg.version.range>[1.0.0, 2.0.0)</carbon.base.imp.pkg.version.range>
         <carbon.kernel.registry.imp.pkg.version>[1.0.1, 2.0.0)</carbon.kernel.registry.imp.pkg.version>
         <encoder.wso2.version>1.2.0.wso2v1</encoder.wso2.version>
         <imp.pkg.version.javax.servlet>[2.6.0, 3.0.0)</imp.pkg.version.javax.servlet>
         <commons-collections.wso2.osgi.version.range>[3.2.0,4.0.0)</commons-collections.wso2.osgi.version.range>
         <encoder.wso2.imp.pkg.version.range>[1.2.0.wso2v1, 2.0.0)</encoder.wso2.imp.pkg.version.range>
-        <cxf-bundle.version>3.2.8</cxf-bundle.version>
+        <carbon.consent.mgt.imp.pkg.version.range>[1.0.0, 3.0.0)</carbon.consent.mgt.imp.pkg.version.range>
+        <cxf-bundle.version>3.3.7</cxf-bundle.version>
         <javax.ws.rs-api.version>2.1.1</javax.ws.rs-api.version>
+
+        <joda.wso2.version>2.9.4.wso2v1</joda.wso2.version>
+        <joda.wso2.osgi.version.range>[2.8.2,3.0.0)</joda.wso2.osgi.version.range>
 
         <org.slf4j.verison>1.7.21</org.slf4j.verison>
         <testng.version>6.9.10</testng.version>
@@ -506,6 +581,8 @@
         <module>components/org.wso2.carbon.mex</module>
         <module>components/org.wso2.carbon.mex.endpoint</module>
         <module>components/org.wso2.carbon.mex2</module>
+        <module>components/org.wso2.carbon.security.sts.common</module>
+        <module>components/org.wso2.carbon.sts.connector</module>
 
         <module>features/org.wso2.carbon.identity.sts.mgt.feature</module>
         <module>features/org.wso2.carbon.identity.sts.mgt.server.feature</module>
@@ -517,6 +594,7 @@
         <module>features/org.wso2.carbon.sts.server.feature</module>
         <module>features/org.wso2.carbon.sts.ui.feature</module>
         <module>features/org.wso2.carbon.mex.feature</module>
+        <module>features/org.wso2.carbon.sts.connector.feature</module>
 
     </modules>
 

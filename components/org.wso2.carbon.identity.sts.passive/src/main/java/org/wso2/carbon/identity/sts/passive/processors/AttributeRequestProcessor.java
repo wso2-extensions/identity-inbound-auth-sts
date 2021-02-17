@@ -17,79 +17,128 @@
 */
 package org.wso2.carbon.identity.sts.passive.processors;
 
-import org.apache.axiom.om.OMElement;
-import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.context.MessageContext;
-import org.apache.rahas.RahasConstants;
-import org.apache.rahas.RahasData;
-import org.apache.rahas.TokenStorage;
-import org.apache.rahas.TrustException;
-import org.apache.rahas.impl.SAMLPassiveTokenIssuer;
-import org.apache.ws.security.WSConstants;
-import org.apache.ws.security.WSSecurityEngineResult;
-import org.apache.ws.security.WSUsernameTokenPrincipal;
-import org.apache.ws.security.handler.WSHandlerConstants;
-import org.apache.ws.security.handler.WSHandlerResult;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.cxf.sts.QNameConstants;
+import org.apache.cxf.sts.operation.TokenIssueOperation;
+import org.apache.cxf.ws.security.sts.provider.STSException;
+import org.apache.cxf.ws.security.sts.provider.model.RequestSecurityTokenResponseCollectionType;
+import org.apache.cxf.ws.security.sts.provider.model.RequestSecurityTokenType;
+import org.apache.wss4j.common.WSS4JConstants;
+import org.apache.wss4j.common.principal.CustomTokenPrincipal;
+import org.w3c.dom.Element;
+import org.wso2.carbon.context.PrivilegedCarbonContext;
 import org.wso2.carbon.identity.sts.passive.RequestToken;
 import org.wso2.carbon.identity.sts.passive.ResponseToken;
+import org.wso2.carbon.identity.sts.passive.internal.IdentityPassiveSTSServiceComponent;
 import org.wso2.carbon.identity.sts.passive.utils.PassiveSTSUtil;
+import org.wso2.carbon.user.api.UserStoreException;
 
-import java.util.Vector;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import java.io.StringWriter;
+import java.util.Map;
+
+import static org.wso2.carbon.identity.sts.passive.utils.RequestProcessorUtil.addSTSProperties;
+import static org.wso2.carbon.identity.sts.passive.utils.RequestProcessorUtil.addService;
+import static org.wso2.carbon.identity.sts.passive.utils.RequestProcessorUtil.addTokenProvider;
+import static org.wso2.carbon.identity.sts.passive.utils.RequestProcessorUtil.changeNamespaces;
+import static org.wso2.carbon.identity.sts.passive.utils.RequestProcessorUtil.createAppliesToElement;
+import static org.wso2.carbon.identity.sts.passive.utils.RequestProcessorUtil.createSecondaryParameters;
+import static org.wso2.carbon.identity.sts.passive.utils.RequestProcessorUtil.handleClaims;
+import static org.wso2.carbon.identity.sts.passive.utils.RequestProcessorUtil.issueToken;
+import static org.wso2.carbon.identity.sts.passive.utils.RequestProcessorUtil.setupMessageContext;
 
 public class AttributeRequestProcessor extends RequestProcessor {
 
-    public ResponseToken process(RequestToken request) throws TrustException {
+    private static final Log log = LogFactory.getLog(AttributeRequestProcessor.class);
 
-        MessageContext context = MessageContext.getCurrentMessageContext();
-        SAMLPassiveTokenIssuer issuer = null;
-        WSHandlerResult handlerResults = null;
-        WSSecurityEngineResult engineResult = null;
-        WSUsernameTokenPrincipal principal = null;
-        Vector<WSSecurityEngineResult> wsResults = null;
-        ResponseToken reponseToken = null;
-        Vector<WSHandlerResult> handlerResultsVector = null;
-        OMElement rstr = null;
+    public ResponseToken process(RequestToken request) throws STSException {
 
+        ResponseToken responseToken;
+        String tenantDomain = null;
         try {
 
             if (request.getAttributes() == null || request.getAttributes().trim().length() == 0) {
-                throw new TrustException("attributesMissing");
+                throw new STSException("The request does not contain attributes.");
             }
 
-            principal = new WSUsernameTokenPrincipal(request.getUserName(), false);
+            tenantDomain = request.getTenantDomain();
+            int tenantId = IdentityPassiveSTSServiceComponent.getRealmService().getTenantManager()
+                    .getTenantId(tenantDomain);
+            if (StringUtils.isNotEmpty(tenantDomain)) {
+                PrivilegedCarbonContext.startTenantFlow();
+                PrivilegedCarbonContext.getThreadLocalCarbonContext().setTenantDomain(tenantDomain);
+                PrivilegedCarbonContext.getThreadLocalCarbonContext().setTenantId(tenantId);
+            }
 
-            engineResult = new WSSecurityEngineResult(WSConstants.UT, principal, null, null, null);
+            TokenIssueOperation issueOperation = new TokenIssueOperation();
+            addTokenProvider(issueOperation, request);
+            addService(issueOperation, request.getRealm());
+            addSTSProperties(issueOperation);
+            // Set the ClaimsManager to the issue operation.
+            handleClaims(request, issueOperation);
 
-            wsResults = new Vector<WSSecurityEngineResult>();
-            wsResults.add(engineResult);
+            // Obtain the type of token, whether it is a SAML1.1 or SAML2 token.
+            String requestedTokenType = PassiveSTSUtil.extractTokenType(request);
 
-            handlerResults = new WSHandlerResult("", wsResults);
+            // Build up an issue request.
+            JAXBElement<String> tokenType;
+            RequestSecurityTokenType issueTokenRequest = new RequestSecurityTokenType();
+            if (!WSS4JConstants.WSS_SAML2_TOKEN_TYPE.equals(requestedTokenType)) {
+                tokenType = new JAXBElement<>(
+                        QNameConstants.TOKEN_TYPE, String.class, WSS4JConstants.WSS_SAML_TOKEN_TYPE
+                );
+            } else {
+                tokenType = new JAXBElement<>(
+                        QNameConstants.TOKEN_TYPE, String.class, WSS4JConstants.WSS_SAML2_TOKEN_TYPE
+                );
+            }
+            issueTokenRequest.getAny().add(tokenType);
+            Element secondaryParameters = createSecondaryParameters(request);
+            issueTokenRequest.getAny().add(secondaryParameters);
+            issueTokenRequest.getAny().add(createAppliesToElement(request.getRealm()));
+            Map<String, Object> msgCtx = setupMessageContext(request.getUserName());
 
-            handlerResultsVector = new Vector<WSHandlerResult>();
-            handlerResultsVector.add(handlerResults);
+            // Make an issue token request.
+            RequestSecurityTokenResponseCollectionType securityTokenResponse = issueToken(issueOperation, issueTokenRequest,
+                    new CustomTokenPrincipal(request.getUserName()),
+                    msgCtx);
 
-            MessageContext.getCurrentMessageContext().setProperty(WSHandlerConstants.RECV_RESULTS,
-                    handlerResultsVector);
-            MessageContext.getCurrentMessageContext().setProperty(RahasConstants.PASSIVE_STS_RST,
-                    getRST(request.getRealm(), request.getAttributes(), request.getDialect(),
-                            PassiveSTSUtil.extractTokenType(request)));
+            // Convert the response into a JAXBElement.
+            JAXBElement<RequestSecurityTokenResponseCollectionType> jaxbResponse =
+                    QNameConstants.WS_TRUST_FACTORY.createRequestSecurityTokenResponseCollection(securityTokenResponse);
 
-            ConfigurationContext configurationContext = context.getConfigurationContext();
-            configurationContext.setProperty(TokenStorage.TOKEN_STORAGE_KEY, PassiveSTSUtil.getTokenStorage());
+            // Create XML Formatted Response.
+            StringWriter sw = new StringWriter();
+            try {
+                JAXBContext jaxbContext = JAXBContext.newInstance(RequestSecurityTokenResponseCollectionType.class);
+                Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+                jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.FALSE);
+                jaxbMarshaller.marshal(jaxbResponse, sw);
+            } catch (JAXBException exception) {
+                log.error(exception.getMessage(), exception);
+                throw new STSException("Error while processing the attribute request.", exception);
+            }
 
-            rahasData = new RahasData(context);
-            issuer = new SAMLPassiveTokenIssuer();
-            issuer.setAudienceRestrictionCondition(request.getRealm());
-            issuer.setConfig(getSAMLTokenIssuerConfig(MessageContext.getCurrentMessageContext()
-                    .getAxisService(), true));
-            rstr = issuer.issuePassiveRSTR(rahasData);
-            reponseToken = new ResponseToken();
-            reponseToken.setResults(rstr.toStringWithConsume());
+            responseToken = new ResponseToken();
+            responseToken.setResults(changeNamespaces(sw.toString()));
 
+        } catch (UserStoreException e) {
+            log.error("Error while getting tenant Id from realm service.", e);
+            throw new STSException("Error while processing the attribute request.", e);
         } catch (Exception e) {
-            throw new TrustException("errorWhileProcessingAttributeRequest", e);
+            log.error("Failed to add the STS configurations.", e);
+            throw new STSException("Error while processing the attribute request.", e);
+        } finally {
+            if (StringUtils.isNotEmpty(tenantDomain)) {
+                PrivilegedCarbonContext.endTenantFlow();
+            }
         }
 
-        return reponseToken;
+        return responseToken;
     }
 }

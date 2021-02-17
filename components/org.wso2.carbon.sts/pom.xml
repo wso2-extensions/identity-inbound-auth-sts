@@ -22,7 +22,7 @@
         <groupId>org.wso2.carbon.identity.inbound.auth.sts</groupId>
         <artifactId>identity-inbound-auth-sts</artifactId>
         <relativePath>../../pom.xml</relativePath>
-        <version>5.5.1</version>
+        <version>5.6.8-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -33,6 +33,10 @@
     <url>http://wso2.org</url>
 
     <dependencies>
+        <dependency>
+            <groupId>commons-lang.wso2</groupId>
+            <artifactId>commons-lang</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.apache.axis2.wso2</groupId>
             <artifactId>axis2</artifactId>
@@ -49,7 +53,19 @@
         </dependency>
         <dependency>
             <groupId>org.wso2.carbon.identity.framework</groupId>
+            <artifactId>org.wso2.carbon.identity.application.mgt</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.identity.framework</groupId>
+            <artifactId>org.wso2.carbon.identity.application.common</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.identity.framework</groupId>
             <artifactId>org.wso2.carbon.security.mgt</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.identity.inbound.auth.sts</groupId>
+            <artifactId>org.wso2.carbon.identity.sts.common</artifactId>
         </dependency>
         <dependency>
             <groupId>org.wso2.carbon</groupId>
@@ -104,20 +120,26 @@
 
                             org.wso2.carbon.utils.*;version="${carbon.kernel.package.import.version.range}",
                             org.wso2.carbon.context; version="${carbon.kernel.package.import.version.range}",
+                            org.wso2.carbon.core; version="${carbon.kernel.package.import.version.range}",
                             org.wso2.carbon.core.deployment; version="${carbon.kernel.package.import.version.range}",
                             org.wso2.carbon.core.util; version="${carbon.kernel.package.import.version.range}",
+                            org.wso2.carbon.consent.mgt.core.*; version="${carbon.consent.mgt.imp.pkg.version.range}",
                             org.wso2.carbon.user.core.*;version="${carbon.kernel.package.import.version.range}",
 
                             org.wso2.carbon.base; version="${carbon.base.imp.pkg.version.range}",
                             org.wso2.carbon.registry.core.*;version="${carbon.kernel.registry.imp.pkg.version}",
                             org.wso2.carbon.registry.api;version="${carbon.kernel.registry.imp.pkg.version}",
 
+                            org.wso2.carbon.identity.application.common.*; version="${identity.framework.imp.pkg.version.range}",
+                            org.wso2.carbon.identity.application.mgt.*; version="${identity.framework.imp.pkg.version.range}",
+                            org.wso2.carbon.identity.core.*; version="${identity.framework.imp.pkg.version.range}",
                             org.wso2.carbon.security.util; version="${identity.framework.imp.pkg.version.range}",
                             org.wso2.carbon.security.keystore.*;
                             version="${identity.framework.imp.pkg.version.range}",
                             org.apache.neethi; version="${neethi.osgi.version.range}",
                             org.apache.axiom.*; version="${axiom.osgi.version.range}",
-                            org.wso2.carbon.security.*,
+                            org.wso2.carbon.security.*; version="${identity.framework.imp.pkg.version.range}",
+                            org.wso2.carbon.identity.sts.common.*; version="${identity.inbound.auth.sts.imp.pkg.version.range}",
                             org.wso2.carbon.identity.sts.store;
                             version="${identity.inbound.auth.sts.imp.pkg.version.range}",
                             org.wso2.carbon.identity.provider; resolution:=optional;

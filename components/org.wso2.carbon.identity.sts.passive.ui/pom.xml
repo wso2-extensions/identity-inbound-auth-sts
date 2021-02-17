@@ -22,7 +22,7 @@
         <groupId>org.wso2.carbon.identity.inbound.auth.sts</groupId>
         <artifactId>identity-inbound-auth-sts</artifactId>
         <relativePath>../../pom.xml</relativePath>
-        <version>5.5.1</version>
+        <version>5.6.8-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -223,6 +223,14 @@
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>8</source>
+                    <target>8</target>
+                </configuration>
             </plugin>
         </plugins>
     </build>

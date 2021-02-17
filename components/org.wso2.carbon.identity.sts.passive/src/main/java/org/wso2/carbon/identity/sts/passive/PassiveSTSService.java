@@ -32,7 +32,7 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.rahas.TrustException;
+import org.apache.cxf.ws.security.sts.provider.STSException;
 import org.wso2.carbon.context.CarbonContext;
 import org.wso2.carbon.identity.application.common.IdentityApplicationManagementException;
 import org.wso2.carbon.identity.application.common.model.InboundAuthenticationRequestConfig;
@@ -40,6 +40,7 @@ import org.wso2.carbon.identity.application.common.model.Property;
 import org.wso2.carbon.identity.application.common.model.ServiceProvider;
 import org.wso2.carbon.identity.application.common.util.IdentityApplicationConstants;
 import org.wso2.carbon.identity.application.mgt.ApplicationManagementService;
+import org.wso2.carbon.identity.core.util.IdentityTenantUtil;
 import org.wso2.carbon.identity.sts.passive.internal.RegistryBasedTrustedServiceStore;
 import org.wso2.carbon.identity.sts.passive.processors.RequestProcessor;
 
@@ -66,7 +67,7 @@ public class PassiveSTSService {
             if (processor != null) {
                 try {
                     responseToken = processor.process(request);
-                } catch (TrustException e) {
+                } catch (STSException e) {
                     log.error(e);
                     soapfault = genFaultResponse(MessageContext.getCurrentMessageContext(), "Sender",
                             "InvalidRequest", e.getMessage(), "none").toStringWithConsume();
@@ -212,8 +213,13 @@ public class PassiveSTSService {
         }
         ServiceProvider sp = null;
         try {
-            String tenantDomain = request.getTenantDomain();
-            if (tenantDomain ==null || tenantDomain.trim().length() == 0) {
+            String tenantDomain;
+            if (IdentityTenantUtil.isTenantQualifiedUrlsEnabled()) {
+                tenantDomain = IdentityTenantUtil.getTenantDomainFromContext();
+            } else {
+                tenantDomain = request.getTenantDomain();
+            }
+            if (StringUtils.isBlank(tenantDomain)) {
                 tenantDomain = CarbonContext.getThreadLocalCarbonContext().getTenantDomain();
                 request.setTenantDomain(tenantDomain);
             }

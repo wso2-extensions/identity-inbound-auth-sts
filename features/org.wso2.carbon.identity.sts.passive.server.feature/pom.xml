@@ -22,7 +22,7 @@
         <groupId>org.wso2.carbon.identity.inbound.auth.sts</groupId>
         <artifactId>identity-inbound-auth-sts</artifactId>
         <relativePath>../../pom.xml</relativePath>
-        <version>5.5.1</version>
+        <version>5.6.8-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -37,11 +37,6 @@
             <groupId>org.wso2.carbon.identity.inbound.auth.sts</groupId>
             <artifactId>org.wso2.carbon.identity.sts.passive</artifactId>
             <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.wso2.carbon.identity.framework</groupId>
-            <artifactId>org.wso2.carbon.identity.application.authentication.endpoint</artifactId>
-            <type>war</type>
         </dependency>
     </dependencies>
 
@@ -62,7 +57,6 @@
                                 <resource>
                                     <directory>resources</directory>
                                     <includes>
-                                        <include>authenticationendpoint.war</include>
                                         <include>p2.inf</include>
                                         <include>build.properties</include>
                                         <include>sts_response.html</include>

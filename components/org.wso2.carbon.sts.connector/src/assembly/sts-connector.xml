@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) 2020, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+  ~
+  ~ WSO2 Inc. licenses this file to you under the Apache License,
+  ~ Version 2.0 (the "License"); you may not use this file except
+  ~ in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing,
+  ~ software distributed under the License is distributed on an
+  ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~ KIND, either express or implied.  See the License for the
+  ~ specific language governing permissions and limitations
+  ~ under the License.
+  ~
+  -->
+<assembly>
+    <id>migration</id>
+    <formats>
+        <format>zip</format>
+    </formats>
+    <includeBaseDirectory>false</includeBaseDirectory>
+    <dependencySets>
+        <dependencySet>
+            <outputDirectory>wso2is-sts-connector-${project.version}/dropins/</outputDirectory>
+            <includes>
+                <include>org.wso2.orbit.org.opensaml:opensaml</include>
+            </includes>
+        </dependencySet>
+        <dependencySet>
+            <outputDirectory>wso2is-sts-connector-${project.version}/dropins/</outputDirectory>
+            <includes>
+                <include>org.apache.ws.security.wso2:wss4j</include>
+            </includes>
+        </dependencySet>
+        <dependencySet>
+            <outputDirectory>wso2is-sts-connector-${project.version}/dropins/</outputDirectory>
+            <includes>
+                <include>org.apache.rampart.wso2:rampart-core</include>
+            </includes>
+        </dependencySet>
+        <dependencySet>
+            <outputDirectory>wso2is-sts-connector-${project.version}/dropins/</outputDirectory>
+            <includes>
+                <include>org.apache.rampart.wso2:rampart-trust</include>
+            </includes>
+        </dependencySet>
+        <dependencySet>
+            <outputDirectory>wso2is-sts-connector-${project.version}/dropins/</outputDirectory>
+            <includes>
+                <include>org.apache.rampart.wso2:rampart-policy</include>
+            </includes>
+        </dependencySet>
+        <dependencySet>
+            <outputDirectory>wso2is-sts-connector-${project.version}/deployment-client-modules/</outputDirectory>
+            <includes>
+                <include>org.apache.rampart:rampart</include>
+            </includes>
+        </dependencySet>
+    </dependencySets>
+    <files>
+        <file>
+            <source>
+                ../org.wso2.carbon.identity.sts.mgt/target/org.wso2.carbon.identity.sts.mgt-${project.version}.jar
+            </source>
+            <outputDirectory>wso2is-sts-connector-${project.version}/dropins/</outputDirectory>
+        </file>
+        <file>
+            <source>
+                ../org.wso2.carbon.identity.sts.mgt.stub/target/org.wso2.carbon.identity.sts.mgt.stub-${project.version}.jar
+            </source>
+            <outputDirectory>wso2is-sts-connector-${project.version}/dropins/</outputDirectory>
+        </file>
+        <file>
+            <source>
+                ../org.wso2.carbon.identity.sts.mgt.ui/target/org.wso2.carbon.identity.sts.mgt.ui-${project.version}.jar
+            </source>
+            <outputDirectory>wso2is-sts-connector-${project.version}/dropins/</outputDirectory>
+        </file>
+        <file>
+            <source>
+                ../org.wso2.carbon.identity.sts.store/target/org.wso2.carbon.identity.sts.store-${project.version}.jar
+            </source>
+            <outputDirectory>wso2is-sts-connector-${project.version}/dropins/</outputDirectory>
+        </file>
+        <file>
+            <source>
+                ../org.wso2.carbon.sts/target/org.wso2.carbon.sts-${project.version}.jar
+            </source>
+            <outputDirectory>wso2is-sts-connector-${project.version}/dropins/</outputDirectory>
+        </file>
+        <file>
+            <source>
+                ../org.wso2.carbon.sts.stub/target/org.wso2.carbon.sts.stub-${project.version}.jar
+            </source>
+            <outputDirectory>wso2is-sts-connector-${project.version}/dropins/</outputDirectory>
+        </file>
+        <file>
+            <source>
+                ../org.wso2.carbon.sts.ui/target/org.wso2.carbon.sts.ui-${project.version}.jar
+            </source>
+            <outputDirectory>wso2is-sts-connector-${project.version}/dropins/</outputDirectory>
+        </file>
+        <file>
+            <source>
+                ../org.wso2.carbon.security.sts.common/target/org.wso2.carbon.identity.sts.common-${project.version}.jar
+            </source>
+            <outputDirectory>wso2is-sts-connector-${project.version}/dropins/</outputDirectory>
+        </file>
+        <file>
+            <source>
+                ./src/main/resources/setup_sts.sh
+            </source>
+            <outputDirectory>wso2is-sts-connector-${project.version}/</outputDirectory>
+        </file>
+    </files>
+</assembly>
