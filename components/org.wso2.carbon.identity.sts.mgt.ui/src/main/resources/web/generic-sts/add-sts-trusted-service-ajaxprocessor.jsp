@@ -18,6 +18,7 @@
 
 <%@ page import="org.owasp.encoder.Encode" %>
 <%@ page import="org.wso2.carbon.identity.sts.mgt.ui.client.CarbonSTSClient" %>
+<%@ page import="org.wso2.carbon.ui.CarbonUIMessage" %>
 <%@ page import="org.wso2.carbon.ui.CarbonUIUtil" %>
 <%@ page import="org.wso2.carbon.utils.ServerConstants" %>
 
@@ -30,6 +31,7 @@
 
     String spName = request.getParameter("spName");
     String action = request.getParameter("spAction");
+    String obsoleteSpAudience = request.getParameter("obsoleteSpAudience");
 
     try {
 
@@ -39,6 +41,9 @@
         String address = request.getParameter("endpointaddrs");
         String keyAlias = request.getParameter("alias");
 
+        if (obsoleteSpAudience != null && !obsoleteSpAudience.isEmpty())
+            stsClient.removeTrustedService(obsoleteSpAudience);
+
         stsClient.addTrustedService(address, keyAlias);
         if (spName != null && action != null && "returnToSp".equals(action)) {
 
@@ -46,10 +51,10 @@
             if (applicationComponentFound) {
 %>
 <script>
-    location.href = '../application/configure-service-provider.jsp?action=update&display=serviceName&spName=<%=Encode.forUriComponent(spName)%>&serviceName=<%=Encode.forUriComponent(address)%>';
+    location.href = '../application/configure-service-provider.jsp?action=update&display=serviceName&spName=<%=Encode.forUriComponent(spName)%>&serviceName=<%=Encode.forUriComponent(address)%>&obsoleteServiceName=<%=Encode.forUriComponent(obsoleteSpAudience)%>';
 </script>
 <%
-} else {
+            } else {
 %>
 <script>
     location.href = 'sts.jsp';

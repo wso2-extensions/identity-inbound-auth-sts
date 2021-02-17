@@ -16,15 +16,13 @@
   ~ under the License.
   --%>
 
-<%@page import="org.apache.axis2.context.ConfigurationContext"%>
+<%@ page import="org.apache.axis2.context.ConfigurationContext"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib uri="http://wso2.org/projects/carbon/taglibs/carbontags.jar" prefix="carbon" %>
-<%@page import="org.wso2.carbon.CarbonConstants" %>
+<%@ page import="org.wso2.carbon.CarbonConstants" %>
 <%@ page import="org.wso2.carbon.base.MultitenantConstants" %>
 <%@ page import="org.wso2.carbon.identity.sts.mgt.stub.service.util.xsd.TrustedServiceData" %>
-
-
-<%@page import="org.wso2.carbon.identity.sts.mgt.ui.client.CarbonSTSClient" %>
+<%@ page import="org.wso2.carbon.identity.sts.mgt.ui.client.CarbonSTSClient" %>
 <%@ page import="org.wso2.carbon.ui.CarbonUIUtil" %>
 <%@ page import="org.wso2.carbon.utils.CarbonUtils" %>
 <%@ page import="org.wso2.carbon.utils.NetworkUtils" %>
@@ -43,58 +41,6 @@
 <script type="text/javascript" src="../carbon/admin/js/cookies.js"></script>
 <script type="text/javascript" src="../carbon/admin/js/main.js"></script>
 
-<script type="text/javascript">
-    function doValidation() {
-        var fld = document.getElementsByName("endpointaddrs")[0];
-        var value = fld.value;
-        if (value.length == 0) {
-            CARBON.showWarningDialog("<fmt:message key='enter.valid.endpoint.address'/>", null, null);
-            return false;
-        }
-
-        value = value.replace(/^\s+/, "");
-        if (value.length == 0) {
-            CARBON.showWarningDialog("<fmt:message key='enter.valid.endpoint.address'/>", null, null);
-            return false;
-        }
-        return true;
-    }
-    function doValidationOnClaims() {
-        var fld = document.getElementById("realmName");
-        var value = fld.value;
-        value = value.replace(/^\s+/, "");
-        if (value.length == 0) {
-            CARBON.showWarningDialog("<fmt:message key='enter.valid.realm.name'/>", null, null);
-            return false;
-        }
-        return true;
-    }
-
-    function itemRemove(hostName) {
-
-        function doDelete() {
-            $.ajax({
-                type: 'POST',
-                url: 'remove-sts-trusted-service-ajaxprocessor.jsp',
-                headers: {
-                    Accept: "text/html"
-                },
-                data: 'endpointaddrs=' + hostName,
-                async: false,
-                success: function (responseText, status) {
-                    if (status == "success") {
-                        location.assign("sts.jsp");
-                    }
-                }
-            });
-        }
-
-        CARBON.showConfirmationDialog('<fmt:message key='remove.message1'/>' + hostName + '<fmt:message key='remove.message2'/>',
-                doDelete, null);
-    }
-
-</script>
-
 <%
     TrustedServiceData[] services = null;
     String[] aliases = null;
@@ -107,19 +53,16 @@
     String action = request.getParameter("spAction");
     String spAudience = request.getParameter("spAudience");
 
-
     ConfigurationContext configurationContext = (ConfigurationContext) config.getServletContext().getAttribute(CarbonConstants.CONFIGURATION_CONTEXT);
     try {
     	
     	String tenantDomain = (String) session.getAttribute(MultitenantConstants.TENANT_DOMAIN);
     	String tenantContext =  "";
-
     	
     	if (! MultitenantConstants.SUPER_TENANT_DOMAIN_NAME.equalsIgnoreCase(tenantDomain)){
         	 tenantContext =  MultitenantConstants.TENANT_AWARE_URL_PREFIX + "/" + tenantDomain + "/";
 
     	}
-       	
     	
         if(CarbonUtils.isRunningOnLocalTransportMode()){
             String mgtTransport = CarbonUtils.getManagementTransport();
@@ -155,6 +98,84 @@
         return;
     }
 %>
+
+<script type="text/javascript">
+    function doValidation() {
+        event.preventDefault();
+        var fld = document.getElementsByName("endpointaddrs")[0];
+        var value = fld.value;
+        var activeStsEndpoints = [];
+    <%
+        if(services != null && services.length > 0) {
+           for (TrustedServiceData service : services) {
+    %>
+        activeStsEndpoints.push('<%=service.getServiceAddress()%>');
+    <%
+            }
+        }
+    %>
+        if (value.length == 0) {
+            CARBON.showWarningDialog("<fmt:message key='enter.valid.endpoint.address'/>", null, null);
+            return false;
+        }
+
+        value = value.replace(/^\s+/, "");
+        if (value.length == 0) {
+            CARBON.showWarningDialog("<fmt:message key='enter.valid.endpoint.address'/>", null, null);
+            return false;
+        }
+
+        if (value.length > 100) {
+            CARBON.showWarningDialog("<fmt:message key='sts.audience.value.too.long'/>", null, null);
+            return false;
+        }
+
+        for (var i = 0; i < activeStsEndpoints.length; i++) {
+            const element = activeStsEndpoints[i];
+            if (value.toLowerCase().localeCompare(element.toLowerCase()) == 0) {
+                CARBON.showWarningDialog("<fmt:message key='sts.audience.already.exist'/>", null, null);
+                return false;
+            }
+        }
+
+        document.getElementById("trustedservice").submit();
+    }
+
+    function doValidationOnClaims() {
+        var fld = document.getElementById("realmName");
+        var value = fld.value;
+        value = value.replace(/^\s+/, "");
+        if (value.length == 0) {
+            CARBON.showWarningDialog("<fmt:message key='enter.valid.realm.name'/>", null, null);
+            return false;
+        }
+        return true;
+    }
+
+    function itemRemove(hostName) {
+
+        function doDelete() {
+            $.ajax({
+                type: 'POST',
+                url: 'remove-sts-trusted-service-ajaxprocessor.jsp',
+                headers: {
+                    Accept: "text/html"
+                },
+                data: 'endpointaddrs=' + hostName,
+                async: false,
+                success: function (responseText, status) {
+                    if (status == "success") {
+                        location.assign("sts.jsp");
+                    }
+                }
+            });
+        }
+
+        CARBON.showConfirmationDialog('<fmt:message key='remove.message1'/>' + hostName + '<fmt:message key='remove.message2'/>',
+                doDelete, null);
+    }
+
+</script>
 
 <div id="middle">
     <h2><fmt:message key="sts.configuration"/></h2>
@@ -233,7 +254,7 @@
         <br/>
         <%} %>
 
-        <form method="post" action="add-sts-trusted-service-ajaxprocessor.jsp" name="trustedservice" onsubmit="return doValidation();">
+        <form method="post" action="add-sts-trusted-service-ajaxprocessor.jsp" id="trustedservice" name="trustedservice">
             <table class="styledLeft" width="100%">
                 <thead>
                 <tr>
@@ -259,6 +280,7 @@
                             </tr>
                             <tr>
                                 <td><fmt:message key="sts.certificate.alias"/>
+                                <input type="hidden" name="obsoleteSpAudience" value="<%=Encode.forHtmlAttribute(spAudience)%>" >
                                 <input type="hidden" name="spName" value="<%=Encode.forHtmlAttribute(spName)%>" >
                                 <input type="hidden" name="spAction" value="returnToSp" >
                                 
@@ -289,8 +311,7 @@
                 </tr>
                 <tr>
                     <td class="buttonRow">
-                        <input class="button" type="submit"
-                               value="<fmt:message key="sts.apply.caption"/>"/>
+                        <input id="addStsAudienceBtn" type="button" value="<fmt:message key="sts.apply.caption"/>" onclick="doValidation();"/>
                     </td>
                 </tr>
                 </tbody>
