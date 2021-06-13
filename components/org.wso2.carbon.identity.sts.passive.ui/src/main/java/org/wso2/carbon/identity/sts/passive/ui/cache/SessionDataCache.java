@@ -19,10 +19,10 @@
 package org.wso2.carbon.identity.sts.passive.ui.cache;
 
 import org.wso2.carbon.identity.application.authentication.framework.store.SessionDataStore;
-import org.wso2.carbon.identity.application.common.cache.BaseCache;
+import org.wso2.carbon.identity.application.authentication.framework.cache.AuthenticationBaseCache;
 import org.wso2.carbon.identity.core.util.IdentityUtil;
 
-public class SessionDataCache extends BaseCache<SessionDataCacheKey, SessionDataCacheEntry> {
+public class SessionDataCache extends AuthenticationBaseCache<SessionDataCacheKey, SessionDataCacheEntry> {
 
     private static final String SESSION_DATA_CACHE_NAME = "PassiveSTSSessionDataCache";
     private static volatile SessionDataCache instance;
