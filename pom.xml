@@ -424,7 +424,7 @@
     </build>
 
     <properties>
-        <identity.framework.version>5.18.8</identity.framework.version>
+        <identity.framework.version>5.20.66</identity.framework.version>
         <identity.inbound.auth.sts.package.export.version>${project.version}
         </identity.inbound.auth.sts.package.export.version>
         <inbound.auth.openid.version>5.6.0</inbound.auth.openid.version>
