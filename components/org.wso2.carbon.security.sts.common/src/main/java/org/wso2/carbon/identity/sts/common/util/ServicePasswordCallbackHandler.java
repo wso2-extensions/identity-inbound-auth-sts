@@ -41,6 +41,8 @@ import org.wso2.carbon.user.core.UserStoreException;
 import org.wso2.carbon.user.core.util.UserCoreUtil;
 import org.wso2.carbon.utils.multitenancy.MultitenantConstants;
 import org.wso2.carbon.utils.multitenancy.MultitenantUtils;
+import org.wso2.carbon.identity.base.IdentityRuntimeException;
+import org.wso2.carbon.identity.core.util.IdentityTenantUtil;
 
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
@@ -48,12 +50,16 @@ import javax.security.auth.callback.UnsupportedCallbackException;
 import java.io.IOException;
 import java.security.KeyStore;
 
+import static org.wso2.carbon.utils.multitenancy.MultitenantConstants.SUPER_TENANT_DOMAIN_NAME;
+
 /**
  * The password callback handler to be used to enable UsernameToken
  * authentication for services.
  */
 public class ServicePasswordCallbackHandler implements CallbackHandler {
     private static final Log log = LogFactory.getLog(ServicePasswordCallbackHandler.class);
+
+    private static final String TENANT_DOMAIN_SEPARATOR = "@";
 
     private String serviceGroupId = null;
     private String serviceId = null;
@@ -246,6 +252,17 @@ public class ServicePasswordCallbackHandler implements CallbackHandler {
         boolean isAuthorized = false;
 
         try {
+            // Before validating the tenant domain in the user's name against the tenant where service is deployed,
+            // there is one scenario which needs to be handled separately. User's name in the request may arrive
+            // without a tenant domain but expects to be validated against the service deployed tenant. For example,
+            // this is the valid usecase when the application is non-SaaS. Therefore, the user is appended with the
+            // tenant domain in which the service is deployed, if the tenant domain is not specified.
+            String tenantDomain = MultitenantUtils.getTenantDomain(user);
+            if (StringUtils.isBlank(tenantDomain) || (SUPER_TENANT_DOMAIN_NAME.equals(tenantDomain) && !StringUtils
+                    .contains(user, SUPER_TENANT_DOMAIN_NAME))) {
+                user = getServiceTenantDomainAppendedUser(user);
+            }
+
             // Verify whether user is in same tenant that service has been deployed.
             if (realm.getUserStoreManager().getTenantId() !=
                     SecurityServiceHolder.getRealmService().getTenantManager().getTenantId(MultitenantUtils.getTenantDomain(user))) {
@@ -347,4 +364,15 @@ public class ServicePasswordCallbackHandler implements CallbackHandler {
         return password;
     }
 
+
+    private String getServiceTenantDomainAppendedUser(String user) throws IdentityRuntimeException, UserStoreException {
+
+        String tenantDomainFromServiceRealm = IdentityTenantUtil.getTenantDomain(realm.getUserStoreManager()
+                .getTenantId());
+        if (log.isDebugEnabled()) {
+            log.debug(String.format("User: %s, does not contain the tenant domain in the username, thus " +
+                    "considered as a user in the service tenant domain: %s", user, tenantDomainFromServiceRealm));
+        }
+        return user + TENANT_DOMAIN_SEPARATOR + tenantDomainFromServiceRealm;
+    }
 }

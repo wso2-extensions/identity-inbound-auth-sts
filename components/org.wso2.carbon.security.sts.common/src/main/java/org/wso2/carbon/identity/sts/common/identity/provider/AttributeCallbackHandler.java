@@ -35,6 +35,7 @@ import org.opensaml.xml.XMLObjectBuilderFactory;
 import org.opensaml.xml.schema.XSString;
 import org.opensaml.xml.schema.impl.XSStringBuilder;
 import org.wso2.carbon.context.CarbonContext;
+import org.wso2.carbon.context.PrivilegedCarbonContext;
 import org.wso2.carbon.identity.application.authentication.framework.model.AuthenticatedUser;
 import org.wso2.carbon.identity.application.common.IdentityApplicationManagementException;
 import org.wso2.carbon.identity.application.common.model.ClaimMapping;
@@ -47,6 +48,7 @@ import org.wso2.carbon.identity.core.util.IdentityCoreConstants;
 import org.wso2.carbon.identity.core.util.IdentityTenantUtil;
 import org.wso2.carbon.identity.provider.IdentityProviderException;
 import org.wso2.carbon.identity.sts.common.internal.IdentityProviderSTSServiceComponent;
+import org.wso2.carbon.user.core.UserRealm;
 import org.wso2.carbon.user.api.UserStoreException;
 import org.wso2.carbon.user.core.UserCoreConstants;
 import org.wso2.carbon.user.core.UserStoreManager;
@@ -360,7 +362,18 @@ public class AttributeCallbackHandler implements SAMLCallbackHandler {
             if (MapUtils.isEmpty(requestedClaimValues)) {
                 try {
                     // WS trust flow does not set the authenticated user property.
-                    if (isHandlerCalledFromWSTrustSTSFlow(callback)) {
+                    String tenantDomain;
+                    if (authenticatedUser == null) {
+                        // If authenticated user is not available, then the user is derived from the provided user
+                        // identifier, and the tenant domain is derived from the current context.
+                        tenantDomain = getTenantDomainFromThreadLocalContext();
+                        UserRealm userRealm = tenantDomain != null ? IdentityTenantUtil.getRealm(tenantDomain,
+                                null) : IdentityTenantUtil.getRealm(null, userId);
+                        connector = userRealm.getUserStoreManager();
+                        mapValues = connector.getUserClaimValues(MultitenantUtils.getTenantAwareUsername(userId),
+                                claimList.toArray(claimArray), null);
+                    } else if (isHandlerCalledFromWSTrustSTSFlow(callback)) {
+                        // WS trust flow does not set the authenticated user property.
                         connector = IdentityTenantUtil.getRealm(null, userId).
                                 getUserStoreManager();
                         mapValues = connector.getUserClaimValues(MultitenantUtils.getTenantAwareUsername(userId),
@@ -370,7 +383,8 @@ public class AttributeCallbackHandler implements SAMLCallbackHandler {
                             log.debug("Loading claim values from local UserStore for user: "
                                     + authenticatedUser.toString());
                         }
-                        connector = IdentityTenantUtil.getRealm(authenticatedUser.getTenantDomain(), null).
+                        tenantDomain = authenticatedUser.getTenantDomain();
+                        connector = IdentityTenantUtil.getRealm(tenantDomain, null).
                                 getUserStoreManager();
                         mapValues = connector.getUserClaimValues(MultitenantUtils.getTenantAwareUsername(userId),
                                 claimList.toArray(claimArray), null);
@@ -453,5 +467,10 @@ public class AttributeCallbackHandler implements SAMLCallbackHandler {
          */
         return !(attributeCallback.getData().getInMessageContext().getProperty(AUTHENTICATED_USER) instanceof
                 AuthenticatedUser);
+    }
+
+    private String getTenantDomainFromThreadLocalContext() {
+
+        return PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantDomain();
     }
 }
