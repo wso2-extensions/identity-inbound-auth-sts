@@ -427,7 +427,7 @@
         <identity.framework.version>5.20.66</identity.framework.version>
         <identity.inbound.auth.sts.package.export.version>${project.version}
         </identity.inbound.auth.sts.package.export.version>
-        <inbound.auth.openid.version>5.6.0</inbound.auth.openid.version>
+        <inbound.auth.openid.version>5.7.0</inbound.auth.openid.version>
 
         <carbon.kernel.version>4.6.0</carbon.kernel.version>
         <carbon.kernel.feature.version>4.6.0</carbon.kernel.feature.version>
