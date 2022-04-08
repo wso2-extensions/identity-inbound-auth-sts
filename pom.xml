@@ -433,7 +433,7 @@
         <carbon.kernel.feature.version>4.6.0</carbon.kernel.feature.version>
         <carbon.xfer.package.version>4.2.0</carbon.xfer.package.version>
         <xmlsec.version>2.1.7</xmlsec.version>
-        <xmlsec.version.imp.pkg.version.range>[1.4.4,2.2.0)</xmlsec.version.imp.pkg.version.range>
+        <xmlsec.version.imp.pkg.version.range>[2.1.7,2.4.0)</xmlsec.version.imp.pkg.version.range>
         <wss4j.version>1.5.11-wso2v21</wss4j.version>
         <rampart.wso2.version>1.6.1-wso2v43</rampart.wso2.version>
         <opensaml2.wso2.version>2.6.6.wso2v4</opensaml2.wso2.version>
