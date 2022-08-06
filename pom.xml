@@ -27,7 +27,7 @@
     <groupId>org.wso2.carbon.identity.inbound.auth.sts</groupId>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>identity-inbound-auth-sts</artifactId>
-    <version>5.7.6-SNAPSHOT</version>
+    <version>5.8.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>WSO2 Carbon - Identity STS Management</name>
     <description>
@@ -449,8 +449,8 @@
         </identity.inbound.auth.sts.package.export.version>
         <inbound.auth.openid.version>5.6.0</inbound.auth.openid.version>
 
-        <carbon.kernel.version>4.6.0</carbon.kernel.version>
-        <carbon.kernel.feature.version>4.6.0</carbon.kernel.feature.version>
+        <carbon.kernel.version>4.7.0</carbon.kernel.version>
+        <carbon.kernel.feature.version>4.7.0</carbon.kernel.feature.version>
         <carbon.xfer.package.version>4.2.0</carbon.xfer.package.version>
         <xmlsec.version>2.1.7</xmlsec.version>
         <xmlsec.version.imp.pkg.version.range>[2.1.7,2.4.0)</xmlsec.version.imp.pkg.version.range>
