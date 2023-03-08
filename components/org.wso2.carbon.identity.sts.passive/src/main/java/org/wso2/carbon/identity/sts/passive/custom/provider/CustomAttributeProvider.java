@@ -15,6 +15,7 @@
  */
 package org.wso2.carbon.identity.sts.passive.custom.provider;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.cxf.sts.claims.ClaimsUtils;
 import org.apache.cxf.sts.claims.ProcessedClaim;
 import org.apache.cxf.sts.claims.ProcessedClaimCollection;
@@ -71,14 +72,20 @@ public class CustomAttributeProvider implements AttributeStatementProvider {
         AttributeBean attributeBean = new AttributeBean();
         if (WSS4JConstants.WSS_SAML2_TOKEN_TYPE.equals(tokenType)
                 || WSS4JConstants.SAML2_NS.equals(tokenType)) {
-            attributeBean.setQualifiedName(claim.getClaimType());
             attributeBean.setNameFormat(claim.getClaimType());
-        } else {
-            attributeBean.setQualifiedName(claim.getClaimType());
         }
+        String attributeName = claim.getClaimType();
+        String attributeNamespace = claim.getClaimType();
+
+        if (StringUtils.isNotBlank(attributeNamespace) && attributeNamespace.contains("/") &&
+                attributeNamespace.length() > attributeNamespace.lastIndexOf("/") + 1) {
+            attributeName = attributeNamespace.substring(attributeNamespace.lastIndexOf("/") + 1);
+            attributeNamespace = attributeNamespace.substring(0, attributeNamespace.lastIndexOf("/"));
+        }
+        attributeBean.setSimpleName(attributeName);
+        attributeBean.setQualifiedName(attributeNamespace);
         attributeBean.setAttributeValues(claim.getValues());
 
         return attributeBean;
     }
-
 }
