@@ -346,6 +346,12 @@
                 <scope>test</scope>
             </dependency>
             <dependency>
+                <groupId>com.h2database</groupId>
+                <artifactId>h2</artifactId>
+                <version>${h2database.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>org.apache.felix.scr.ds-annotations</artifactId>
                 <version>${apache.felix.scr.ds.annotations.version}</version>
@@ -444,7 +450,7 @@
     </build>
 
     <properties>
-        <identity.framework.version>5.20.66</identity.framework.version>
+        <identity.framework.version>5.25.131</identity.framework.version>
         <identity.inbound.auth.sts.package.export.version>${project.version}
         </identity.inbound.auth.sts.package.export.version>
         <inbound.auth.openid.version>5.6.0</inbound.auth.openid.version>
@@ -505,6 +511,7 @@
 
         <org.slf4j.verison>1.7.21</org.slf4j.verison>
         <testng.version>6.9.10</testng.version>
+        <h2database.version>2.1.210</h2database.version>
         <jacoco.version>0.7.9</jacoco.version>
         <powermock.version>1.7.0</powermock.version>
         <maven.surefire.plugin.version>2.18.1</maven.surefire.plugin.version>
