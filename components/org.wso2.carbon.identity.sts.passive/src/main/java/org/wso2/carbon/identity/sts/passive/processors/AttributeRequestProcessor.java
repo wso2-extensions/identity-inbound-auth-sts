@@ -29,6 +29,8 @@ import org.apache.wss4j.common.WSS4JConstants;
 import org.apache.wss4j.common.principal.CustomTokenPrincipal;
 import org.w3c.dom.Element;
 import org.wso2.carbon.context.PrivilegedCarbonContext;
+import org.wso2.carbon.identity.base.IdentityConstants;
+import org.wso2.carbon.identity.core.util.IdentityUtil;
 import org.wso2.carbon.identity.sts.passive.RequestToken;
 import org.wso2.carbon.identity.sts.passive.ResponseToken;
 import org.wso2.carbon.identity.sts.passive.internal.IdentityPassiveSTSServiceComponent;
@@ -100,7 +102,10 @@ public class AttributeRequestProcessor extends RequestProcessor {
             issueTokenRequest.getAny().add(tokenType);
             Element secondaryParameters = createSecondaryParameters(request);
             issueTokenRequest.getAny().add(secondaryParameters);
-            issueTokenRequest.getAny().add(createAppliesToElement(request.getRealm()));
+            if (!Boolean.parseBoolean(IdentityUtil.getProperty(
+                    IdentityConstants.STS.PASSIVE_STS_DISABLE_APPLIES_TO_IN_RESPONSE))) {
+                issueTokenRequest.getAny().add(createAppliesToElement(request.getRealm()));
+            }
             Map<String, Object> msgCtx = setupMessageContext(request.getUserName());
 
             // Make an issue token request.
