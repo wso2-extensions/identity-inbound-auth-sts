@@ -75,7 +75,7 @@ public class CustomCryptoProvider extends Merlin {
         String tenantId = this.properties.getProperty(TENANT_ID_PROP);
         String keyStoreName = this.properties.getProperty(KEY_STORE_NAME_PROP);
 
-        log.info("Loading keystore...");
+        log.debug("Loading keystore...");
         if (!String.valueOf(MultitenantConstants.SUPER_TENANT_ID).equals(tenantId)
                 && keyStoreName != null) {
             // Loads the keystore in a custom way since the tenant keystore does not have a location.
