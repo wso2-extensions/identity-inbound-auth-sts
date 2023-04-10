@@ -454,9 +454,9 @@
         <carbon.xfer.package.version>4.2.0</carbon.xfer.package.version>
         <xmlsec.version>2.1.7</xmlsec.version>
         <xmlsec.version.imp.pkg.version.range>[2.1.7,2.4.0)</xmlsec.version.imp.pkg.version.range>
-        <wss4j.version>1.5.11-wso2v22</wss4j.version>
+        <wss4j.version>1.5.11-wso2v23</wss4j.version>
         <rampart.wso2.version>1.6.1-wso2v45</rampart.wso2.version>
-        <opensaml2.wso2.version>2.6.6.wso2v5</opensaml2.wso2.version>
+        <opensaml2.wso2.version>2.6.6.wso2v6</opensaml2.wso2.version>
         <commons-fileupload.wso2.version>1.2.2.wso2v1</commons-fileupload.wso2.version>
         <carbon.p2.plugin.version>1.5.3</carbon.p2.plugin.version>
         <commons-collections.version>3.2.0.wso2v1</commons-collections.version>
