@@ -201,7 +201,16 @@ public class RequestProcessorUtil {
 
         String signatureAlgorithm = serverConfig.getFirstProperty(STS_SIGNATURE_ALGORITHM_KEY);
         String digestAlgorithm = serverConfig.getFirstProperty(STS_DIGEST_ALGORITHM_KEY);
-
+        boolean enableDefaultAlgorithms = Boolean.parseBoolean(IdentityUtil.getProperty(
+                IdentityConstants.STS.PASSIVE_STS_ENABLE_DEFAULT_SIGNATURE_AND_DIGEST_ALG));
+        if (enableDefaultAlgorithms) {
+            if (StringUtils.isBlank(signatureAlgorithm)) {
+                signatureAlgorithm = IdentityApplicationConstants.XML.SignatureAlgorithmURI.RSA_SHA256;
+            }
+            if (StringUtils.isBlank(digestAlgorithm)) {
+                digestAlgorithm = IdentityApplicationConstants.XML.DigestAlgorithmURI.SHA256;
+            }
+        }
 
         if (keyAlias == null) {
             throw new STSException("Private key alias cannot be null.");
@@ -223,19 +232,13 @@ public class RequestProcessorUtil {
         stsProperties.setSignatureUsername(keyAlias);
         stsProperties.setCallbackHandler(new PasswordCallbackHandler());
         stsProperties.setIssuer(getIssuerName());
-
         SignatureProperties signatureProperties = new SignatureProperties();
-        if (StringUtils.isNotBlank(signatureAlgorithm)) {
-            if (!signatureProperties.getAcceptedSignatureAlgorithms().contains(signatureAlgorithm)) {
-                signatureProperties.setAcceptedSignatureAlgorithms(
-                        Collections.singletonList(signatureAlgorithm));
-            }
-            signatureProperties.setSignatureAlgorithm(signatureAlgorithm);
+        if (!signatureProperties.getAcceptedSignatureAlgorithms().contains(signatureAlgorithm)) {
+            signatureProperties.setAcceptedSignatureAlgorithms(
+                    Collections.singletonList(signatureAlgorithm));
         }
-
-        if (StringUtils.isNotBlank(digestAlgorithm)) {
-            signatureProperties.setDigestAlgorithm(digestAlgorithm);
-        }
+        signatureProperties.setSignatureAlgorithm(signatureAlgorithm);
+        signatureProperties.setDigestAlgorithm(digestAlgorithm);
 
         stsProperties.setSignatureProperties(signatureProperties);
 
