@@ -94,19 +94,13 @@ public class MexGetService {
                 }
 
                 String rsaSignatureAlgorithm;
-                if (StringUtils.isNotBlank(IdentityUtil.getProperty(
-                        IdentityConstants.MEX.MEX_DEFAULT_RSA_SIGNATURE_ALG))) {
-                        rsaSignatureAlgorithm =
-                                IdentityUtil.getProperty(IdentityConstants.MEX.MEX_DEFAULT_RSA_SIGNATURE_ALG).trim();
-                } else {
-                        rsaSignatureAlgorithm = IdentityApplicationConstants.Mex.RSA_SHA256;
-                }
                 String hmacSignatureAlgorithm;
-                if (StringUtils.isNotBlank(IdentityUtil.getProperty(IdentityConstants.MEX.MEX_DEFAULT_HMAC_SIGNATURE_ALG))) {
-                        hmacSignatureAlgorithm =
-                                IdentityUtil.getProperty(IdentityConstants.MEX.MEX_DEFAULT_HMAC_SIGNATURE_ALG).trim();
-                } else {
+                if (Boolean.parseBoolean(IdentityUtil.getProperty(IdentityConstants.MEX.ENABLE_SHA256_SIGNATURE_ALG))) {
+                        rsaSignatureAlgorithm = IdentityApplicationConstants.Mex.RSA_SHA256;
                         hmacSignatureAlgorithm = IdentityApplicationConstants.Mex.HMAC_SHA256;
+                } else {
+                        rsaSignatureAlgorithm = IdentityApplicationConstants.Mex.RSA_SHA1;
+                        hmacSignatureAlgorithm = IdentityApplicationConstants.Mex.HMAC_SHA1;
                 }
 
                 String response = "<Metadata xmlns=\"http://schemas.xmlsoap.org/ws/2004/09/mex\" xmlns:wsx=\"http://schemas.xmlsoap.org/ws/2004/09/mex\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n" +
