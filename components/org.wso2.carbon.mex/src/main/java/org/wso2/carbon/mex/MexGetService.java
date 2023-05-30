@@ -24,6 +24,8 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.wso2.carbon.identity.application.common.util.IdentityApplicationConstants;
+import org.wso2.carbon.identity.base.IdentityConstants;
 import org.wso2.carbon.identity.core.util.IdentityUtil;
 import org.wso2.carbon.mex.util.KeyUtil;
 
@@ -89,6 +91,16 @@ public class MexGetService {
 
                 if (log.isDebugEnabled()) {
                         log.debug("stsEndpointUrl:=> " + stsEndpointUrl);
+                }
+
+                String rsaSignatureAlgorithm;
+                String hmacSignatureAlgorithm;
+                if (Boolean.parseBoolean(IdentityUtil.getProperty(IdentityConstants.MEX.ENABLE_SHA256_SIGNATURE_ALG))) {
+                        rsaSignatureAlgorithm = IdentityApplicationConstants.Mex.RSA_SHA256;
+                        hmacSignatureAlgorithm = IdentityApplicationConstants.Mex.HMAC_SHA256;
+                } else {
+                        rsaSignatureAlgorithm = IdentityApplicationConstants.Mex.RSA_SHA1;
+                        hmacSignatureAlgorithm = IdentityApplicationConstants.Mex.HMAC_SHA1;
                 }
 
                 String response = "<Metadata xmlns=\"http://schemas.xmlsoap.org/ws/2004/09/mex\" xmlns:wsx=\"http://schemas.xmlsoap.org/ws/2004/09/mex\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n" +
@@ -284,7 +296,7 @@ public class MexGetService {
                         "                                 <sp:RequestSecurityTokenTemplate>\n" +
                         "                                    <t:KeyType>http://schemas.xmlsoap.org/ws/2005/02/trust/PublicKey</t:KeyType>\n" +
                         "                                    <t:EncryptWith>http://www.w3.org/2001/04/xmlenc#rsa-oaep-mgf1p</t:EncryptWith>\n" +
-                        "                                    <t:SignatureAlgorithm>http://www.w3.org/2000/09/xmldsig#rsa-sha1</t:SignatureAlgorithm>\n" +
+                        "                                    <t:SignatureAlgorithm>" + rsaSignatureAlgorithm + "</t:SignatureAlgorithm>\n" +
                         "                                    <t:CanonicalizationAlgorithm>http://www.w3.org/2001/10/xml-exc-c14n#</t:CanonicalizationAlgorithm>\n" +
                         "                                    <t:EncryptionAlgorithm>http://www.w3.org/2001/04/xmlenc#aes256-cbc</t:EncryptionAlgorithm>\n" +
                         "                                 </sp:RequestSecurityTokenTemplate>\n" +
@@ -342,7 +354,7 @@ public class MexGetService {
                         "                                    <t:KeyType>http://schemas.xmlsoap.org/ws/2005/02/trust/SymmetricKey</t:KeyType>\n" +
                         "                                    <t:KeySize>256</t:KeySize>\n" +
                         "                                    <t:EncryptWith>http://www.w3.org/2001/04/xmlenc#aes256-cbc</t:EncryptWith>\n" +
-                        "                                    <t:SignatureAlgorithm>http://www.w3.org/2000/09/xmldsig#hmac-sha1</t:SignatureAlgorithm>\n" +
+                        "                                    <t:SignatureAlgorithm>" + hmacSignatureAlgorithm + "</t:SignatureAlgorithm>\n" +
                         "                                    <t:CanonicalizationAlgorithm>http://www.w3.org/2001/10/xml-exc-c14n#</t:CanonicalizationAlgorithm>\n" +
                         "                                    <t:EncryptionAlgorithm>http://www.w3.org/2001/04/xmlenc#aes256-cbc</t:EncryptionAlgorithm>\n" +
                         "                                 </sp:RequestSecurityTokenTemplate>\n" +
@@ -507,7 +519,7 @@ public class MexGetService {
                         "                                    <trust:KeyType>http://docs.oasis-open.org/ws-sx/ws-trust/200512/PublicKey</trust:KeyType>\n" +
                         "                                    <trust:KeyWrapAlgorithm>http://www.w3.org/2001/04/xmlenc#rsa-oaep-mgf1p</trust:KeyWrapAlgorithm>\n" +
                         "                                    <trust:EncryptWith>http://www.w3.org/2001/04/xmlenc#rsa-oaep-mgf1p</trust:EncryptWith>\n" +
-                        "                                    <trust:SignatureAlgorithm>http://www.w3.org/2000/09/xmldsig#rsa-sha1</trust:SignatureAlgorithm>\n" +
+                        "                                    <trust:SignatureAlgorithm>" + rsaSignatureAlgorithm + "</trust:SignatureAlgorithm>\n" +
                         "                                    <trust:CanonicalizationAlgorithm>http://www.w3.org/2001/10/xml-exc-c14n#</trust:CanonicalizationAlgorithm>\n" +
                         "                                    <trust:EncryptionAlgorithm>http://www.w3.org/2001/04/xmlenc#aes256-cbc</trust:EncryptionAlgorithm>\n" +
                         "                                 </sp:RequestSecurityTokenTemplate>\n" +
@@ -566,7 +578,7 @@ public class MexGetService {
                         "                                    <trust:KeySize>256</trust:KeySize>\n" +
                         "                                    <trust:KeyWrapAlgorithm>http://www.w3.org/2001/04/xmlenc#rsa-oaep-mgf1p</trust:KeyWrapAlgorithm>\n" +
                         "                                    <trust:EncryptWith>http://www.w3.org/2001/04/xmlenc#aes256-cbc</trust:EncryptWith>\n" +
-                        "                                    <trust:SignatureAlgorithm>http://www.w3.org/2000/09/xmldsig#hmac-sha1</trust:SignatureAlgorithm>\n" +
+                        "                                    <trust:SignatureAlgorithm>" + hmacSignatureAlgorithm + "</trust:SignatureAlgorithm>\n" +
                         "                                    <trust:CanonicalizationAlgorithm>http://www.w3.org/2001/10/xml-exc-c14n#</trust:CanonicalizationAlgorithm>\n" +
                         "                                    <trust:EncryptionAlgorithm>http://www.w3.org/2001/04/xmlenc#aes256-cbc</trust:EncryptionAlgorithm>\n" +
                         "                                 </sp:RequestSecurityTokenTemplate>\n" +
