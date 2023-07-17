@@ -78,7 +78,7 @@ public class CustomAttributeProvider implements AttributeStatementProvider {
         String attributeNamespace = claim.getClaimType();
 
         if (StringUtils.isNotBlank(attributeNamespace) && attributeNamespace.contains("/") &&
-                attributeNamespace.length() > attributeNamespace.lastIndexOf("/") + 1) {
+                !StringUtils.endsWith(attributeNamespace, "/")) {
             attributeName = attributeNamespace.substring(attributeNamespace.lastIndexOf("/") + 1);
             attributeNamespace = attributeNamespace.substring(0, attributeNamespace.lastIndexOf("/"));
         }
