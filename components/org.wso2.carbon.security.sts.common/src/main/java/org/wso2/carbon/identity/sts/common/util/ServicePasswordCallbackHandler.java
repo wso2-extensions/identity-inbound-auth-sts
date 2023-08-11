@@ -89,8 +89,7 @@ public class ServicePasswordCallbackHandler implements CallbackHandler {
         this.includeUserStoreDomainInUsername = IdentityUtil.getProperty(INCLUDE_USER_STORE_DOMAIN_IN_USERNAME) == null
                 || Boolean.parseBoolean(IdentityUtil.getProperty(INCLUDE_USER_STORE_DOMAIN_IN_USERNAME));
         // If the property is not available, default value is false.
-        this.includeTenantInUsername = IdentityUtil.getProperty(INCLUDE_TENANT_DOMAIN_IN_USERNAME) != null
-                && Boolean.parseBoolean(IdentityUtil.getProperty(INCLUDE_TENANT_DOMAIN_IN_USERNAME));
+        this.includeTenantInUsername = Boolean.parseBoolean(IdentityUtil.getProperty(INCLUDE_TENANT_DOMAIN_IN_USERNAME));
     }
 
     @Override
