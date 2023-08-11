@@ -60,12 +60,18 @@ public class ServicePasswordCallbackHandler implements CallbackHandler {
     private static final Log log = LogFactory.getLog(ServicePasswordCallbackHandler.class);
 
     private static final String TENANT_DOMAIN_SEPARATOR = "@";
+    private static final String INCLUDE_USER_STORE_DOMAIN_IN_USERNAME = "SecurityTokenService.LocalSubjectIdentifier" +
+            ".IncludeUserStoreDomain";
+    private static final String INCLUDE_TENANT_DOMAIN_IN_USERNAME = "SecurityTokenService.LocalSubjectIdentifier" +
+            ".IncludeTenantDomain";
 
     private String serviceGroupId = null;
     private String serviceId = null;
     private Registry registry = null;
     private UserRealm realm = null;
     private SecurityConfigParams configParams;
+    private final boolean includeUserStoreDomainInUsername;
+    private final boolean includeTenantInUsername;
 
     //todo there's a API change here. apparently only security component uses this. If not, change the invocations accordingly.
     public ServicePasswordCallbackHandler(SecurityConfigParams configParams, String serviceGroupId,
@@ -78,6 +84,12 @@ public class ServicePasswordCallbackHandler implements CallbackHandler {
         this.serviceGroupId = serviceGroupId;
         this.realm = realm;
         this.configParams = configParams;
+        IdentityUtil.populateProperties();
+        // If the property is not available, default value is true.
+        this.includeUserStoreDomainInUsername = IdentityUtil.getProperty(INCLUDE_USER_STORE_DOMAIN_IN_USERNAME) == null
+                || Boolean.parseBoolean(IdentityUtil.getProperty(INCLUDE_USER_STORE_DOMAIN_IN_USERNAME));
+        // If the property is not available, default value is false.
+        this.includeTenantInUsername = Boolean.parseBoolean(IdentityUtil.getProperty(INCLUDE_TENANT_DOMAIN_IN_USERNAME));
     }
 
     @Override
@@ -112,14 +124,8 @@ public class ServicePasswordCallbackHandler implements CallbackHandler {
                             try {
                                 if (receivedPasswd != null
                                         && this.authenticateUser(username, receivedPasswd)) {
-
-                                    String domainName = UserCoreUtil.getDomainFromThreadLocal();
-                                    String usernameWithDomain = IdentityUtil.addDomainToName(username, domainName);
-                                    if (log.isDebugEnabled()) {
-                                        log.debug("Updating username with userstore domain. Updated username is :" +
-                                                usernameWithDomain);
-                                    }
-                                    passwordCallback.setIdentifier(usernameWithDomain);
+                                    username = applyLocalSubjectIdentifierConfigs(username);
+                                    passwordCallback.setIdentifier(username);
                                 } else {
                                     throw new UnsupportedCallbackException(callbacks[i], "check failed");
                                 }
@@ -217,6 +223,68 @@ public class ServicePasswordCallbackHandler implements CallbackHandler {
             throw new UnsupportedCallbackException(null, e.getMessage());
         }
     }
+
+    /**
+     * Apply local subject identifier configurations to the username.
+     *
+     * @param username Username to be processed.
+     * @return Username with local subject identifier configurations applied.
+     * @throws UserStoreException {@link UserStoreException}
+     */
+    private String applyLocalSubjectIdentifierConfigs(String username) throws UserStoreException {
+
+        String processedUsername;
+        if (includeTenantInUsername) {
+            processedUsername = getUsernameWithTenantDomain(username);
+            if (log.isDebugEnabled()) {
+                log.debug("Updating username with tenant domain. Updated username: " + processedUsername);
+            }
+        } else {
+            processedUsername = MultitenantUtils.getTenantAwareUsername(username);
+            if (log.isDebugEnabled()) {
+                log.debug("Removed tenant domain from the username. Updated username: " + processedUsername);
+            }
+        }
+
+        if (includeUserStoreDomainInUsername) {
+            String domainName = UserCoreUtil.getDomainFromThreadLocal();
+            processedUsername = IdentityUtil.addDomainToName(processedUsername, domainName);
+            if (log.isDebugEnabled()) {
+                log.debug("Updating username with user store domain. Updated username: " + processedUsername);
+            }
+        } else {
+            processedUsername = UserCoreUtil.removeDomainFromName(processedUsername);
+            if (log.isDebugEnabled()) {
+                log.debug("Removed user store domain from the username. Updated username is: " + processedUsername);
+            }
+        }
+        return processedUsername;
+    }
+
+    /**
+     * Get the username with the tenant domain appended.
+     * @param username Username to be processed.
+     * @return Username with the tenant domain appended.
+     * @throws UserStoreException {@link UserStoreException}
+     */
+    private String getUsernameWithTenantDomain(String username) throws UserStoreException {
+
+        String tenantDomain = MultitenantUtils.getTenantDomain(username);
+        if (StringUtils.isBlank(tenantDomain) || (SUPER_TENANT_DOMAIN_NAME.equals(tenantDomain) &&
+                !StringUtils.contains(username, SUPER_TENANT_DOMAIN_NAME))) {
+            // If the tenant domain cannot be determined using the username, use the tenant domain of the service
+            // provider
+            return getServiceTenantDomainAppendedUser(username);
+        }
+
+        if (log.isDebugEnabled()) {
+            log.debug("Tenant domain can be determined using the username. Hence appending the tenant domain to the " +
+                    "tenant-aware username. Username: " + username + ", Tenant domain: " + tenantDomain);
+        }
+        String tenantAwareUsername = MultitenantUtils.getTenantAwareUsername(username);
+        return tenantAwareUsername + TENANT_DOMAIN_SEPARATOR + tenantDomain;
+    }
+
 
     private String getServicePrincipalPassword()
             throws SecurityConfigException {

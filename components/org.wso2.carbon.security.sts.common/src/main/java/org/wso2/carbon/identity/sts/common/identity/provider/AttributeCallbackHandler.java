@@ -46,6 +46,7 @@ import org.wso2.carbon.identity.base.IdentityException;
 import org.wso2.carbon.identity.core.IdentityClaimManager;
 import org.wso2.carbon.identity.core.util.IdentityCoreConstants;
 import org.wso2.carbon.identity.core.util.IdentityTenantUtil;
+import org.wso2.carbon.identity.core.util.IdentityUtil;
 import org.wso2.carbon.identity.provider.IdentityProviderException;
 import org.wso2.carbon.identity.sts.common.internal.IdentityProviderSTSServiceComponent;
 import org.wso2.carbon.user.core.UserRealm;
@@ -53,6 +54,7 @@ import org.wso2.carbon.user.api.UserStoreException;
 import org.wso2.carbon.user.core.UserCoreConstants;
 import org.wso2.carbon.user.core.UserStoreManager;
 import org.wso2.carbon.user.core.claim.Claim;
+import org.wso2.carbon.user.core.util.UserCoreUtil;
 import org.wso2.carbon.utils.multitenancy.MultitenantUtils;
 
 import javax.xml.namespace.QName;
@@ -109,6 +111,10 @@ public class AttributeCallbackHandler implements SAMLCallbackHandler {
                 splitArr = userIdentifier.split(",")[0].split("=");
                 if (splitArr.length == 2) {
                     userIdentifier = splitArr[1];
+                } else if (!userIdentifier.contains(UserCoreConstants.DOMAIN_SEPARATOR)) {
+                    // if the user identifier is not qualified with user store domain, making it so.
+                    userIdentifier = IdentityUtil.addDomainToName(userIdentifier,
+                            UserCoreUtil.getDomainFromThreadLocal());
                 }
             }
 
