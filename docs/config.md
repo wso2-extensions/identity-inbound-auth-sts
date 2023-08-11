@@ -90,6 +90,22 @@ To secure the Security Token Service:
 Now STS is configured and secured with a username and password. Only users with the `admin` role can consume the 
 service.
 
+#### Configuring the format of the subject identifier (Optional)
+
+ By default, the user store domain is included in the subject identifier and the tenant domain is not 
+ included. If you want to customize this behaviour, you can append the following configuration to the `deployment.toml` file.
+ - include_tenant_domain :  The tenant domain will be included in the subject identifier based on the specified 
+ `boolean` value.
+ - include_user_store_domain : The user store domain will be included in the subject identifier based on the specified
+ `boolean` value.
+ 
+ Ex: 
+ ```toml
+ [sts.local_subject_identifier]
+ include_tenant_domain = true
+ include_user_store_domain =  false
+```
+
 The next step is to add a service provider to consume the STS.
 
 #### Adding a service provider for the STS client
