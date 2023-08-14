@@ -39,7 +39,7 @@
             <artifactId>axis2</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.wso2.carbon.identity.framework</groupId>
+            <groupId>org.wso2.carbon.security.mgt</groupId>
             <artifactId>org.wso2.carbon.security.mgt</artifactId>
         </dependency>
         <dependency>
@@ -108,14 +108,14 @@
                             org.wso2.carbon.registry.core.*;version="${carbon.kernel.registry.imp.pkg.version}",
                             org.wso2.carbon.registry.api;version="${carbon.kernel.registry.imp.pkg.version}",
 
-                            org.wso2.carbon.security.util; version="${identity.framework.imp.pkg.version.range}",
+                            org.wso2.carbon.security.util; version="${carbon.security.mgt.imp.pkg.version.range}",
                             org.wso2.carbon.security.keystore.*;
-                            version="${identity.framework.imp.pkg.version.range}",
+                            version="${carbon.security.mgt.imp.pkg.version.range}",
                             org.apache.neethi; version="${neethi.osgi.version.range}",
                             org.apache.axiom.*; version="${axiom.osgi.version.range}",
-                            org.wso2.carbon.security.*;version="${identity.framework.imp.pkg.version.range}",
+                            org.wso2.carbon.security.*;version="${carbon.security.mgt.imp.pkg.version.range}",
                             javax.cache,
-                            org.wso2.carbon.security.*;version="${identity.framework.imp.pkg.version.range}",
+                            org.wso2.carbon.security.*;version="${carbon.security.mgt.imp.pkg.version.range}",
                             org.wso2.xfer.*; version="${xfer.import.pkg.version}",
                             org.wso2.carbon.identity.core.util; version="${identity.framework.imp.pkg.version.range}",
                         </Import-Package>

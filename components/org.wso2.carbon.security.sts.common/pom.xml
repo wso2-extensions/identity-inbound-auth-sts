@@ -135,7 +135,7 @@
             <artifactId>org.wso2.carbon.identity.core</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.wso2.carbon.identity.framework</groupId>
+            <groupId>org.wso2.carbon.security.mgt</groupId>
             <artifactId>org.wso2.carbon.security.mgt</artifactId>
         </dependency>
     </dependencies>
@@ -199,7 +199,7 @@
                             org.wso2.carbon.identity.base; version="${identity.framework.imp.pkg.version.range}",
                             org.wso2.carbon.identity.application.*;
                             version="${identity.framework.imp.pkg.version.range}",
-                            org.wso2.carbon.security.*; version="${identity.framework.imp.pkg.version.range}"
+                            org.wso2.carbon.security.*; version="${carbon.security.mgt.imp.pkg.version.range}"
                         </Import-Package>
                         <Export-Package>
                             !org.wso2.carbon.identity.sts.common.internal,
