@@ -46,7 +46,7 @@
             <artifactId>org.wso2.carbon.core</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.wso2.carbon.security.mgt</groupId>
+            <groupId>org.wso2.carbon.identity.framework</groupId>
             <artifactId>org.wso2.carbon.security.mgt</artifactId>
         </dependency>
         <dependency>
@@ -200,11 +200,11 @@
                             org.wso2.carbon.identity.application.mgt;
                             version="${identity.framework.imp.pkg.version.range}",
                             org.wso2.carbon.security.keystore.*;
-                            version="${carbon.security.mgt.imp.pkg.version.range}",
+                            version="${identity.framework.imp.pkg.version.range}",
                             org.wso2.carbon.security.util;
-                            version="${carbon.security.mgt.imp.pkg.version.range}",
+                            version="${identity.framework.imp.pkg.version.range}",
                             org.wso2.carbon.security.sts.service;
-                            version="${carbon.security.mgt.imp.pkg.version.range}",
+                            version="${identity.framework.imp.pkg.version.range}",
                             org.wso2.carbon.identity.core.*;
                             version="${identity.framework.imp.pkg.version.range}",
                             org.wso2.carbon.identity.application.authentication.framework.*;
