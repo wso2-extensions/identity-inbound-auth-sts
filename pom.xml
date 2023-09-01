@@ -185,9 +185,9 @@
                 <version>${carbon.kernel.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.wso2.carbon.security.mgt</groupId>
+                <groupId>org.wso2.carbon.identity.framework</groupId>
                 <artifactId>org.wso2.carbon.security.mgt</artifactId>
-                <version>${carbon.security.mgt.version}</version>
+                <version>${identity.framework.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.axis2.wso2</groupId>
@@ -450,12 +450,10 @@
     </build>
 
     <properties>
-        <identity.framework.version>5.25.210</identity.framework.version>
+        <identity.framework.version>5.25.305</identity.framework.version>
         <identity.inbound.auth.sts.package.export.version>${project.version}
         </identity.inbound.auth.sts.package.export.version>
         <inbound.auth.openid.version>5.6.0</inbound.auth.openid.version>
-        <carbon.security.mgt.version>1.0.0</carbon.security.mgt.version>
-        <carbon.security.mgt.imp.pkg.version.range>[1.0.0, 2.0.0)</carbon.security.mgt.imp.pkg.version.range>
 
         <carbon.kernel.version>4.7.0</carbon.kernel.version>
         <carbon.kernel.feature.version>4.7.0</carbon.kernel.feature.version>
