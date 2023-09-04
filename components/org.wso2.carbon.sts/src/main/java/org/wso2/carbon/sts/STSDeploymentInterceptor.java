@@ -38,13 +38,13 @@ import org.wso2.carbon.base.ServerConfiguration;
 import org.wso2.carbon.context.CarbonContext;
 import org.wso2.carbon.core.RegistryResources;
 import org.wso2.carbon.core.deployment.DeploymentInterceptor;
+import org.wso2.carbon.core.keystore.KeyStoreAdmin;
+import org.wso2.carbon.core.keystore.service.KeyStoreData;
 import org.wso2.carbon.core.util.KeyStoreManager;
 import org.wso2.carbon.core.util.KeyStoreUtil;
 import org.wso2.carbon.registry.core.Registry;
 import org.wso2.carbon.registry.core.Resource;
 import org.wso2.carbon.registry.core.utils.RegistryUtils;
-import org.wso2.carbon.security.keystore.KeyStoreAdmin;
-import org.wso2.carbon.security.keystore.service.KeyStoreData;
 import org.wso2.carbon.identity.sts.common.util.RampartConfigUtil;
 import org.wso2.carbon.identity.sts.common.util.ServerCrypto;
 import org.wso2.carbon.sts.internal.STSServiceDataHolder;
@@ -93,7 +93,6 @@ public class STSDeploymentInterceptor implements AxisObserver {
     public static void updateSTSService(AxisConfiguration config) throws Exception {
         AxisService service = null;
         Registry configRegistry = null;
-        Registry governRegistry = null;
         String keyPassword = null;
         KeyStoreAdmin admin = null;
         KeyStoreData[] keystores = null;
@@ -105,7 +104,6 @@ public class STSDeploymentInterceptor implements AxisObserver {
         int tenantId = CarbonContext.getThreadLocalCarbonContext().getTenantId();
 
         configRegistry = STSServiceDataHolder.getInstance().getRegistryService().getConfigSystemRegistry(tenantId);
-        governRegistry = STSServiceDataHolder.getInstance().getRegistryService().getGovernanceSystemRegistry(tenantId);
 
         if (configRegistry == null || config.getService(ServerConstants.STS_NAME) == null) {
             if (log.isDebugEnabled()) {
@@ -115,7 +113,7 @@ public class STSDeploymentInterceptor implements AxisObserver {
         }
 
         serverConfig = ServerConfiguration.getInstance();
-        admin = new KeyStoreAdmin(tenantId, governRegistry);
+        admin = new KeyStoreAdmin(tenantId);
 
         if (MultitenantConstants.SUPER_TENANT_ID == tenantId) {
             keyPassword = serverConfig.getFirstProperty(SECURITY_KEY_STORE_KEY_PASSWORD);
