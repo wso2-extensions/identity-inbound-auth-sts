@@ -66,7 +66,7 @@ public class SigningRequestProcessor extends RequestProcessor {
 
         try {
             if (IdentityTenantUtil.isTenantQualifiedUrlsEnabled()) {
-                tenantDomain = IdentityTenantUtil.getTenantDomainFromContext();
+                tenantDomain = IdentityTenantUtil.resolveTenantDomain();
             } else {
                 tenantDomain = request.getTenantDomain();
             }

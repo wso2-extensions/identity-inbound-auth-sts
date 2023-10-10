@@ -215,7 +215,7 @@ public class PassiveSTSService {
         try {
             String tenantDomain;
             if (IdentityTenantUtil.isTenantQualifiedUrlsEnabled()) {
-                tenantDomain = IdentityTenantUtil.getTenantDomainFromContext();
+                tenantDomain = IdentityTenantUtil.resolveTenantDomain();
             } else {
                 tenantDomain = request.getTenantDomain();
             }

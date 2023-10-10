@@ -531,7 +531,7 @@ public class PassiveSTS extends HttpServlet {
         String wtrealm = getAttribute(request.getParameterMap(), PassiveRequestorConstants.REALM);
         String tenantDomain;
         if (IdentityTenantUtil.isTenantQualifiedUrlsEnabled()) {
-            tenantDomain = IdentityTenantUtil.getTenantDomainFromContext();
+            tenantDomain = IdentityTenantUtil.resolveTenantDomain();
         } else {
             tenantDomain = getAttribute(request.getParameterMap(), MultitenantConstants.TENANT_DOMAIN);
         }
@@ -643,7 +643,7 @@ public class PassiveSTS extends HttpServlet {
 
         String tenantDomain;
         if (IdentityTenantUtil.isTenantQualifiedUrlsEnabled()) {
-            tenantDomain = IdentityTenantUtil.getTenantDomainFromContext();
+            tenantDomain = IdentityTenantUtil.resolveTenantDomain();
             if (log.isDebugEnabled()) {
                 log.debug("Tenant domain from context: " + tenantDomain);
             }
