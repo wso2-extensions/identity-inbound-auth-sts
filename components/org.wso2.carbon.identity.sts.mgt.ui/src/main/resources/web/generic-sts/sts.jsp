@@ -112,7 +112,7 @@
     try {
         String tenantDomain;
         if (IdentityTenantUtil.isTenantQualifiedUrlsEnabled()) {
-            tenantDomain = IdentityTenantUtil.getTenantDomainFromContext();
+            tenantDomain = IdentityTenantUtil.resolveTenantDomain();
         } else {
     	    tenantDomain = (String) session.getAttribute(MultitenantConstants.TENANT_DOMAIN);
         }
