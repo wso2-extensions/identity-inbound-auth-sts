@@ -549,7 +549,7 @@ public class PassiveSTS extends HttpServlet {
 
         String wreplyFromReq = getAttribute(request.getParameterMap(), PassiveRequestorConstants.REPLY_TO);
         if (StringUtils.isNotBlank(wreplyFromReq)) {
-            String configuredWreply = getConfiguredWreplyUrl(request);
+            String configuredWreply = getConfiguredWreplyLogoutUrl(request);
             if (!wreplyFromReq.equals(configuredWreply)) {
                 throw new PassiveSTSException("Provided wreply URL in the request does not match the configured " +
                         "wreply logout url.");
@@ -558,13 +558,13 @@ public class PassiveSTS extends HttpServlet {
     }
 
     /**
-     * Retrieve the configured wreply url from the service provider.
+     * Retrieve the configured wreply logout url from the service provider.
      *
      * @param request   Logout request.
-     * @return          Wreply url configured in the service provider.
+     * @return          Wreply logout url configured in the service provider.
      * @throws PassiveSTSException Errors in retrieving the configured wreply url.
      */
-    private String getConfiguredWreplyUrl(HttpServletRequest request) throws PassiveSTSException {
+    private String getConfiguredWreplyLogoutUrl(HttpServletRequest request) throws PassiveSTSException {
 
         String wtrealm = getAttribute(request.getParameterMap(), PassiveRequestorConstants.REALM);
         if (StringUtils.isBlank(wtrealm)) {

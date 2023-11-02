@@ -68,7 +68,7 @@ public class PassiveRequestorConstants {
     public static final String ERROR_AUTHENTICATION = "Authentication Error!";
 
     public static final String ERROR_MSG_LOGOUT_WREPLY_MISMATCH = "Error in validating the application's logout " +
-            "redirect URL against the configured redirect URL.";
+            "redirect URL against the configured WReply Logout URL.";
 
     private PassiveRequestorConstants() {
     }
