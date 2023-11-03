@@ -714,6 +714,7 @@ public class PassiveSTS extends HttpServlet {
             }
         }
     }
+
     private void sendFrameworkForLogout(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException, PassiveSTSException {
 
