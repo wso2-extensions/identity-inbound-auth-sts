@@ -26,4 +26,8 @@ public class PassiveSTSException extends IdentityException {
     public PassiveSTSException(String message, Throwable cause) {
         super(message, cause);
     }
+
+    public PassiveSTSException(String message) {
+        super(message);
+    }
 }

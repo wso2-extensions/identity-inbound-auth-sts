@@ -136,6 +136,7 @@
                             org.apache.commons.lang; version="${commons-lang.wso2.osgi.version.range}",
                             org.apache.commons.logging; version="${commons-logging.osgi.version.range}",
                             org.apache.commons.collections; version="${commons-collections.wso2.osgi.version.range}",
+                            org.apache.http.client.utils; version="${httpcomponents-httpclient.imp.pkg.version.range}",
                             org.wso2.carbon.ui; version="${carbon.kernel.package.import.version.range}",
                             org.wso2.carbon.registry.core.utils; version="${carbon.kernel.registry.imp.pkg.version}",
                             org.wso2.carbon.identity.application.authentication.framework.*;

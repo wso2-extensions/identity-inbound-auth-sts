@@ -87,6 +87,8 @@ import java.util.Scanner;
 import java.util.Set;
 
 import static org.wso2.carbon.identity.application.authentication.framework.util.FrameworkConstants.AUTHENTICATED_USER;
+import static org.wso2.carbon.identity.sts.passive.ui.PassiveRequestorConstants.ERROR_AUTHENTICATION;
+import static org.wso2.carbon.identity.sts.passive.ui.PassiveRequestorConstants.ERROR_MSG_LOGOUT_WREPLY_MISMATCH;
 
 public class PassiveSTS extends HttpServlet {
 
@@ -108,6 +110,7 @@ public class PassiveSTS extends HttpServlet {
     private static final String HTTPS = "https";
     private static final String PASSIVE_STS_CLIENT_TYPE = "passivests";
     private static final String PASSIVE_STS_W_REPLY_PROPERTY = "passiveSTSWReply";
+    private static final String PASSIVE_STS_W_REPLY_LOGOUT_PROPERTY = "passiveSTSWReplyLogout";
     private static final String PASSIVE_STS_EP_URL = "/passivests";
 
     /**
@@ -498,6 +501,19 @@ public class PassiveSTS extends HttpServlet {
     private void handleLogoutRequest(HttpServletRequest request, HttpServletResponse response)
             throws IOException, PassiveSTSException {
 
+        // Validate the logout url if the logout wreply validation is enabled.
+        if (Boolean.parseBoolean(IdentityUtil.getProperty(
+                IdentityConstants.STS.PASSIVE_STS_LOGOUT_WREPLY_VALIDATION))) {
+            try {
+                validateLogoutURL(request);
+            } catch (PassiveSTSException e) {
+                log.error(e.getMessage());
+                PassiveSTSUtil.sendToErrorPage(request, response,
+                        ERROR_AUTHENTICATION, ERROR_MSG_LOGOUT_WREPLY_MISMATCH);
+                return;
+            }
+        }
+
         // wreply parameter is optional for the logout request. So we are setting that value from the service
         // provider configuration in case it is not available in the request.
         if (StringUtils.isBlank(getAttribute(request.getParameterMap(), PassiveRequestorConstants.REPLY_TO)) &&
@@ -519,6 +535,123 @@ public class PassiveSTS extends HttpServlet {
                 log.debug("Error while sending the logout request", e);
             }
         }
+    }
+
+    /**
+     * Validate the wreply url sent in the logout request with the configured logout wreply url.
+     * The user is redirected to an error page upon validation failure.
+     *
+     * @param request   Logout request.
+     * @throws PassiveSTSException Error in logout url validation.
+     */
+    private void validateLogoutURL(HttpServletRequest request)
+            throws PassiveSTSException {
+
+        String wreplyFromReq = getAttribute(request.getParameterMap(), PassiveRequestorConstants.REPLY_TO);
+        if (StringUtils.isNotBlank(wreplyFromReq)) {
+            String configuredWreply = getConfiguredWreplyLogoutUrl(request);
+            if (!wreplyFromReq.equals(configuredWreply)) {
+                throw new PassiveSTSException("Provided wreply URL in the request does not match the configured " +
+                        "wreply logout url.");
+            }
+        }
+    }
+
+    /**
+     * Retrieve the configured wreply logout url from the service provider.
+     *
+     * @param request   Logout request.
+     * @return          Wreply logout url configured in the service provider.
+     * @throws PassiveSTSException Errors in retrieving the configured wreply url.
+     */
+    private String getConfiguredWreplyLogoutUrl(HttpServletRequest request) throws PassiveSTSException {
+
+        String wtrealm = getAttribute(request.getParameterMap(), PassiveRequestorConstants.REALM);
+        if (StringUtils.isBlank(wtrealm)) {
+            throw new PassiveSTSException("Missing parameter wtrealm in request.");
+        }
+        String tenantDomain = getTenantDomain(request);
+        ServiceProvider serviceProvider = getServiceProvider(wtrealm, tenantDomain);
+        Property[] properties = getInboundAuthConfigPropertiesFromSP(serviceProvider);
+        if (ArrayUtils.isNotEmpty(properties)) {
+            String wreplyUrl = null;
+            for (Property property : properties) {
+                if (PASSIVE_STS_W_REPLY_LOGOUT_PROPERTY.equalsIgnoreCase(property.getName())) {
+                    return property.getValue();
+                } else if (PASSIVE_STS_W_REPLY_PROPERTY.equalsIgnoreCase(property.getName())) {
+                    wreplyUrl = property.getValue();
+                }
+            }
+            // If the logout specific wreply url is not set, fallback to the wreply url.
+            if (StringUtils.isNotBlank(wreplyUrl)) {
+                return wreplyUrl;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Get the passive sts inbound authentication config properties from the service provider.
+     *
+     * @param serviceProvider   Service provider.
+     * @return                  Passive STS inbound authentication config properties.
+     */
+    private Property[] getInboundAuthConfigPropertiesFromSP(ServiceProvider serviceProvider) {
+
+        InboundAuthenticationRequestConfig[] inboundAuthenticationConfigs =
+                serviceProvider.getInboundAuthenticationConfig().getInboundAuthenticationRequestConfigs();
+        if (inboundAuthenticationConfigs != null) {
+            for (InboundAuthenticationRequestConfig inboundAuthenticationConfig : inboundAuthenticationConfigs) {
+                if (PASSIVE_STS_CLIENT_TYPE.equals(inboundAuthenticationConfig.getInboundAuthType())) {
+                    return inboundAuthenticationConfig.getProperties();
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Get the passive sts service provider for the given realm.
+     *
+     * @param wtrealm       Realm of the service provider.
+     * @param tenantDomain  Tenant domain of the service provider.
+     * @return              Passive STS Service provider.
+     * @throws PassiveSTSException  Errors when getting the service provider.
+     */
+    private ServiceProvider getServiceProvider(String wtrealm, String tenantDomain) throws PassiveSTSException {
+
+        try {
+            ServiceProvider serviceProvider = ApplicationManagementService.getInstance()
+                    .getServiceProviderByClientId(wtrealm, PASSIVE_STS_CLIENT_TYPE, tenantDomain);
+            if (serviceProvider == null || IdentityApplicationConstants.DEFAULT_SP_CONFIG.equals(serviceProvider
+                    .getApplicationName())) {
+                throw new PassiveSTSException("Service provider for wtrealm: "  + wtrealm + " in tenant: "
+                        + tenantDomain + " is null or the default service provider.");
+            }
+            return serviceProvider;
+        } catch (IdentityApplicationManagementException e) {
+            throw new PassiveSTSException("Failed to retrieve service provider for wtrealm: " + wtrealm +
+                    " in tenant: " + tenantDomain);
+        }
+    }
+
+    /**
+     * Get tenant domain.
+     * @param request   HTTP request.
+     * @return          Tenant domain.
+     */
+    private String getTenantDomain(HttpServletRequest request) {
+
+        String tenantDomain;
+        if (IdentityTenantUtil.isTenantQualifiedUrlsEnabled()) {
+            tenantDomain = IdentityTenantUtil.resolveTenantDomain();
+        } else {
+            tenantDomain = getAttribute(request.getParameterMap(), MultitenantConstants.TENANT_DOMAIN);
+        }
+        if (StringUtils.isBlank(tenantDomain)) {
+            tenantDomain = MultitenantConstants.SUPER_TENANT_DOMAIN_NAME;
+        }
+        return tenantDomain;
     }
 
     /**
@@ -562,11 +695,19 @@ public class PassiveSTS extends HttpServlet {
                 if (PASSIVE_STS_CLIENT_TYPE.equals(inboundAuthenticationConfig.getInboundAuthType())) {
                     Property[] properties = inboundAuthenticationConfig.getProperties();
                     if (ArrayUtils.isNotEmpty(properties)) {
+                        String wreplyUrl = null;
                         for (Property property : properties) {
-                            if (PASSIVE_STS_W_REPLY_PROPERTY.equalsIgnoreCase(property.getName())) {
+                            if (PASSIVE_STS_W_REPLY_LOGOUT_PROPERTY.equalsIgnoreCase(property.getName())) {
                                 request.addParameter(PassiveRequestorConstants.REPLY_TO, property.getValue());
                                 break loop;
+                            } else if (PASSIVE_STS_W_REPLY_PROPERTY.equalsIgnoreCase(property.getName())) {
+                                wreplyUrl = property.getValue();
                             }
+                        }
+                        // If the logout specific wreply url is not set, fallback to the wreply url.
+                        if (StringUtils.isNotBlank(wreplyUrl)) {
+                            request.addParameter(PassiveRequestorConstants.REPLY_TO, wreplyUrl);
+                            break;
                         }
                     }
                 }
