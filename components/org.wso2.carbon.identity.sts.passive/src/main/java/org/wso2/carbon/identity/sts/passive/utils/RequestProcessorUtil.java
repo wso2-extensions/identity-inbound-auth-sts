@@ -15,7 +15,6 @@
  */
 package org.wso2.carbon.identity.sts.passive.utils;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.cxf.helpers.DOMUtils;
@@ -225,17 +224,12 @@ public class RequestProcessorUtil {
         stsProperties.setIssuer(getIssuerName());
 
         SignatureProperties signatureProperties = new SignatureProperties();
-        if (StringUtils.isNotBlank(signatureAlgorithm)) {
-            if (!signatureProperties.getAcceptedSignatureAlgorithms().contains(signatureAlgorithm)) {
-                signatureProperties.setAcceptedSignatureAlgorithms(
-                        Collections.singletonList(signatureAlgorithm));
-            }
-            signatureProperties.setSignatureAlgorithm(signatureAlgorithm);
+        if (!signatureProperties.getAcceptedSignatureAlgorithms().contains(signatureAlgorithm)) {
+            signatureProperties.setAcceptedSignatureAlgorithms(
+                    Collections.singletonList(signatureAlgorithm));
         }
-
-        if (StringUtils.isNotBlank(digestAlgorithm)) {
-            signatureProperties.setDigestAlgorithm(digestAlgorithm);
-        }
+        signatureProperties.setSignatureAlgorithm(signatureAlgorithm);
+        signatureProperties.setDigestAlgorithm(digestAlgorithm);
 
         stsProperties.setSignatureProperties(signatureProperties);
 
