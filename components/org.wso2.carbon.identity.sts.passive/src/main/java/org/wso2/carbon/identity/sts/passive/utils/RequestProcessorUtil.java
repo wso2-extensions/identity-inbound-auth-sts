@@ -15,7 +15,6 @@
  */
 package org.wso2.carbon.identity.sts.passive.utils;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.cxf.helpers.DOMUtils;
@@ -201,16 +200,7 @@ public class RequestProcessorUtil {
 
         String signatureAlgorithm = serverConfig.getFirstProperty(STS_SIGNATURE_ALGORITHM_KEY);
         String digestAlgorithm = serverConfig.getFirstProperty(STS_DIGEST_ALGORITHM_KEY);
-        boolean enableDefaultAlgorithms = Boolean.parseBoolean(IdentityUtil.getProperty(
-                IdentityConstants.STS.PASSIVE_STS_ENABLE_DEFAULT_SIGNATURE_AND_DIGEST_ALG));
-        if (enableDefaultAlgorithms) {
-            if (StringUtils.isBlank(signatureAlgorithm)) {
-                signatureAlgorithm = IdentityApplicationConstants.XML.SignatureAlgorithmURI.RSA_SHA256;
-            }
-            if (StringUtils.isBlank(digestAlgorithm)) {
-                digestAlgorithm = IdentityApplicationConstants.XML.DigestAlgorithmURI.SHA256;
-            }
-        }
+
 
         if (keyAlias == null) {
             throw new STSException("Private key alias cannot be null.");
@@ -232,6 +222,7 @@ public class RequestProcessorUtil {
         stsProperties.setSignatureUsername(keyAlias);
         stsProperties.setCallbackHandler(new PasswordCallbackHandler());
         stsProperties.setIssuer(getIssuerName());
+
         SignatureProperties signatureProperties = new SignatureProperties();
         if (!signatureProperties.getAcceptedSignatureAlgorithms().contains(signatureAlgorithm)) {
             signatureProperties.setAcceptedSignatureAlgorithms(
