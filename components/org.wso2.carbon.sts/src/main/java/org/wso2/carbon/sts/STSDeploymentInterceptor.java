@@ -49,6 +49,7 @@ import org.wso2.carbon.identity.sts.common.util.RampartConfigUtil;
 import org.wso2.carbon.identity.sts.common.util.ServerCrypto;
 import org.wso2.carbon.sts.internal.STSServiceDataHolder;
 import org.wso2.carbon.utils.ServerConstants;
+import org.wso2.carbon.utils.security.KeystoreUtils;
 
 import java.security.KeyStore;
 import java.util.ArrayList;
@@ -141,7 +142,7 @@ public class STSDeploymentInterceptor implements AxisObserver {
 
             if (tenantDomain != null) {
                 // assuming domain always in this format -> example.com
-                keyStoreName = tenantDomain.replace(".", "-") + ".jks";
+                keyStoreName = KeystoreUtils.getKeyStoreFileLocation(tenantDomain);
                 KeyStore keyStore = KeyStoreManager.getInstance(tenantId).getKeyStore(keyStoreName);
                 if (keyStore != null) {
                     privateKeyAlias = KeyStoreUtil.getPrivateKeyAlias(keyStore);
