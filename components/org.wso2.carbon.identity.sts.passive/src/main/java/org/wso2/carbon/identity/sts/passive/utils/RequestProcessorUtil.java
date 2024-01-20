@@ -64,6 +64,7 @@ import org.wso2.carbon.identity.sts.passive.custom.handler.PasswordCallbackHandl
 import org.wso2.carbon.identity.sts.passive.custom.provider.CustomAttributeProvider;
 import org.wso2.carbon.identity.sts.passive.custom.provider.CustomAuthenticationProvider;
 import org.wso2.carbon.idp.mgt.IdentityProviderManager;
+import org.wso2.carbon.utils.security.KeystoreUtils;
 
 import java.net.URI;
 import java.security.Principal;
@@ -277,8 +278,7 @@ public class RequestProcessorUtil {
      */
     private static String generateKSNameFromDomainName(String tenantDomain) {
 
-        String ksName = tenantDomain.trim().replace(".", "-");
-        return ksName + ".jks";
+        return KeystoreUtils.getKeyStoreFileLocation(tenantDomain);
     }
 
     /**
