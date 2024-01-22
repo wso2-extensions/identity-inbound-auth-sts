@@ -56,7 +56,7 @@
         <dependency>
             <groupId>org.wso2.orbit.org.opensaml</groupId>
             <artifactId>opensaml</artifactId>
-            <version>3.3.1.wso2v7</version>
+            <version>3.3.1.wso2v11</version>
         </dependency>
         <dependency>
             <groupId>org.ops4j.pax.logging</groupId>
