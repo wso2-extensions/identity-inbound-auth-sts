@@ -474,7 +474,7 @@
         <neethi.osgi.version>2.0.4.wso2v5</neethi.osgi.version>
         <neethi.osgi.version.range>[2.0.4.wso2v4,3.0.0)</neethi.osgi.version.range>
 
-        <identity.framework.imp.pkg.version.range>[5.14.0, 6.0.0)</identity.framework.imp.pkg.version.range>
+        <identity.framework.imp.pkg.version.range>[5.14.0, 8.0.0)</identity.framework.imp.pkg.version.range>
         <identity.inbound.auth.openid.imp.pkg.version.range>[5.4.0, 6.0.0)
         </identity.inbound.auth.openid.imp.pkg.version.range>
         <identity.inbound.auth.sts.imp.pkg.version.range>[5.4.0, 6.0.0)</identity.inbound.auth.sts.imp.pkg.version.range>
