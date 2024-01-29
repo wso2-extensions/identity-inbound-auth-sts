@@ -27,12 +27,13 @@ import org.wso2.carbon.base.MultitenantConstants;
 import org.wso2.carbon.context.CarbonContext;
 import org.wso2.carbon.core.AbstractAdmin;
 import org.wso2.carbon.core.RegistryResources;
+import org.wso2.carbon.core.keystore.KeyStoreAdmin;
+import org.wso2.carbon.core.keystore.KeyStoreManagementException;
+import org.wso2.carbon.core.keystore.service.KeyStoreData;
 import org.wso2.carbon.core.util.KeyStoreUtil;
 import org.wso2.carbon.registry.core.Registry;
 import org.wso2.carbon.registry.core.Resource;
 import org.wso2.carbon.security.SecurityConfigException;
-import org.wso2.carbon.security.keystore.KeyStoreAdmin;
-import org.wso2.carbon.security.keystore.service.KeyStoreData;
 import org.wso2.carbon.identity.sts.common.config.SecurityServiceAdmin;
 import org.wso2.carbon.security.sts.service.STSAdminServiceInterface;
 import org.wso2.carbon.security.sts.service.util.TrustedServiceData;
@@ -181,30 +182,34 @@ public class STSAdminServiceImpl extends AbstractAdmin implements STSAdminServic
     @Override
     public String[] getCertAliasOfPrimaryKeyStore() throws SecurityConfigException {
 
-        KeyStoreData[] keyStores = getKeyStores();
-        int tenantId = CarbonContext.getThreadLocalCarbonContext().getTenantId();
-        KeyStoreData primaryKeystore = null;
-        for (KeyStoreData keyStore : keyStores) {
-            if (keyStore != null) {
-                if (tenantId == MultitenantConstants.SUPER_TENANT_ID) {
-                    if (KeyStoreUtil.isPrimaryStore(keyStore.getKeyStoreName())) {
-                        primaryKeystore = keyStore;
-                        break;
-                    }
-                } else {
-                    if (keyStore.getPrivateStore()) {
-                        primaryKeystore = keyStore;
-                        break;
+        try {
+            KeyStoreData[] keyStores = getKeyStores();
+            int tenantId = CarbonContext.getThreadLocalCarbonContext().getTenantId();
+            KeyStoreData primaryKeystore = null;
+            for (KeyStoreData keyStore : keyStores) {
+                if (keyStore != null) {
+                    if (tenantId == MultitenantConstants.SUPER_TENANT_ID) {
+                        if (KeyStoreUtil.isPrimaryStore(keyStore.getKeyStoreName())) {
+                            primaryKeystore = keyStore;
+                            break;
+                        }
+                    } else {
+                        if (keyStore.getPrivateStore()) {
+                            primaryKeystore = keyStore;
+                            break;
+                        }
                     }
                 }
             }
+
+            if (primaryKeystore != null) {
+                return getStoreEntries(primaryKeystore.getKeyStoreName());
+            }
+        } catch (KeyStoreManagementException e) {
+            throw new SecurityConfigException("Primary Keystore cannot be found.");
         }
 
-        if (primaryKeystore != null) {
-            return getStoreEntries(primaryKeystore.getKeyStoreName());
-        }
-
-        throw new SecurityConfigException("Primary Keystore cannot be found.");
+        return null;
     }
 
     private void setSTSParameter(SAMLTokenIssuerConfig samlConfig) throws AxisFault {
@@ -213,19 +218,17 @@ public class STSAdminServiceImpl extends AbstractAdmin implements STSAdminServic
                 setServiceParameterElement(ServerConstants.STS_NAME, samlConfig.getParameter());
     }
 
-    private KeyStoreData[] getKeyStores() throws SecurityConfigException {
+    private KeyStoreData[] getKeyStores() throws KeyStoreManagementException {
 
-        KeyStoreAdmin admin = new KeyStoreAdmin(CarbonContext.getThreadLocalCarbonContext().getTenantId(),
-                getGovernanceSystemRegistry());
+        KeyStoreAdmin admin = new KeyStoreAdmin(CarbonContext.getThreadLocalCarbonContext().getTenantId());
         boolean isSuperTenant = CarbonContext.getThreadLocalCarbonContext().getTenantId() ==
                 MultitenantConstants.SUPER_TENANT_ID;
         return admin.getKeyStores(isSuperTenant);
     }
 
-    private String[] getStoreEntries(String keyStoreName) throws org.wso2.carbon.security.SecurityConfigException {
+    private String[] getStoreEntries(String keyStoreName) throws KeyStoreManagementException {
 
-        KeyStoreAdmin admin = new KeyStoreAdmin(CarbonContext.getThreadLocalCarbonContext().getTenantId(),
-                getGovernanceSystemRegistry());
+        KeyStoreAdmin admin = new KeyStoreAdmin(CarbonContext.getThreadLocalCarbonContext().getTenantId());
         return admin.getStoreEntries(keyStoreName);
     }
 
