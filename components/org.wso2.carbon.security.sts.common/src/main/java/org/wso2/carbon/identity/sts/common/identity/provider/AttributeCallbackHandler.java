@@ -37,6 +37,7 @@ import org.opensaml.xml.schema.impl.XSStringBuilder;
 import org.wso2.carbon.context.CarbonContext;
 import org.wso2.carbon.context.PrivilegedCarbonContext;
 import org.wso2.carbon.identity.application.authentication.framework.model.AuthenticatedUser;
+import org.wso2.carbon.identity.application.authentication.framework.util.FrameworkConstants;
 import org.wso2.carbon.identity.application.common.IdentityApplicationManagementException;
 import org.wso2.carbon.identity.application.common.model.ClaimMapping;
 import org.wso2.carbon.identity.application.common.model.ServiceProvider;
@@ -407,6 +408,7 @@ public class AttributeCallbackHandler implements SAMLCallbackHandler {
                 userAttributeSeparator = claimSeparator;
                 mapValues.remove(IdentityCoreConstants.MULTI_ATTRIBUTE_SEPARATOR);
             }
+            mapValues.remove(FrameworkConstants.IDP_MAPPED_USER_ROLES);
 
             ite = requestedClaims.values().iterator();
             while (ite.hasNext()) {
