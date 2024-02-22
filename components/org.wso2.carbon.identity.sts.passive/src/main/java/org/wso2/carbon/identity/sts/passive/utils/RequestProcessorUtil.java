@@ -15,6 +15,7 @@
  */
 package org.wso2.carbon.identity.sts.passive.utils;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.cxf.helpers.DOMUtils;
@@ -50,6 +51,7 @@ import org.wso2.carbon.base.ServerConfiguration;
 import org.wso2.carbon.context.PrivilegedCarbonContext;
 import org.wso2.carbon.core.RegistryResources;
 import org.wso2.carbon.core.util.KeyStoreManager;
+import org.wso2.carbon.identity.application.authentication.framework.util.FrameworkConstants;
 import org.wso2.carbon.identity.application.common.model.FederatedAuthenticatorConfig;
 import org.wso2.carbon.identity.application.common.model.IdentityProvider;
 import org.wso2.carbon.identity.application.common.model.Property;
@@ -156,7 +158,14 @@ public class RequestProcessorUtil {
                 if (!attribute.contains("Multi")) {
                     attribute = attribute.replaceAll("[{}]", "");
                     String[] separatedAttribute = attribute.split("\\|");
-                    formattedClaims.put(separatedAttribute[0], separatedAttribute[1]);
+                    if (FrameworkConstants.IDP_MAPPED_USER_ROLES.equals(separatedAttribute[0])) {
+                        continue;
+                    }
+                    if (separatedAttribute.length > 1) {
+                        formattedClaims.put(separatedAttribute[0], separatedAttribute[1]);
+                    } else {
+                        formattedClaims.put(separatedAttribute[0], StringUtils.EMPTY);
+                    }
                 }
             }
         }
