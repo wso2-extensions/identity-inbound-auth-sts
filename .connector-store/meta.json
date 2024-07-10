@@ -8,34 +8,34 @@
     "labels": [],
     "releases": [
         {
-            "tagName": "5.10.16.1",
+            "tagName": "v5.10.16.1",
             "products": [
                 "IS 5.11.0"
             ]
         },
         {
-            "tagName": "5.10.13",
-            "products": [
-                "IS 6.0.0",
-                "IS 5.11.0"
-            ]
-        },
-        {
-            "tagName": "5.10.10",
+            "tagName": "v5.10.13",
             "products": [
                 "IS 6.0.0",
                 "IS 5.11.0"
             ]
         },
         {
-            "tagName": "5.10.2",
+            "tagName": "v5.10.10",
             "products": [
                 "IS 6.0.0",
                 "IS 5.11.0"
             ]
         },
         {
-            "tagName": "5.6.5",
+            "tagName": "v5.10.2",
+            "products": [
+                "IS 6.0.0",
+                "IS 5.11.0"
+            ]
+        },
+        {
+            "tagName": "v5.6.5",
             "products": [
                 "IS 5.11.0"
             ]
