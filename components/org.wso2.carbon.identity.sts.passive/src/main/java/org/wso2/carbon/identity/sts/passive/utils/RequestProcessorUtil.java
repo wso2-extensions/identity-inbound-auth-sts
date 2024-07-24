@@ -50,7 +50,6 @@ import org.wso2.carbon.base.MultitenantConstants;
 import org.wso2.carbon.base.ServerConfiguration;
 import org.wso2.carbon.context.PrivilegedCarbonContext;
 import org.wso2.carbon.core.RegistryResources;
-import org.wso2.carbon.core.util.KeyStoreManager;
 import org.wso2.carbon.identity.application.authentication.framework.util.FrameworkConstants;
 import org.wso2.carbon.identity.application.common.model.FederatedAuthenticatorConfig;
 import org.wso2.carbon.identity.application.common.model.IdentityProvider;
@@ -58,6 +57,8 @@ import org.wso2.carbon.identity.application.common.model.Property;
 import org.wso2.carbon.identity.application.common.util.IdentityApplicationConstants;
 import org.wso2.carbon.identity.application.common.util.IdentityApplicationManagementUtil;
 import org.wso2.carbon.identity.base.IdentityConstants;
+import org.wso2.carbon.identity.core.IdentityKeyStoreResolver;
+import org.wso2.carbon.identity.core.util.IdentityKeyStoreResolverConstants;
 import org.wso2.carbon.identity.core.util.IdentityTenantUtil;
 import org.wso2.carbon.identity.core.util.IdentityUtil;
 import org.wso2.carbon.identity.sts.passive.RequestToken;
@@ -202,10 +203,14 @@ public class RequestProcessorUtil {
         int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
 
         String[] aliasAndPassword = getKeyStoreAliasAndKeyStorePassword(serverConfig, tenantId, tenantDomain);
+
         String keyAlias = aliasAndPassword[0];
         String keyStorePassword = aliasAndPassword[1];
-        String keyStoreFileLocation = serverConfig
-                .getFirstProperty(RegistryResources.SecurityManagement.SERVER_PRIMARY_KEYSTORE_FILE);
+        String keyStoreFileLocation = IdentityKeyStoreResolver.getInstance().getKeyStoreConfig(
+                tenantDomain,
+                IdentityKeyStoreResolverConstants.InboundProtocol.WS_FEDERATION,
+                RegistryResources.SecurityManagement.CustomKeyStore.PROP_LOCATION);
+
         String keyStoreName = null;
 
         String signatureAlgorithm = serverConfig.getFirstProperty(STS_SIGNATURE_ALGORITHM_KEY);
@@ -260,21 +265,14 @@ public class RequestProcessorUtil {
 
         String[] aliasAndPassword = new String[2];
 
-        String keyStorePassword;
-        String keyAlias;
-
-        boolean isSuperTenantDomain = (MultitenantConstants.SUPER_TENANT_ID == tenantId);
-        if (isSuperTenantDomain) {
-            keyAlias = serverConfig.getFirstProperty(KEY_ALIAS_KEY);
-            keyStorePassword = serverConfig.getFirstProperty(KEY_STORE_PASSWORD_KEY);
-        } else {
-            String keyStoreName = generateKSNameFromDomainName(tenantDomain);
-            keyAlias = tenantDomain;
-            keyStorePassword = KeyStoreManager.getInstance(tenantId).getKeyStorePassword(keyStoreName);
-        }
-
-        aliasAndPassword[0] = keyAlias;
-        aliasAndPassword[1] = keyStorePassword;
+        aliasAndPassword[0] = IdentityKeyStoreResolver.getInstance().getKeyStoreConfig(
+                tenantDomain,
+                IdentityKeyStoreResolverConstants.InboundProtocol.WS_FEDERATION,
+                RegistryResources.SecurityManagement.CustomKeyStore.PROP_KEY_ALIAS);
+        aliasAndPassword[1] = IdentityKeyStoreResolver.getInstance().getKeyStoreConfig(
+                tenantDomain,
+                IdentityKeyStoreResolverConstants.InboundProtocol.WS_FEDERATION,
+                RegistryResources.SecurityManagement.CustomKeyStore.PROP_PASSWORD);
 
         return aliasAndPassword;
     }
