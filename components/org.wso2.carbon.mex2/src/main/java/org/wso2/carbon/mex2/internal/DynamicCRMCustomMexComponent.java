@@ -28,8 +28,8 @@ import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 
 @Component(
-         name = "carbon.mex2.component", 
-         immediate = true)
+        name = "carbon.mex2.component",
+        immediate = true)
 public class DynamicCRMCustomMexComponent {
 
     private static final Log log = LogFactory.getLog(DynamicCRMCustomMexComponent.class);
@@ -44,6 +44,7 @@ public class DynamicCRMCustomMexComponent {
 
     @Deactivate
     protected void deactivate(ComponentContext ctxt) {
+
         if (log.isDebugEnabled()) {
             log.debug("DynamicCRMSupport MexServiceComponent is deactivated.");
         }
