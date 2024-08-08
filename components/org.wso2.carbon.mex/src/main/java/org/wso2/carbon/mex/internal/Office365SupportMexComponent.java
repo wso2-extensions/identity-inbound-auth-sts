@@ -36,7 +36,10 @@ public class Office365SupportMexComponent {
 
     @Activate
     protected void activate(ComponentContext ctxt) {
-        log.info("Office365Support MexServiceComponent bundle activated successfully..");
+
+        if (log.isDebugEnabled()) {
+            log.debug("Office365Support MexServiceComponent bundle activated successfully.");
+        }
     }
 
     @Deactivate

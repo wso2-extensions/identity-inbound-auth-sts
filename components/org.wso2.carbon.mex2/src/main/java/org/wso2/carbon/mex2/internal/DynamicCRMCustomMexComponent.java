@@ -36,7 +36,10 @@ public class DynamicCRMCustomMexComponent {
 
     @Activate
     protected void activate(ComponentContext ctxt) {
-        log.info("DynamicCRMSupport MexServiceComponent bundle activated successfully.");
+
+        if (log.isDebugEnabled()) {
+            log.debug("DynamicCRMSupport MexServiceComponent bundle activated successfully.");
+        }
     }
 
     @Deactivate
