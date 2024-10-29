@@ -16,45 +16,35 @@
 package org.wso2.carbon.identity.sts.mgt;
 
 import org.apache.neethi.Policy;
-import org.mockito.Mock;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.testng.IObjectFactory;
-import org.testng.annotations.ObjectFactory;
+import org.mockito.MockedStatic;
 import org.testng.annotations.Test;
 import org.wso2.carbon.base.ServerConfiguration;
 import org.wso2.carbon.identity.sts.mgt.base.IdentityBaseUtil;
 
-import static org.mockito.Matchers.anyString;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
-import static org.powermock.api.mockito.PowerMockito.when;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertNotNull;
 
 /**
  * Test class for IdentityBaseUtil test cases
  */
-@PrepareForTest({ServerConfiguration.class})
 public class IdentityBaseUtilTest {
-
-    @Mock
-    private ServerConfiguration mockServerConfig;
 
     @Test
     public void testGetDefaultRampartConfig() throws Exception {
 
-        //mock ServerConfiguration
-        mockStatic(ServerConfiguration.class);
-        when(ServerConfiguration.getInstance()).thenReturn(mockServerConfig);
-        when(mockServerConfig.getFirstProperty(anyString())).thenReturn("mockedValue");
+        // Mock ServerConfiguration
+        try (MockedStatic<ServerConfiguration> serverConfiguration = mockStatic(ServerConfiguration.class)) {
 
-        Policy policy = IdentityBaseUtil.getDefaultRampartConfig();
-        assertNotNull(policy);
-        assertNotNull(policy.getFirstPolicyComponent());
+            ServerConfiguration mockServerConfiguration = mock(ServerConfiguration.class);
+            serverConfiguration.when(ServerConfiguration::getInstance).thenReturn(mockServerConfiguration);
+            when(mockServerConfiguration.getFirstProperty(anyString())).thenReturn("mockedValue");
+
+            Policy policy = IdentityBaseUtil.getDefaultRampartConfig();
+            assertNotNull(policy);
+            assertNotNull(policy.getFirstPolicyComponent());
+        }
     }
-
-    @ObjectFactory
-    public IObjectFactory getObjectFactory() {
-
-        return new org.powermock.modules.testng.PowerMockObjectFactory();
-    }
-
 }
