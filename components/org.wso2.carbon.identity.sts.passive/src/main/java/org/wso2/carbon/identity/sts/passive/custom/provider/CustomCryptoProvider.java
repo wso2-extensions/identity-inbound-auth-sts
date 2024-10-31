@@ -15,18 +15,20 @@
  */
 package org.wso2.carbon.identity.sts.passive.custom.provider;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.security.KeyStore;
-import java.util.Properties;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.wss4j.common.crypto.Merlin;
 import org.apache.wss4j.common.crypto.PasswordEncryptor;
 import org.apache.wss4j.common.ext.WSSecurityException;
-import org.wso2.carbon.base.MultitenantConstants;
-import org.wso2.carbon.core.util.KeyStoreManager;
+import org.wso2.carbon.context.PrivilegedCarbonContext;
+import org.wso2.carbon.identity.core.IdentityKeyStoreResolver;
+import org.wso2.carbon.identity.core.util.IdentityKeyStoreResolverConstants;
+import org.wso2.carbon.identity.core.util.IdentityKeyStoreResolverException;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.security.KeyStore;
+import java.util.Properties;
 
 public class CustomCryptoProvider extends Merlin {
 
@@ -58,7 +60,7 @@ public class CustomCryptoProvider extends Merlin {
     }
 
     /**
-     * Loads the keystore from an InputStream or from the KeyStoreManager if it is a tenant.
+     * Loads the keystore from IdentityKeyStoreResolver.
      *
      * @param input     InputStream which the key store should be read from.
      * @param storepass Password of the key store.
@@ -70,31 +72,16 @@ public class CustomCryptoProvider extends Merlin {
     protected KeyStore load(InputStream input, String storepass, String provider, String type)
             throws WSSecurityException {
 
-        KeyStore keyStore;
-
-        String tenantId = this.properties.getProperty(TENANT_ID_PROP);
-        String keyStoreName = this.properties.getProperty(KEY_STORE_NAME_PROP);
-
         log.debug("Loading keystore...");
-        if (!String.valueOf(MultitenantConstants.SUPER_TENANT_ID).equals(tenantId)
-                && keyStoreName != null) {
-            // Loads the keystore in a custom way since the tenant keystore does not have a location.
-            if (log.isDebugEnabled()) {
-                log.debug("Loading keystore for tenant with id: " + tenantId + ".");
-            }
-            KeyStoreManager keyStoreManager = KeyStoreManager.getInstance(Integer.parseInt(tenantId));
-            try {
-                keyStore = keyStoreManager.getKeyStore(keyStoreName);
-            } catch (Exception exception) {
-                throw new WSSecurityException(WSSecurityException.ErrorCode.FAILURE, exception, "failedCredentialLoad");
-            }
-        } else {
-            // Loads the keystore in the default way since the keystore has a location.
-            if (log.isDebugEnabled()) {
-                log.debug("Loading keystore for super tenant.");
-            }
-            keyStore = super.load(input, storepass, provider, type);
+        try {
+            String tenantDomain = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantDomain();
+            KeyStore keyStore = IdentityKeyStoreResolver.getInstance().getKeyStore(
+                    tenantDomain, IdentityKeyStoreResolverConstants.InboundProtocol.WS_FEDERATION);
+            log.debug("Successfully retrieved the keystore.");
+            return keyStore;
+        } catch (IdentityKeyStoreResolverException e) {
+            log.debug("Error occurred when loading keystore.", e);
+            throw new WSSecurityException(WSSecurityException.ErrorCode.FAILURE, e);
         }
-        return keyStore;
     }
 }
