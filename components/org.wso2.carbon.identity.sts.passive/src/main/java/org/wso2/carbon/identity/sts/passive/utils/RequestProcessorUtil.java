@@ -78,8 +78,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import static org.wso2.carbon.identity.sts.passive.PassiveRequestorConstants.KEY_ALIAS_KEY;
-import static org.wso2.carbon.identity.sts.passive.PassiveRequestorConstants.KEY_STORE_PASSWORD_KEY;
 import static org.wso2.carbon.identity.sts.passive.PassiveRequestorConstants.STS_DIGEST_ALGORITHM_KEY;
 import static org.wso2.carbon.identity.sts.passive.PassiveRequestorConstants.STS_SIGNATURE_ALGORITHM_KEY;
 import static org.wso2.carbon.identity.sts.passive.PassiveRequestorConstants.STS_TIME_TO_LIVE_KEY;
@@ -211,19 +209,25 @@ public class RequestProcessorUtil {
                 IdentityKeyStoreResolverConstants.InboundProtocol.WS_FEDERATION,
                 RegistryResources.SecurityManagement.CustomKeyStore.PROP_LOCATION);
 
-        String keyStoreName = null;
+        String keyStoreName = generateKSNameFromDomainName(tenantDomain);
 
         String signatureAlgorithm = serverConfig.getFirstProperty(STS_SIGNATURE_ALGORITHM_KEY);
         String digestAlgorithm = serverConfig.getFirstProperty(STS_DIGEST_ALGORITHM_KEY);
-
 
         if (keyAlias == null) {
             throw new STSException("Private key alias cannot be null.");
         }
 
-        if (MultitenantConstants.SUPER_TENANT_ID != tenantId) {
-            keyStoreName = generateKSNameFromDomainName(tenantDomain);
+        // Encryption properties expected by org.apache.wss4j.common.crypto.CryptoFactory is,
+        // If keystore is in <IS-HOME>/repository/resources/security, (Primary keystore or custom keystore)
+        //      keyStoreName = "" or null, keyStoreFileLocation = path to key store
+        // If keystore is not located in file system, (tenant keystore)
+        //      keyStoreName = keystore name, keyStoreFileLocation = "" or any path
+        if (MultitenantConstants.SUPER_TENANT_ID != tenantId && keyStoreFileLocation.equals(keyStoreName)) {
+            keyStoreFileLocation = "";
             tenantId = IdentityTenantUtil.getTenantId(tenantDomain);
+        } else {
+            keyStoreName = "";
         }
 
         Crypto crypto = CryptoFactory
