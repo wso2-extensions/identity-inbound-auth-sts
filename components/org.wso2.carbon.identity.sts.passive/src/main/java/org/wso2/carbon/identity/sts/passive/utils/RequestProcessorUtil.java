@@ -59,7 +59,8 @@ import org.wso2.carbon.identity.application.common.util.IdentityApplicationManag
 import org.wso2.carbon.identity.base.IdentityConstants;
 import org.wso2.carbon.identity.core.IdentityKeyStoreResolver;
 import org.wso2.carbon.identity.core.util.IdentityKeyStoreResolverConstants;
-import org.wso2.carbon.identity.core.util.IdentityTenantUtil;
+import org.wso2.carbon.identity.core.util.IdentityKeyStoreResolverException;
+import org.wso2.carbon.identity.core.util.IdentityKeyStoreResolverUtil;
 import org.wso2.carbon.identity.core.util.IdentityUtil;
 import org.wso2.carbon.identity.sts.passive.RequestToken;
 import org.wso2.carbon.identity.sts.passive.custom.handler.CustomClaimsHandler;
@@ -67,7 +68,6 @@ import org.wso2.carbon.identity.sts.passive.custom.handler.PasswordCallbackHandl
 import org.wso2.carbon.identity.sts.passive.custom.provider.CustomAttributeProvider;
 import org.wso2.carbon.identity.sts.passive.custom.provider.CustomAuthenticationProvider;
 import org.wso2.carbon.idp.mgt.IdentityProviderManager;
-import org.wso2.carbon.utils.security.KeystoreUtils;
 
 import java.net.URI;
 import java.security.Principal;
@@ -195,44 +195,21 @@ public class RequestProcessorUtil {
      */
     public static void addSTSProperties(TokenIssueOperation issueOperation) throws Exception {
 
-        ServerConfiguration serverConfig = ServerConfiguration.getInstance();
+        Crypto crypto = CryptoFactory.getInstance(getEncryptionProperties());
 
         String tenantDomain = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantDomain();
-        int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
-
-        String[] aliasAndPassword = getKeyStoreAliasAndKeyStorePassword(serverConfig, tenantId, tenantDomain);
-
-        String keyAlias = aliasAndPassword[0];
-        String keyStorePassword = aliasAndPassword[1];
-        String keyStoreFileLocation = IdentityKeyStoreResolver.getInstance().getKeyStoreConfig(
+        String keyAlias = IdentityKeyStoreResolver.getInstance().getKeyStoreConfig(
                 tenantDomain,
                 IdentityKeyStoreResolverConstants.InboundProtocol.WS_FEDERATION,
-                RegistryResources.SecurityManagement.CustomKeyStore.PROP_LOCATION);
-
-        String keyStoreName = generateKSNameFromDomainName(tenantDomain);
-
-        String signatureAlgorithm = serverConfig.getFirstProperty(STS_SIGNATURE_ALGORITHM_KEY);
-        String digestAlgorithm = serverConfig.getFirstProperty(STS_DIGEST_ALGORITHM_KEY);
+                RegistryResources.SecurityManagement.CustomKeyStore.PROP_KEY_ALIAS);
 
         if (keyAlias == null) {
             throw new STSException("Private key alias cannot be null.");
         }
 
-        // Encryption properties expected by org.apache.wss4j.common.crypto.CryptoFactory is,
-        // If keystore is in <IS-HOME>/repository/resources/security, (Primary keystore or custom keystore)
-        //      keyStoreName = "" or null, keyStoreFileLocation = path to key store
-        // If keystore is not located in file system, (tenant keystore)
-        //      keyStoreName = keystore name, keyStoreFileLocation = "" or any path
-        if (MultitenantConstants.SUPER_TENANT_ID != tenantId && keyStoreFileLocation.equals(keyStoreName)) {
-            keyStoreFileLocation = "";
-            tenantId = IdentityTenantUtil.getTenantId(tenantDomain);
-        } else {
-            keyStoreName = "";
-        }
-
-        Crypto crypto = CryptoFactory
-                .getInstance(getEncryptionProperties(keyStoreFileLocation,
-                        keyStorePassword, tenantId, keyStoreName));
+        ServerConfiguration serverConfig = ServerConfiguration.getInstance();
+        String signatureAlgorithm = serverConfig.getFirstProperty(STS_SIGNATURE_ALGORITHM_KEY);
+        String digestAlgorithm = serverConfig.getFirstProperty(STS_DIGEST_ALGORITHM_KEY);
 
         STSPropertiesMBean stsProperties = new StaticSTSProperties();
         stsProperties.setEncryptionCrypto(crypto);
@@ -282,41 +259,39 @@ public class RequestProcessorUtil {
     }
 
     /**
-     * Generate a key store name from the given domain name.
-     *
-     * @param tenantDomain The tenant domain.
-     * @return The name of the key store.
-     */
-    private static String generateKSNameFromDomainName(String tenantDomain) {
-
-        return KeystoreUtils.getKeyStoreFileLocation(tenantDomain);
-    }
-
-    /**
      * Set the encryption properties to a properties object and return it.
      *
-     * @param keyStoreFileLocation Location of the key store file.
-     * @param keyStorePassword     Password of the key store.
-     * @param tenantId             Id of the tenant(Needed for the tenant flow).
-     * @param keyStoreName         Name of the key store(Needed for the tenant flow).
      * @return Properties object containing the encryption properties.
      */
-    private static Properties getEncryptionProperties(String keyStoreFileLocation,
-                                                      String keyStorePassword,
-                                                      int tenantId, String keyStoreName) {
+    private static Properties getEncryptionProperties() throws IdentityKeyStoreResolverException {
+
+        String tenantDomain = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantDomain();
+        int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
+
+        String keyStoreFileLocation = IdentityKeyStoreResolver.getInstance().getKeyStoreConfig(
+                tenantDomain,
+                IdentityKeyStoreResolverConstants.InboundProtocol.WS_FEDERATION,
+                RegistryResources.SecurityManagement.CustomKeyStore.PROP_LOCATION);
+        String keyStorePassword = IdentityKeyStoreResolver.getInstance().getKeyStoreConfig(
+                tenantDomain,
+                IdentityKeyStoreResolverConstants.InboundProtocol.WS_FEDERATION,
+                RegistryResources.SecurityManagement.CustomKeyStore.PROP_PASSWORD);
+
+        String tenantKeyStoreName = IdentityKeyStoreResolverUtil.buildTenantKeyStoreName(tenantDomain);
 
         Properties properties = new Properties();
-        properties.put(
-                "org.apache.wss4j.crypto.provider", "org.wso2.carbon.identity.sts.passive.custom.provider.CustomCryptoProvider"
-        );
-        properties.put("org.apache.wss4j.crypto.merlin.keystore.password", keyStorePassword);
-        properties.put("org.apache.wss4j.crypto.merlin.keystore.file", keyStoreFileLocation);
 
-        /* This if block will execute in a tenant scenario and the purpose is to set the key store
-           manually since it does not have a specific location. Refer CustomCryptoProvider class. */
-        if (keyStoreName != null) {
+        properties.put("org.apache.wss4j.crypto.provider",
+                "org.wso2.carbon.identity.sts.passive.custom.provider.CustomCryptoProvider");
+        properties.put("org.apache.wss4j.crypto.merlin.keystore.file", keyStoreFileLocation);
+        properties.put("org.apache.wss4j.crypto.merlin.keystore.password", keyStorePassword);
+
+        // If the keystore is a tenant keystore, it cannot be loaded from the file location.
+        // Passing tenant id and keystore name for the keystore to be loaded using the CustomCryptoProvider class.
+        if (MultitenantConstants.SUPER_TENANT_ID != tenantId && keyStoreFileLocation.equals(tenantKeyStoreName)) {
             properties.put("org.apache.wss4j.crypto.merlin.keystore.tenant.id", String.valueOf(tenantId));
-            properties.put("org.apache.wss4j.crypto.merlin.keystore.name", keyStoreName);
+            properties.put("org.apache.wss4j.crypto.merlin.keystore.name", tenantKeyStoreName);
+            properties.put("org.apache.wss4j.crypto.merlin.keystore.file", "");
         }
 
         return properties;
