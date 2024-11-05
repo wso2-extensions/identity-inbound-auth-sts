@@ -279,6 +279,11 @@ public class RequestProcessorUtil {
 
         String tenantKeyStoreName = IdentityKeyStoreResolverUtil.buildTenantKeyStoreName(tenantDomain);
 
+        if (StringUtils.isEmpty(keyStoreFileLocation) || StringUtils.isEmpty(keyStorePassword)) {
+            throw new STSException("Error occoured when building encryption properties." +
+                    " One or more keystore properties are null or empty.");
+        }
+
         Properties properties = new Properties();
 
         properties.put("org.apache.wss4j.crypto.provider",
