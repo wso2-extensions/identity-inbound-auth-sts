@@ -158,17 +158,19 @@ public class AttributeCallbackHandler implements SAMLCallbackHandler {
                                     StringUtils.isNotBlank(remoteClaimPrefixValue)) {
                                 // WS trust flow does not set the authenticated user property.
                                 if (isHandlerCalledFromWSTrustSTSFlow(attrCallback)) {
-                                    localClaimValue = IdentityProviderSTSServiceComponent.getRealmService().
-                                            getBootstrapRealm().getUserStoreManager().
-                                            getUserClaimValue(userIdentifier, localClaimUri, DEFAULT_PROFILE);
+                                    tenantDomain = getTenantDomainFromThreadLocalContext();
+                                    UserRealm userRealm = IdentityTenantUtil.getRealm(tenantDomain, null);
+                                    localClaimValue = userRealm.getUserStoreManager().getUserClaimValue(userIdentifier,
+                                            localClaimUri, DEFAULT_PROFILE);
                                 } else if (!authenticatedUser.isFederatedUser()) {
                                     if (log.isDebugEnabled()) {
                                         log.debug("Loading claim values from local UserStore for user: "
                                                 + authenticatedUser.toString());
                                     }
-                                    localClaimValue = IdentityProviderSTSServiceComponent.getRealmService().
-                                            getBootstrapRealm().getUserStoreManager().
-                                            getUserClaimValue(userIdentifier, localClaimUri, DEFAULT_PROFILE);
+                                    tenantDomain = getTenantDomainFromThreadLocalContext();
+                                    UserRealm userRealm = IdentityTenantUtil.getRealm(tenantDomain, null);
+                                    localClaimValue = userRealm.getUserStoreManager().getUserClaimValue(userIdentifier,
+                                            localClaimUri, DEFAULT_PROFILE);
                                 }
 
                                 if (StringUtils.isEmpty(localClaimValue)) {
@@ -189,6 +191,8 @@ public class AttributeCallbackHandler implements SAMLCallbackHandler {
                     throw new SAMLException("Error while loading SP specific claims", e);
                 } catch (org.wso2.carbon.user.core.UserStoreException e) {
                     throw new SAMLException("Error while loading claims of the user", e);
+                } catch (IdentityException e) {
+                    throw new SAMLException("Error while loading claims", e);
                 }
             }
         }
