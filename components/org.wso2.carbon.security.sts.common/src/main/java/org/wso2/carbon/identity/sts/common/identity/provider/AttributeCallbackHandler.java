@@ -189,10 +189,8 @@ public class AttributeCallbackHandler implements SAMLCallbackHandler {
                     }
                 } catch (IdentityApplicationManagementException e) {
                     throw new SAMLException("Error while loading SP specific claims", e);
-                } catch (org.wso2.carbon.user.core.UserStoreException e) {
+                } catch (org.wso2.carbon.user.core.UserStoreException | IdentityException e) {
                     throw new SAMLException("Error while loading claims of the user", e);
-                } catch (IdentityException e) {
-                    throw new SAMLException("Error while loading claims", e);
                 }
             }
         }
