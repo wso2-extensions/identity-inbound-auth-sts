@@ -25,6 +25,9 @@ import org.wso2.carbon.core.util.CryptoException;
 import org.wso2.carbon.core.util.CryptoUtil;
 import org.wso2.carbon.core.util.KeyStoreManager;
 import org.wso2.carbon.identity.core.util.IdentityUtil;
+import org.wso2.carbon.identity.multi.attribute.login.mgt.MultiAttributeLoginService;
+import org.wso2.carbon.identity.multi.attribute.login.mgt.ResolvedUserResult;
+import org.wso2.carbon.identity.sts.common.internal.SecurityMgtServiceComponent;
 import org.wso2.carbon.identity.sts.common.SecurityConfigParams;
 import org.wso2.carbon.identity.sts.common.UserCredentialRetriever;
 import org.wso2.carbon.registry.core.Collection;
@@ -341,6 +344,15 @@ public class ServicePasswordCallbackHandler implements CallbackHandler {
             }
 
             String tenantAwareUserName = MultitenantUtils.getTenantAwareUsername(user);
+            String requestTenantDomain = MultitenantUtils.getTenantDomain(user);
+            MultiAttributeLoginService multiAttributeLoginService = SecurityMgtServiceComponent.getMultiAttributeLoginService();
+            if (multiAttributeLoginService.isEnabled(requestTenantDomain)) {
+                ResolvedUserResult resolvedUserResult = multiAttributeLoginService.resolveUser(tenantAwareUserName, requestTenantDomain);
+                if (resolvedUserResult != null && ResolvedUserResult.UserResolvedStatus.SUCCESS.
+                        equals(resolvedUserResult.getResolvedStatus())) {
+                    tenantAwareUserName = resolvedUserResult.getUser().getUsername();
+                }
+            }
 
             isAuthenticated = realm.getUserStoreManager().authenticate(
                     tenantAwareUserName, password);
