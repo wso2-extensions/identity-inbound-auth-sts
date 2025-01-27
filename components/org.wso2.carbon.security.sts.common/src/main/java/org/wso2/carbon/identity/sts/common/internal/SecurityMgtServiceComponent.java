@@ -30,6 +30,7 @@ import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 import org.wso2.carbon.base.ServerConfiguration;
 import org.wso2.carbon.identity.core.util.IdentityCoreInitializedEvent;
+import org.wso2.carbon.identity.multi.attribute.login.mgt.MultiAttributeLoginService;
 import org.wso2.carbon.identity.sts.common.sts.service.STSAdminServiceImpl;
 import org.wso2.carbon.registry.core.service.RegistryService;
 import org.wso2.carbon.registry.core.service.TenantRegistryLoader;
@@ -51,6 +52,7 @@ public class SecurityMgtServiceComponent {
     private static ConfigurationContextService configContextService = null;
     private static RealmService realmService;
     private static RegistryService registryService;
+    private static MultiAttributeLoginService multiAttributeLoginService;
 
     public static ConfigurationContext getServerConfigurationContext() {
 
@@ -218,4 +220,24 @@ public class SecurityMgtServiceComponent {
         return registryService;
     }
 
+    @Reference(
+            name = "MultiAttributeLoginService",
+            service = MultiAttributeLoginService.class,
+            cardinality = ReferenceCardinality.MANDATORY,
+            policy = ReferencePolicy.DYNAMIC,
+            unbind = "unsetMultiAttributeLoginService")
+    protected void setMultiAttributeLoginService(MultiAttributeLoginService multiAttributeLogin) {
+
+        this.multiAttributeLoginService = multiAttributeLogin;
+    }
+
+    protected void unsetMultiAttributeLoginService(MultiAttributeLoginService multiAttributeLogin) {
+
+        this.multiAttributeLoginService = null;
+    }
+
+    public static MultiAttributeLoginService getMultiAttributeLoginService() {
+
+        return multiAttributeLoginService;
+    }
 }

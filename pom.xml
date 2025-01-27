@@ -246,6 +246,11 @@
                 </exclusions>
             </dependency>
             <dependency>
+                <groupId>org.wso2.carbon.identity.framework</groupId>
+                <artifactId>org.wso2.carbon.identity.multi.attribute.login.mgt</artifactId>
+                <version>${identity.framework.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>backport-util-concurrent.wso2</groupId>
                 <artifactId>backport-util-concurrent</artifactId>
                 <version>${orbit.version.backport.util}</version>

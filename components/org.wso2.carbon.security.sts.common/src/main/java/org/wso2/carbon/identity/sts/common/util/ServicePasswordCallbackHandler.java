@@ -24,7 +24,11 @@ import org.wso2.carbon.core.RegistryResources;
 import org.wso2.carbon.core.util.CryptoException;
 import org.wso2.carbon.core.util.CryptoUtil;
 import org.wso2.carbon.core.util.KeyStoreManager;
+import org.wso2.carbon.identity.application.authentication.framework.context.AuthenticationContext;
 import org.wso2.carbon.identity.core.util.IdentityUtil;
+import org.wso2.carbon.identity.multi.attribute.login.mgt.MultiAttributeLoginService;
+import org.wso2.carbon.identity.multi.attribute.login.mgt.ResolvedUserResult;
+import org.wso2.carbon.identity.sts.common.internal.SecurityMgtServiceComponent;
 import org.wso2.carbon.identity.sts.common.SecurityConfigParams;
 import org.wso2.carbon.identity.sts.common.UserCredentialRetriever;
 import org.wso2.carbon.registry.core.Collection;
@@ -122,6 +126,7 @@ public class ServicePasswordCallbackHandler implements CallbackHandler {
 
                             receivedPasswd = passwordCallback.getPassword();
                             try {
+                                username = resolveUserFromLoginIdentifier(username);
                                 if (receivedPasswd != null
                                         && this.authenticateUser(username, receivedPasswd)) {
                                     username = applyLocalSubjectIdentifierConfigs(username);
@@ -342,8 +347,7 @@ public class ServicePasswordCallbackHandler implements CallbackHandler {
 
             String tenantAwareUserName = MultitenantUtils.getTenantAwareUsername(user);
 
-            isAuthenticated = realm.getUserStoreManager().authenticate(
-                    tenantAwareUserName, password);
+            isAuthenticated = realm.getUserStoreManager().authenticate(tenantAwareUserName, password);
 
             if (isAuthenticated) {
 
@@ -432,6 +436,40 @@ public class ServicePasswordCallbackHandler implements CallbackHandler {
         return password;
     }
 
+    private String resolveUserFromLoginIdentifier(String loginIdentifier) throws UserStoreException {
+
+        String tenantDomainFromServiceRealm = IdentityTenantUtil.getTenantDomain(realm.getUserStoreManager()
+                .getTenantId());
+        if (!IdentityUtil.isEmailUsernameValidationDisabled()) {
+            loginIdentifier = preprocessLoginIdentifier(loginIdentifier, tenantDomainFromServiceRealm);
+        }
+
+        MultiAttributeLoginService multiAttributeLoginService = SecurityMgtServiceComponent
+                .getMultiAttributeLoginService();
+        if (multiAttributeLoginService.isEnabled(tenantDomainFromServiceRealm)) {
+            String tenantAwareLoginIdentifier = MultitenantUtils.getTenantAwareUsername(loginIdentifier);
+            ResolvedUserResult resolvedUserResult = multiAttributeLoginService.resolveUser(tenantAwareLoginIdentifier,
+                    tenantDomainFromServiceRealm);
+            if (resolvedUserResult != null && ResolvedUserResult.UserResolvedStatus.SUCCESS.
+                    equals(resolvedUserResult.getResolvedStatus())) {
+                return getServiceTenantDomainAppendedUser(resolvedUserResult.getUser().getUsername());
+            }
+        }
+        return loginIdentifier;
+    }
+
+    private String preprocessLoginIdentifier(String loginIdentifier, String TenantDomain) {
+
+        if (IdentityUtil.isEmailUsernameEnabled()) {
+            if (StringUtils.countMatches(loginIdentifier, TENANT_DOMAIN_SEPARATOR) == 1) {
+                return loginIdentifier + TENANT_DOMAIN_SEPARATOR + TenantDomain;
+            }
+        } else if (!loginIdentifier.endsWith(TenantDomain)) {
+            return loginIdentifier + TENANT_DOMAIN_SEPARATOR + TenantDomain;
+        }
+
+        return loginIdentifier;
+    }
 
     private String getServiceTenantDomainAppendedUser(String user) throws IdentityRuntimeException, UserStoreException {
 
