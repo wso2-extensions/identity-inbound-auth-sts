@@ -450,7 +450,7 @@
     </build>
 
     <properties>
-        <identity.framework.version>7.5.94</identity.framework.version>
+        <identity.framework.version>7.7.269</identity.framework.version>
         <identity.inbound.auth.sts.package.export.version>${project.version}
         </identity.inbound.auth.sts.package.export.version>
         <inbound.auth.openid.version>5.6.0</inbound.auth.openid.version>

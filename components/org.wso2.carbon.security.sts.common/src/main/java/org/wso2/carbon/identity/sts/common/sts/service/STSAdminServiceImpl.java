@@ -215,8 +215,7 @@ public class STSAdminServiceImpl extends AbstractAdmin implements STSAdminServic
 
     private KeyStoreData[] getKeyStores() throws SecurityConfigException {
 
-        KeyStoreAdmin admin = new KeyStoreAdmin(CarbonContext.getThreadLocalCarbonContext().getTenantId(),
-                getGovernanceSystemRegistry());
+        KeyStoreAdmin admin = new KeyStoreAdmin(CarbonContext.getThreadLocalCarbonContext().getTenantId());
         boolean isSuperTenant = CarbonContext.getThreadLocalCarbonContext().getTenantId() ==
                 MultitenantConstants.SUPER_TENANT_ID;
         return admin.getKeyStores(isSuperTenant);
@@ -224,8 +223,7 @@ public class STSAdminServiceImpl extends AbstractAdmin implements STSAdminServic
 
     private String[] getStoreEntries(String keyStoreName) throws org.wso2.carbon.security.SecurityConfigException {
 
-        KeyStoreAdmin admin = new KeyStoreAdmin(CarbonContext.getThreadLocalCarbonContext().getTenantId(),
-                getGovernanceSystemRegistry());
+        KeyStoreAdmin admin = new KeyStoreAdmin(CarbonContext.getThreadLocalCarbonContext().getTenantId());
         return admin.getStoreEntries(keyStoreName);
     }
 
