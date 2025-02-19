@@ -94,7 +94,6 @@ public class STSDeploymentInterceptor implements AxisObserver {
     public static void updateSTSService(AxisConfiguration config) throws Exception {
         AxisService service = null;
         Registry configRegistry = null;
-        Registry governRegistry = null;
         String keyPassword = null;
         KeyStoreAdmin admin = null;
         KeyStoreData[] keystores = null;
@@ -106,7 +105,6 @@ public class STSDeploymentInterceptor implements AxisObserver {
         int tenantId = CarbonContext.getThreadLocalCarbonContext().getTenantId();
 
         configRegistry = STSServiceDataHolder.getInstance().getRegistryService().getConfigSystemRegistry(tenantId);
-        governRegistry = STSServiceDataHolder.getInstance().getRegistryService().getGovernanceSystemRegistry(tenantId);
 
         if (configRegistry == null || config.getService(ServerConstants.STS_NAME) == null) {
             if (log.isDebugEnabled()) {
@@ -116,7 +114,7 @@ public class STSDeploymentInterceptor implements AxisObserver {
         }
 
         serverConfig = ServerConfiguration.getInstance();
-        admin = new KeyStoreAdmin(tenantId, governRegistry);
+        admin = new KeyStoreAdmin(tenantId);
 
         if (MultitenantConstants.SUPER_TENANT_ID == tenantId) {
             keyPassword = serverConfig.getFirstProperty(SECURITY_KEY_STORE_KEY_PASSWORD);
