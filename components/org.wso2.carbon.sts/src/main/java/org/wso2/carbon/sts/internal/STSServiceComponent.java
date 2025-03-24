@@ -68,14 +68,6 @@ public class STSServiceComponent {
             BundleContext bundleCtx = ctxt.getBundleContext();
             STSServiceDataHolder.getInstance().setBundle(bundleCtx.getBundle());
 
-            try {
-                addKeystores();
-            } catch (Exception e) {
-                String msg = "Cannot add keystores";
-                log.error(msg, e);
-                throw new RuntimeException(msg, e);
-            }
-
             // Publish the OSGi service
             Dictionary props = new Hashtable();
             props.put(CarbonConstants.AXIS2_CONFIG_SERVICE, AxisObserver.class.getName());
@@ -163,33 +155,6 @@ public class STSServiceComponent {
 
         if (log.isDebugEnabled()) {
             log.debug("IdentityAttributeService removed in Carbon STS bundle");
-        }
-    }
-
-    private void addKeystores() throws RegistryException {
-
-        Registry registry = SecurityServiceHolder.getRegistryService().getGovernanceSystemRegistry();
-        try {
-            boolean transactionStarted = Transaction.isStarted();
-            if (!transactionStarted) {
-                registry.beginTransaction();
-            }
-            if (!registry.resourceExists(SecurityConstants.KEY_STORES)) {
-                Collection kstores = registry.newCollection();
-                registry.put(SecurityConstants.KEY_STORES, kstores);
-
-                Resource primResource = registry.newResource();
-                if (!registry.resourceExists(RegistryResources.SecurityManagement.PRIMARY_KEYSTORE_PHANTOM_RESOURCE)) {
-                    registry.put(RegistryResources.SecurityManagement.PRIMARY_KEYSTORE_PHANTOM_RESOURCE,
-                            primResource);
-                }
-            }
-            if (!transactionStarted) {
-                registry.commitTransaction();
-            }
-        } catch (Exception e) {
-            registry.rollbackTransaction();
-            throw e;
         }
     }
 }

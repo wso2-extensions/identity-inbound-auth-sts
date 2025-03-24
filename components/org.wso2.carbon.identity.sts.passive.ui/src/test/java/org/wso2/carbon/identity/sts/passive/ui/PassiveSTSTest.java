@@ -35,7 +35,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import static org.mockito.Matchers.anyString;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertTrue;
 
@@ -94,5 +94,4 @@ public class PassiveSTSTest {
         passiveSTS.doPost(request, response);
         assertTrue(true, "No MalformedURLException occurred.");
     }
-
 }

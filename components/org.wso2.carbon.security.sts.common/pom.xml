@@ -21,7 +21,7 @@
     <parent>
         <artifactId>identity-inbound-auth-sts</artifactId>
         <groupId>org.wso2.carbon.identity.inbound.auth.sts</groupId>
-        <version>5.11.8-SNAPSHOT</version>
+        <version>5.12.6-SNAPSHOT</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
@@ -160,8 +160,8 @@
                             javax.servlet.http; version="${imp.pkg.version.javax.servlet}",
                             javax.xml.namespace,
                             javax.xml.stream; version="${equinox.osgi.stax-api.imp.pkg.version.range}",
-                            javax.xml.bind,
-                            javax.xml.bind.annotation,
+                            javax.xml.bind; version="${org.wso2.orbit.javax.xml.bind.version.range}",
+                            javax.xml.bind.annotation; version="${org.wso2.orbit.javax.xml.bind.version.range}",
                             org.w3c.dom,
                             org.joda.time;version="${joda.wso2.osgi.version.range}",
                             org.opensaml.*; version="${opensaml2.wso2.osgi.version.range}",

@@ -20,37 +20,35 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.ws.security.WSPasswordCallback;
-import org.wso2.carbon.core.RegistryResources;
+import org.wso2.carbon.core.security.KeyStoreMetadata;
 import org.wso2.carbon.core.util.CryptoException;
 import org.wso2.carbon.core.util.CryptoUtil;
 import org.wso2.carbon.core.util.KeyStoreManager;
+import org.wso2.carbon.identity.base.IdentityRuntimeException;
+import org.wso2.carbon.identity.core.util.IdentityTenantUtil;
 import org.wso2.carbon.identity.core.util.IdentityUtil;
 import org.wso2.carbon.identity.sts.common.SecurityConfigParams;
 import org.wso2.carbon.identity.sts.common.UserCredentialRetriever;
-import org.wso2.carbon.registry.core.Collection;
 import org.wso2.carbon.registry.core.Registry;
-import org.wso2.carbon.registry.core.Resource;
 import org.wso2.carbon.registry.core.exceptions.RegistryException;
 import org.wso2.carbon.registry.core.session.UserRegistry;
 import org.wso2.carbon.security.SecurityConfigException;
-import org.wso2.carbon.security.SecurityConstants;
 import org.wso2.carbon.security.SecurityServiceHolder;
 import org.wso2.carbon.user.core.UserCoreConstants;
 import org.wso2.carbon.user.core.UserRealm;
 import org.wso2.carbon.user.core.UserStoreException;
 import org.wso2.carbon.user.core.util.UserCoreUtil;
-import org.wso2.carbon.utils.multitenancy.MultitenantConstants;
 import org.wso2.carbon.utils.multitenancy.MultitenantUtils;
-import org.wso2.carbon.identity.base.IdentityRuntimeException;
-import org.wso2.carbon.identity.core.util.IdentityTenantUtil;
+
+import java.io.IOException;
+import java.security.KeyStore;
 
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.UnsupportedCallbackException;
-import java.io.IOException;
-import java.security.KeyStore;
 
 import static org.wso2.carbon.utils.multitenancy.MultitenantConstants.SUPER_TENANT_DOMAIN_NAME;
+import static org.wso2.carbon.utils.multitenancy.MultitenantConstants.SUPER_TENANT_ID;
 
 /**
  * The password callback handler to be used to enable UsernameToken
@@ -381,44 +379,14 @@ public class ServicePasswordCallbackHandler implements CallbackHandler {
 
         String password = null;
         int tenantId = ((UserRegistry) registry).getTenantId();
-        UserRegistry govRegistry = SecurityServiceHolder.getRegistryService().
-                getGovernanceSystemRegistry(tenantId);
         try {
             KeyStoreManager keyMan = KeyStoreManager.getInstance(tenantId);
-            if (govRegistry.resourceExists(SecurityConstants.KEY_STORES)) {
-                Collection collection = (Collection) govRegistry.get(SecurityConstants.KEY_STORES);
-                String[] ks = collection.getChildren();
-
-                for (int i = 0; i < ks.length; i++) {
-
-                    String fullname = ks[i];
-                    //get the primary keystore, only if it is super tenant.
-                    if (tenantId == MultitenantConstants.SUPER_TENANT_ID && fullname
-                            .equals(RegistryResources.SecurityManagement.PRIMARY_KEYSTORE_PHANTOM_RESOURCE)) {
-                        KeyStore store = keyMan.getPrimaryKeyStore();
-                        if (store.containsAlias(username)) {
-                            password = keyMan.getPrimaryPrivateKeyPasssword();
-                            break;
-                        }
-                    } else {
-                        String name = fullname.substring(fullname.lastIndexOf("/") + 1);
-                        KeyStore store = null;
-                        //Not all the keystores encrypted using primary keystore password. So, some of the keystores will fail while loading
-                        store = keyMan.getKeyStore(name);
-                        if (log.isDebugEnabled()) {
-                            log.debug("Load the keystore " + name);
-                        }
-                        if (store != null && store.containsAlias(username)) {
-                            Resource resource = (Resource) govRegistry.get(ks[i]);
-                            CryptoUtil cryptoUtil = CryptoUtil.getDefaultCryptoUtil();
-                            String encryptedPassword = resource
-                                    .getProperty(SecurityConstants.PROP_PRIVATE_KEY_PASS);
-                            password = new String(cryptoUtil
-                                    .base64DecodeAndDecrypt(encryptedPassword));
-                            break;
-                        }
-                    }
-
+            KeyStoreMetadata[] keyStoreMetadataArray = keyMan.getKeyStoresMetadata(SUPER_TENANT_ID == tenantId);
+            for (KeyStoreMetadata keyStoreMetadata : keyStoreMetadataArray) {
+                KeyStore keyStore = keyMan.getKeyStore(keyStoreMetadata.getKeyStoreName());
+                if (keyStore.containsAlias(username)) {
+                    password = String.valueOf(keyMan.getPrivateKeyPassword(keyStoreMetadata.getKeyStoreName()));
+                    break;
                 }
             }
         } catch (IOException e) {
