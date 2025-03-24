@@ -516,7 +516,7 @@
         <mockito.version>5.3.1</mockito.version>
         <mockito-testng.version>0.5.2</mockito-testng.version>
 
-        <h2database.version>2.1.210</h2database.version>
+        <h2database.version>2.2.220</h2database.version>
         <jacoco.version>0.8.7</jacoco.version>
         <maven.surefire.plugin.version>3.2.5</maven.surefire.plugin.version>
 
