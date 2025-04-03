@@ -11,7 +11,7 @@ functionality is reimplemented with a newer version of OpenSAML.
  
 
 ## Getting started
-- To download the connector, go to [the store](https://store.wso2.com/store/assets/isconnector/list).
+- To download the connector, go to [the store](https://store.wso2.com/connector/identity-inbound-auth-sts).
 - To get started with the connector, go to [Configuring WS-Trust Security Token Service](config.md).
 - Once you have completed your configurations, you can try out WS-Trust Security Token service with WSO2 Identity 
 Server.

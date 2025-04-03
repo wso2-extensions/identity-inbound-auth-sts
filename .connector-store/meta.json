@@ -2,10 +2,10 @@
     "name": "WS-Trust Authenticator",
     "owner": "WSO2",
     "category": "Inbound authenticator",
-    "documentationUrl": "https://github.com/wso2-extensions/identity-inbound-auth-sts/tree/master/docs",
+    "documentationUrl": "https://github.com/wso2-extensions/identity-inbound-auth-sts/tree/master/docs/README.md",
     "description": "The Security Token Service (STS) component of WSO2 Identity Server enables you to configure the generic STS to issue claim-based security tokens. A claim-based security token is a common way for applications to acquire and authenticate the identity information they need about users inside their organization, in other organizations, and on the Internet. This Security Token Service is capable of issuing SAML 1.1 and SAML 2.0 tokens as recommended in WS-Trust and SAML Web Service Token Profile specifications.",
     "status": "Active",
-    "labels": [],
+    "labels": ["Inbound Authenticator", "Security Token Service"],
     "releases": [
         {
             "tagName": "v5.12.1",

@@ -4,8 +4,8 @@ SAML 1.1 and 2.0 security tokens and has a SOAP/XML API for token issuance. This
 configure WS-Trust Security Token Service with WSO2 Identity Server. 
 
 ## Installing the connector
-   1. Download the connector from [WSO2 Connector Store](https://store.wso2.com/store/assets/isconnector/list).
-   2. Navigate to the `<PRODUCT_HOME>`, paste the `wso2is-sts-connector-x.x.x.zip` file downloaded from the WSO2 
+   1. Download the connector from [WSO2 Connector Store](https://store.wso2.com/connector/identity-inbound-auth-sts).
+   2. Navigate to the `<PRODUCT_HOME>`, paste the `org.wso2.carbon.sts.connector-x.x.x.zip` file downloaded from the WSO2 
    Connector Store and extract it. The extracted folder will be referred to as `<CONNECTOR_HOME>` in the rest of this
     document.
    3. If you are using MacOS/Ubuntu, navigate to `<CONNECTOR_HOME>` and execute the following commands.
@@ -60,7 +60,7 @@ To secure the Security Token Service:
         <tr class="odd">
         <td><strong>Remember Me Period</strong></td>
         <td><div class="content-wrapper">
-        <p>This is the duration in weeks for which WSO2 Identity Server should remember an SSO session given that the <strong>Remember Me</strong> option is selected in the WSO2 Identity Server login screen.</p>
+        <p>This is the duration in minutes for which WSO2 Identity Server should remember an SSO session given that the <strong>Remember Me</strong> option is selected in the WSO2 Identity Server login screen.</p>
         <p>The default value is <code>                 2                </code> weeks.</p>
         </div></td>
         <td><code>               2              </code></td>
@@ -142,7 +142,7 @@ The next step is to add a service provider to consume the STS.
                           <p>The endpoint must be used as the service <code>                  URL                 </code> to which the token gets delivered by the STS client. Then select the public certificate imported. Tokens issued are encrypted using the public certificate of the trusted relying party. Therefore, the consumer who obtains this token, to invoke the RP service, will not be able to see the token.</p> 
                            <div class="admonition note">
                             <p class="admonition-title"><strong>Note</strong></p>
-                                 Make sure to upload the certificate of the relying party to the truststore. For instructions, see <a href="https://is.docs.wso2.com/en/latest/administer/creating-new-keystores/#adding-ca-signed-certificates-to-keystores">Adding CA-signed certificates to keystores</a>.</div>
+                                 Make sure to upload the certificate of the relying party to the truststore. For instructions, see <a href="https://is.docs.wso2.com/en/5.11.0//administer/creating-new-keystores/#adding-ca-signed-certificates-to-keystores">Adding CA-signed certificates to keystores</a>.</div>
                           <br/>
                        </div>
                     </div>
