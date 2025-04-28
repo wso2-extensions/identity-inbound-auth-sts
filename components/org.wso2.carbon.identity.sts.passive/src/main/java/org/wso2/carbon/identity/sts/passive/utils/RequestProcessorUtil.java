@@ -257,7 +257,7 @@ public class RequestProcessorUtil {
                         RegistryResources.SecurityManagement.CustomKeyStore.PROP_KEY_ALIAS);
         aliasAndPassword[1] = IdentityKeyStoreResolver.getInstance()
                 .getKeyStoreConfig(tenantDomain, IdentityKeyStoreResolverConstants.InboundProtocol.WS_FEDERATION,
-                        RegistryResources.SecurityManagement.CustomKeyStore.PROP_KEY_ALIAS);
+                        RegistryResources.SecurityManagement.CustomKeyStore.PROP_KEY_PASSWORD);
 
         return aliasAndPassword;
     }
