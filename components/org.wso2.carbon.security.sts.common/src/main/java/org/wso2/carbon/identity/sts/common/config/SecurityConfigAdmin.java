@@ -57,6 +57,11 @@ import org.wso2.carbon.core.util.CryptoException;
 import org.wso2.carbon.core.util.CryptoUtil;
 import org.wso2.carbon.core.util.KeyStoreManager;
 import org.wso2.carbon.core.util.KeyStoreUtil;
+import org.wso2.carbon.identity.base.IdentityRuntimeException;
+import org.wso2.carbon.identity.core.IdentityKeyStoreResolver;
+import org.wso2.carbon.identity.core.util.IdentityKeyStoreResolverConstants;
+import org.wso2.carbon.identity.core.util.IdentityKeyStoreResolverException;
+import org.wso2.carbon.identity.core.util.IdentityTenantUtil;
 import org.wso2.carbon.identity.core.util.IdentityUtil;
 import org.wso2.carbon.identity.sts.common.SecurityConfigParams;
 import org.wso2.carbon.identity.sts.common.SecurityScenario;
@@ -560,6 +565,21 @@ public class SecurityConfigAdmin {
         }
         // First disable security and remove all applied policies before applying a new policy
         this.disableSecurityOnService(serviceName);
+
+        // Override keystore settings with custom WS-Trust specific keystore configuration
+        // if available for the tenant.
+        try {
+            String tenantDomain = IdentityTenantUtil.getTenantDomain(((UserRegistry) registry).getTenantId());
+            String keyStoreName = IdentityKeyStoreResolver.getInstance()
+                    .getKeyStoreName(tenantDomain, IdentityKeyStoreResolverConstants.InboundProtocol.WS_TRUST);
+            if (KeyStoreUtil.isCustomKeyStore(keyStoreName)) {
+                privateStore = keyStoreName;
+                trustedStores = new String[] {keyStoreName};
+            }
+        } catch (IdentityKeyStoreResolverException | IdentityRuntimeException e) {
+            String msg = "Error while retrieving the keystore configurations for the tenant";
+            throw new SecurityConfigException(msg, e);
+        }
 
         OMElement policyElement = loadPolicyAsXML(scenarioId, policyPath);
         SecurityScenario scenario = SecurityScenarioDatabase.get(scenarioId);

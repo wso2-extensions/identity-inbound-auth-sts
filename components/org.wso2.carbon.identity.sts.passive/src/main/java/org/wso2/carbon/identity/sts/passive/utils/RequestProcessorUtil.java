@@ -277,7 +277,7 @@ public class RequestProcessorUtil {
                         RegistryResources.SecurityManagement.CustomKeyStore.PROP_LOCATION);
         String keyStorePassword = IdentityKeyStoreResolver.getInstance()
                 .getKeyStoreConfig(tenantDomain, IdentityKeyStoreResolverConstants.InboundProtocol.WS_FEDERATION,
-                        RegistryResources.SecurityManagement.CustomKeyStore.PROP_PASSWORD);
+                        RegistryResources.SecurityManagement.CustomKeyStore.PROP_KEY_PASSWORD);
 
         String tenantKeyStoreName = IdentityKeyStoreResolverUtil.buildTenantKeyStoreName(tenantDomain);
 
