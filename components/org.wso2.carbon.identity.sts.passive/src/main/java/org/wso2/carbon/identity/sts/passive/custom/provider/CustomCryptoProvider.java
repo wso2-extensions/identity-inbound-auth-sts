@@ -23,11 +23,13 @@ import java.io.InputStream;
 import java.security.KeyStore;
 import java.util.Properties;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.wss4j.common.crypto.Merlin;
 import org.apache.wss4j.common.crypto.PasswordEncryptor;
 import org.apache.wss4j.common.ext.WSSecurityException;
+import org.wso2.carbon.context.PrivilegedCarbonContext;
 import org.wso2.carbon.identity.core.IdentityKeyStoreResolver;
 import org.wso2.carbon.identity.core.util.IdentityKeyStoreResolverConstants;
 import org.wso2.carbon.identity.core.util.IdentityTenantUtil;
@@ -82,9 +84,16 @@ public class CustomCryptoProvider extends Merlin {
             log.debug("Loading keystore for tenant with id: " + tenantId + ".");
         }
         try {
+            String tenantDomain;
+
+            if (StringUtils.isBlank(tenantId)) {
+                tenantDomain = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantDomain();
+            } else {
+                tenantDomain = IdentityTenantUtil.getTenantDomain(Integer.parseInt(tenantId));
+            }
+
             return IdentityKeyStoreResolver.getInstance()
-                    .getKeyStore(IdentityTenantUtil.getTenantDomain(Integer.parseInt(tenantId)),
-                            IdentityKeyStoreResolverConstants.InboundProtocol.WS_FEDERATION);
+                    .getKeyStore(tenantDomain, IdentityKeyStoreResolverConstants.InboundProtocol.WS_FEDERATION);
         } catch (Exception exception) {
             throw new WSSecurityException(WSSecurityException.ErrorCode.FAILURE, exception, "failedCredentialLoad");
         }
