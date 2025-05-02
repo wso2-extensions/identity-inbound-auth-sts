@@ -16,15 +16,22 @@
 
 package org.wso2.carbon.identity.sts.common.util;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.ws.security.WSPasswordCallback;
+import org.wso2.carbon.core.RegistryResources;
 import org.wso2.carbon.core.security.KeyStoreMetadata;
 import org.wso2.carbon.core.util.CryptoException;
 import org.wso2.carbon.core.util.CryptoUtil;
 import org.wso2.carbon.core.util.KeyStoreManager;
+import org.wso2.carbon.core.util.KeyStoreUtil;
 import org.wso2.carbon.identity.base.IdentityRuntimeException;
+import org.wso2.carbon.identity.core.IdentityKeyStoreResolver;
+import org.wso2.carbon.identity.core.util.IdentityKeyStoreResolverConstants;
 import org.wso2.carbon.identity.core.util.IdentityTenantUtil;
 import org.wso2.carbon.identity.core.util.IdentityUtil;
 import org.wso2.carbon.identity.sts.common.SecurityConfigParams;
@@ -387,6 +394,20 @@ public class ServicePasswordCallbackHandler implements CallbackHandler {
                 if (keyStore.containsAlias(username)) {
                     password = String.valueOf(keyMan.getPrivateKeyPassword(keyStoreMetadata.getKeyStoreName()));
                     break;
+                }
+            }
+
+            // If the custom keystore is configured check for the password within the custom keystore.
+            String tenantDomain = IdentityTenantUtil.getTenantDomain(tenantId);
+            String keyStoreName = IdentityKeyStoreResolver.getInstance()
+                    .getKeyStoreName(tenantDomain, IdentityKeyStoreResolverConstants.InboundProtocol.WS_TRUST);
+            if (KeyStoreUtil.isCustomKeyStore(keyStoreName)) {
+                KeyStore keyStore = IdentityKeyStoreResolver.getInstance()
+                        .getKeyStore(tenantDomain, IdentityKeyStoreResolverConstants.InboundProtocol.WS_TRUST);
+                if (keyStore.containsAlias(username)) {
+                    password = IdentityKeyStoreResolver.getInstance()
+                            .getKeyStoreConfig(tenantDomain, IdentityKeyStoreResolverConstants.InboundProtocol.WS_TRUST,
+                                    RegistryResources.SecurityManagement.CustomKeyStore.PROP_PASSWORD);
                 }
             }
         } catch (IOException e) {
