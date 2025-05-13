@@ -1,12 +1,12 @@
 /*
- * Copyright (c) 2010, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ * Copyright (c) 2010-2025, WSO2 LLC. (http://www.wso2.com).
  *
- *  WSO2 Inc. licenses this file to you under the Apache License,
- *  Version 2.0 (the "License"); you may not use this file except
- *  in compliance with the License.
- *  You may obtain a copy of the License at
+ * WSO2 LLC. licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -15,6 +15,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.wso2.carbon.sts;
 
 import org.apache.axiom.om.OMElement;
@@ -33,24 +34,20 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.rahas.impl.AbstractIssuerConfig;
 import org.apache.rahas.impl.SAMLTokenIssuerConfig;
 import org.apache.rahas.impl.TokenIssuerUtil;
-import org.wso2.carbon.base.MultitenantConstants;
 import org.wso2.carbon.base.ServerConfiguration;
 import org.wso2.carbon.context.CarbonContext;
 import org.wso2.carbon.core.RegistryResources;
 import org.wso2.carbon.core.deployment.DeploymentInterceptor;
-import org.wso2.carbon.core.util.KeyStoreManager;
-import org.wso2.carbon.core.util.KeyStoreUtil;
+import org.wso2.carbon.identity.core.IdentityKeyStoreResolver;
+import org.wso2.carbon.identity.core.util.IdentityKeyStoreResolverConstants;
 import org.wso2.carbon.registry.core.Registry;
 import org.wso2.carbon.registry.core.Resource;
 import org.wso2.carbon.registry.core.utils.RegistryUtils;
-import org.wso2.carbon.security.keystore.KeyStoreAdmin;
-import org.wso2.carbon.security.keystore.service.KeyStoreData;
 import org.wso2.carbon.identity.sts.common.util.RampartConfigUtil;
 import org.wso2.carbon.identity.sts.common.util.ServerCrypto;
 import org.wso2.carbon.sts.internal.STSServiceDataHolder;
 import org.wso2.carbon.utils.ServerConstants;
 
-import java.security.KeyStore;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -93,10 +90,7 @@ public class STSDeploymentInterceptor implements AxisObserver {
     public static void updateSTSService(AxisConfiguration config) throws Exception {
         AxisService service = null;
         Registry configRegistry = null;
-        Registry governRegistry = null;
         String keyPassword = null;
-        KeyStoreAdmin admin = null;
-        KeyStoreData[] keystores = null;
         String privateKeyAlias = null;
         String keyStoreName = null;
         String issuerName = null;
@@ -105,7 +99,6 @@ public class STSDeploymentInterceptor implements AxisObserver {
         int tenantId = CarbonContext.getThreadLocalCarbonContext().getTenantId();
 
         configRegistry = STSServiceDataHolder.getInstance().getRegistryService().getConfigSystemRegistry(tenantId);
-        governRegistry = STSServiceDataHolder.getInstance().getRegistryService().getGovernanceSystemRegistry(tenantId);
 
         if (configRegistry == null || config.getService(ServerConstants.STS_NAME) == null) {
             if (log.isDebugEnabled()) {
@@ -114,47 +107,30 @@ public class STSDeploymentInterceptor implements AxisObserver {
             return;
         }
 
-        serverConfig = ServerConfiguration.getInstance();
-        admin = new KeyStoreAdmin(tenantId, governRegistry);
+        String tenantDomain = CarbonContext.getThreadLocalCarbonContext().getTenantDomain();
 
-        if (MultitenantConstants.SUPER_TENANT_ID == tenantId) {
-            keyPassword = serverConfig.getFirstProperty(SECURITY_KEY_STORE_KEY_PASSWORD);
-            keystores = admin.getKeyStores(true);
-
-            for (int i = 0; i < keystores.length; i++) {
-                if (KeyStoreUtil.isPrimaryStore(keystores[i].getKeyStoreName())) {
-                    keyStoreName = keystores[i].getKeyStoreName();
-                    privateKeyAlias = KeyStoreUtil.getPrivateKeyAlias(KeyStoreManager.getInstance(
-                            MultitenantConstants.SUPER_TENANT_ID)
-                                                                                     .getKeyStore(keyStoreName));
-                    break;
-                }
-            }
-        } else {
-            // this is not the proper way to find out the primary key store of the tenant. We need
-            // check a better way  TODO
-            String tenantDomain = CarbonContext.getThreadLocalCarbonContext().getTenantDomain();
-            if (tenantDomain == null) {
-                tenantDomain = STSServiceDataHolder.getInstance().getRealmService().
-                        getTenantManager().getDomain(tenantId);
-            }
-
-            if (tenantDomain != null) {
-                // assuming domain always in this format -> example.com
-                keyStoreName = tenantDomain.replace(".", "-") + ".jks";
-                KeyStore keyStore = KeyStoreManager.getInstance(tenantId).getKeyStore(keyStoreName);
-                if (keyStore != null) {
-                    privateKeyAlias = KeyStoreUtil.getPrivateKeyAlias(keyStore);
-                    keyPassword = KeyStoreManager.getInstance(tenantId).getKeyStorePassword(keyStoreName);
-                } else {
-                    log.warn("No key store is exist as " + keyStoreName + ". STS would be fail");
-                }
-            } else {
-                throw new Exception("Tenant Domain can not be null");
-            }
-
+        if (tenantDomain == null) {
+            tenantDomain = STSServiceDataHolder.getInstance().getRealmService().
+                    getTenantManager().getDomain(tenantId);
         }
 
+        if (tenantDomain == null) {
+            throw new Exception("Tenant Domain can not be null");
+        }
+
+        keyStoreName = IdentityKeyStoreResolver.getInstance()
+                .getKeyStoreName(tenantDomain, IdentityKeyStoreResolverConstants.InboundProtocol.WS_TRUST);
+        keyPassword = IdentityKeyStoreResolver.getInstance()
+                .getKeyStoreConfig(tenantDomain, IdentityKeyStoreResolverConstants.InboundProtocol.WS_TRUST,
+                        RegistryResources.SecurityManagement.CustomKeyStore.PROP_KEY_PASSWORD);
+        privateKeyAlias = IdentityKeyStoreResolver.getInstance()
+                .getKeyStoreConfig(tenantDomain, IdentityKeyStoreResolverConstants.InboundProtocol.WS_TRUST,
+                        RegistryResources.SecurityManagement.CustomKeyStore.PROP_KEY_ALIAS);
+        if (keyStoreName == null) {
+            log.warn("No key store is exist as " + keyStoreName + ". STS would be fail");
+        }
+
+        serverConfig = ServerConfiguration.getInstance();
         issuerName = serverConfig.getFirstProperty(STS_HOST_NAME);
 
         if (StringUtils.isBlank(issuerName)) {
