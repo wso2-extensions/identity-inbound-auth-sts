@@ -8,9 +8,15 @@
     "labels": ["Inbound Authenticator", "Security Token Service"],
     "releases": [
         {
-            "tagName": "v5.12.1",
+            "tagName": "v5.12.9",
             "products": [
                 "IS 7.1.0"
+            ]
+        },
+        {
+            "tagName": "v5.10.16.3",
+            "products": [
+                "IS 5.11.0"
             ]
         },
         {
