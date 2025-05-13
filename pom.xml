@@ -165,7 +165,7 @@
             <dependency>
                 <groupId>org.wso2.carbon.identity.framework</groupId>
                 <artifactId>org.wso2.carbon.identity.core</artifactId>
-                <version>${identity.framework.version}</version>
+                <version>${identity.framework.core.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.wso2.carbon</groupId>
@@ -448,7 +448,8 @@
     </build>
 
     <properties>
-        <identity.framework.version>7.8.101</identity.framework.version>
+        <identity.framework.version>5.25.305</identity.framework.version>
+        <identity.framework.core.version>7.8.101</identity.framework.core.version>
         <identity.inbound.auth.sts.package.export.version>${project.version}
         </identity.inbound.auth.sts.package.export.version>
         <inbound.auth.openid.version>5.6.0</inbound.auth.openid.version>
