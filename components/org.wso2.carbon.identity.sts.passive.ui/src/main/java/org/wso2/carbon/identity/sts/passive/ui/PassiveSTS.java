@@ -112,7 +112,6 @@ public class PassiveSTS extends HttpServlet {
     private static final String PASSIVE_STS_W_REPLY_PROPERTY = "passiveSTSWReply";
     private static final String PASSIVE_STS_W_REPLY_LOGOUT_PROPERTY = "passiveSTSWReplyLogout";
     private static final String PASSIVE_STS_EP_URL = "/passivests";
-    // Backward compatibility toggle can be wired via config later if needed.
 
     /**
      * This method reads Passive STS Html Redirect file content.
@@ -497,7 +496,6 @@ public class PassiveSTS extends HttpServlet {
                      authnResult.getAuthenticatedIdPs());
         }
     }
-
 
     private void handleLogoutRequest(HttpServletRequest request, HttpServletResponse response)
             throws IOException, PassiveSTSException {

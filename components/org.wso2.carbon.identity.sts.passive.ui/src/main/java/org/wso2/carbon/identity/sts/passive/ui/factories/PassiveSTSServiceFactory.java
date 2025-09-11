@@ -21,7 +21,7 @@ package org.wso2.carbon.identity.sts.passive.ui.factories;
 import org.wso2.carbon.identity.sts.passive.PassiveSTSService;
 
 /**
- * Factory class for AuthorizationDetailsTypeManagementService.
+ * Factory class for PassiveSTSService.
  */
 public class PassiveSTSServiceFactory {
 

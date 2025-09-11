@@ -32,9 +32,9 @@ import org.wso2.carbon.identity.sts.passive.stub.IdentityPassiveSTSServiceStub;
 import org.wso2.carbon.identity.sts.passive.ui.factories.PassiveSTSServiceFactory;
 
 /**
- * Backward-compatible client facade for Passive STS operations.
+ * Client facade for Passive STS operations.
  *
- * This no longer uses SOAP stubs. It delegates to in-process services instead.
+ * This no longer uses SOAP stubs. It delegates to PassiveSTSService instead.
  */
 public class IdentityPassiveSTSClient {
 
@@ -46,16 +46,21 @@ public class IdentityPassiveSTSClient {
 
     public IdentityPassiveSTSClient(String backendServerURL, ConfigurationContext configCtx) throws AxisFault {
 
-        // Read toggle from config; default to in-process to avoid SOAP dependency at runtime.
+        // Read toggle from config; default to PassiveSTSService to avoid SOAP dependency at runtime.
         String prop = IdentityUtil.getProperty("passive.sts.useSoapService");
-        boolean useSoapService = false;
-        this.useSoapService = (prop == null) ? useSoapService : !"false".equalsIgnoreCase(prop);
+        this.useSoapService = Boolean.parseBoolean(prop);
 
-        String serviceURL = backendServerURL + "IdentityPassiveSTSService";
-        soapStub = new IdentityPassiveSTSServiceStub(configCtx, serviceURL);
-        ServiceClient client = soapStub._getServiceClient();
-        Options option = client.getOptions();
-        option.setManageSession(true);
+        if (this.useSoapService) {
+            String serviceURL = backendServerURL + "IdentityPassiveSTSService";
+            soapStub = new IdentityPassiveSTSServiceStub(configCtx, serviceURL);
+            ServiceClient client = soapStub._getServiceClient();
+            Options option = client.getOptions();
+            option.setManageSession(true);
+
+            if (log.isDebugEnabled()) {
+                log.debug("SOAP stub initialized for service URL: " + serviceURL);
+            }
+        }
 
         this.passiveSTSService = PassiveSTSServiceFactory.getPassiveSTSService();
     }
@@ -69,16 +74,14 @@ public class IdentityPassiveSTSClient {
             } catch (Exception e) {
                 handleException("Error occurred getting the response from the SOAP passive STS service", e);
             }
-            return null;
         } else {
-
             try {
-                // Map stub RequestToken to in-process RequestToken
+                // Map stub RequestToken to in-process RequestToken.
                 RequestToken inReq = getRequestToken(request);
 
                 ResponseToken inResp = passiveSTSService.getResponse(inReq);
 
-                // Map in-process ResponseToken back to stub ResponseToken
+                // Map in-process ResponseToken back to stub ResponseToken.
                 org.wso2.carbon.identity.sts.passive.stub.types.ResponseToken out =
                         new org.wso2.carbon.identity.sts.passive.stub.types.ResponseToken();
                 out.setResults(inResp.getResults());
@@ -88,13 +91,14 @@ public class IdentityPassiveSTSClient {
                 out.setAuthenticated(inResp.isAuthenticated());
                 return out;
             } catch (Exception e) {
-                handleException("Error occurred getting the response from the in-process passive STS service", e);
+                handleException("Error occurred getting the response from the PassiveSTSService", e);
             }
-            return null;
         }
+        return null;
     }
 
     private static RequestToken getRequestToken(org.wso2.carbon.identity.sts.passive.stub.types.RequestToken request) {
+
         RequestToken inReq = new RequestToken();
         inReq.setAction(request.getAction());
         inReq.setReplyTo(request.getReplyTo());
@@ -115,10 +119,10 @@ public class IdentityPassiveSTSClient {
     }
 
     public void addTrustedService(String realmName, String claimDialect, String claims) throws AxisFault {
+
         if (useSoapService) {
             try {
                 soapStub.addTrustedService(realmName, claimDialect, claims);
-                return;
             } catch (Exception e) {
                 handleException("Error occurred while adding the trusted service: " + realmName, e);
             }
@@ -132,10 +136,10 @@ public class IdentityPassiveSTSClient {
     }
 
     public void removeTrustedService(String realmName) throws AxisFault {
+
         if (useSoapService) {
             try {
                 soapStub.removeTrustedService(realmName);
-                return;
             } catch (Exception e) {
                 handleException("Error occurred while removing the trusted service: " + realmName, e);
             }
@@ -149,6 +153,7 @@ public class IdentityPassiveSTSClient {
     }
 
     public org.wso2.carbon.identity.sts.passive.stub.types.ClaimDTO[] getAllTrustedServices() throws AxisFault {
+
         if (useSoapService) {
             try {
                 return soapStub.getAllTrustedServices();
@@ -188,6 +193,7 @@ public class IdentityPassiveSTSClient {
      * @throws org.apache.axis2.AxisFault
      */
     private void handleException(String msg, Exception e) throws AxisFault {
+
         log.error(msg, e);
         throw new AxisFault(msg, e);
     }
