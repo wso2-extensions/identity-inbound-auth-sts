@@ -25,15 +25,14 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.identity.core.util.IdentityUtil;
 import org.wso2.carbon.identity.sts.passive.PassiveSTSService;
-import org.wso2.carbon.identity.sts.passive.ClaimDTO;
-import org.wso2.carbon.identity.sts.passive.RequestToken;
-import org.wso2.carbon.identity.sts.passive.ResponseToken;
 import org.wso2.carbon.identity.sts.passive.stub.IdentityPassiveSTSServiceStub;
+import org.wso2.carbon.identity.sts.passive.stub.types.ClaimDTO;
+import org.wso2.carbon.identity.sts.passive.stub.types.RequestToken;
+import org.wso2.carbon.identity.sts.passive.stub.types.ResponseToken;
 import org.wso2.carbon.identity.sts.passive.ui.factories.PassiveSTSServiceFactory;
 
 /**
  * Client facade for Passive STS operations.
- *
  * This no longer uses SOAP stubs. It delegates to PassiveSTSService instead.
  */
 public class IdentityPassiveSTSClient {
@@ -65,8 +64,7 @@ public class IdentityPassiveSTSClient {
         this.passiveSTSService = PassiveSTSServiceFactory.getPassiveSTSService();
     }
 
-    public org.wso2.carbon.identity.sts.passive.stub.types.ResponseToken getResponse(
-            org.wso2.carbon.identity.sts.passive.stub.types.RequestToken request) throws AxisFault {
+    public ResponseToken getResponse(RequestToken request) throws AxisFault {
 
         if (soapEnabled) {
             try {
@@ -77,9 +75,9 @@ public class IdentityPassiveSTSClient {
         } else {
             try {
                 // Map stub RequestToken to in-process RequestToken.
-                RequestToken inReq = getRequestToken(request);
+                org.wso2.carbon.identity.sts.passive.RequestToken inReq = getRequestToken(request);
 
-                ResponseToken inResp = passiveSTSService.getResponse(inReq);
+                org.wso2.carbon.identity.sts.passive.ResponseToken inResp = passiveSTSService.getResponse(inReq);
 
                 // Map in-process ResponseToken back to stub ResponseToken.
                 org.wso2.carbon.identity.sts.passive.stub.types.ResponseToken out =
@@ -97,9 +95,11 @@ public class IdentityPassiveSTSClient {
         return null;
     }
 
-    private static RequestToken getRequestToken(org.wso2.carbon.identity.sts.passive.stub.types.RequestToken request) {
+    private static org.wso2.carbon.identity.sts.passive.RequestToken
+        getRequestToken(org.wso2.carbon.identity.sts.passive.stub.types.RequestToken request) {
 
-        RequestToken inReq = new RequestToken();
+        org.wso2.carbon.identity.sts.passive.RequestToken inReq =
+                new org.wso2.carbon.identity.sts.passive.RequestToken();
         inReq.setAction(request.getAction());
         inReq.setReplyTo(request.getReplyTo());
         inReq.setResponseTo(request.getResponseTo());
@@ -152,7 +152,7 @@ public class IdentityPassiveSTSClient {
         }
     }
 
-    public org.wso2.carbon.identity.sts.passive.stub.types.ClaimDTO[] getAllTrustedServices() throws AxisFault {
+    public ClaimDTO[] getAllTrustedServices() throws AxisFault {
 
         if (soapEnabled) {
             try {
@@ -160,18 +160,15 @@ public class IdentityPassiveSTSClient {
             } catch (Exception e) {
                 handleException("Error occurred while getting all trusted services (SOAP).", e);
             }
-            return new org.wso2.carbon.identity.sts.passive.stub.types.ClaimDTO[0];
         } else {
             try {
-                ClaimDTO[] in = passiveSTSService.getAllTrustedServices();
+                org.wso2.carbon.identity.sts.passive.ClaimDTO[] in = passiveSTSService.getAllTrustedServices();
                 if (in == null) {
-                    return new org.wso2.carbon.identity.sts.passive.stub.types.ClaimDTO[0];
+                    return new ClaimDTO[0];
                 }
-                org.wso2.carbon.identity.sts.passive.stub.types.ClaimDTO[] out =
-                        new org.wso2.carbon.identity.sts.passive.stub.types.ClaimDTO[in.length];
+                ClaimDTO[] out = new ClaimDTO[in.length];
                 for (int i = 0; i < in.length; i++) {
-                    org.wso2.carbon.identity.sts.passive.stub.types.ClaimDTO dto =
-                            new org.wso2.carbon.identity.sts.passive.stub.types.ClaimDTO();
+                    ClaimDTO dto = new ClaimDTO();
                     dto.setRealm(in[i].getRealm());
                     dto.setDefaultClaims(in[i].getDefaultClaims());
                     dto.setClaimDialect(in[i].getClaimDialect());
@@ -181,8 +178,8 @@ public class IdentityPassiveSTSClient {
             } catch (Exception e) {
                 handleException("Error occurred while getting all trusted services.", e);
             }
-            return new org.wso2.carbon.identity.sts.passive.stub.types.ClaimDTO[0];
         }
+        return new ClaimDTO[0];
     }
 
     /**
