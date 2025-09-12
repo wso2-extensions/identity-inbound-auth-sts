@@ -191,7 +191,6 @@ public class IdentityPassiveSTSClient {
      */
     private void handleException(String msg, Exception e) throws AxisFault {
 
-        log.error(msg, e);
         throw new AxisFault(msg, e);
     }
 }
