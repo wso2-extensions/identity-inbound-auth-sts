@@ -40,17 +40,17 @@ public class IdentityPassiveSTSClient {
 
     private static final Log log = LogFactory.getLog(IdentityPassiveSTSClient.class);
 
-    private final boolean useSoapService;
+    private final boolean soapEnabled;
     private IdentityPassiveSTSServiceStub soapStub;
     private final PassiveSTSService passiveSTSService;
 
     public IdentityPassiveSTSClient(String backendServerURL, ConfigurationContext configCtx) throws AxisFault {
 
         // Read toggle from config; default to PassiveSTSService to avoid SOAP dependency at runtime.
-        String prop = IdentityUtil.getProperty("passive.sts.useSoapService");
-        this.useSoapService = Boolean.parseBoolean(prop);
+        String prop = IdentityUtil.getProperty("PassiveSTS.SOAPEnabled");
+        this.soapEnabled = Boolean.parseBoolean(prop);
 
-        if (this.useSoapService) {
+        if (this.soapEnabled) {
             String serviceURL = backendServerURL + "IdentityPassiveSTSService";
             soapStub = new IdentityPassiveSTSServiceStub(configCtx, serviceURL);
             ServiceClient client = soapStub._getServiceClient();
@@ -68,7 +68,7 @@ public class IdentityPassiveSTSClient {
     public org.wso2.carbon.identity.sts.passive.stub.types.ResponseToken getResponse(
             org.wso2.carbon.identity.sts.passive.stub.types.RequestToken request) throws AxisFault {
 
-        if (useSoapService) {
+        if (soapEnabled) {
             try {
                 return soapStub.getResponse(request);
             } catch (Exception e) {
@@ -120,7 +120,7 @@ public class IdentityPassiveSTSClient {
 
     public void addTrustedService(String realmName, String claimDialect, String claims) throws AxisFault {
 
-        if (useSoapService) {
+        if (soapEnabled) {
             try {
                 soapStub.addTrustedService(realmName, claimDialect, claims);
             } catch (Exception e) {
@@ -137,7 +137,7 @@ public class IdentityPassiveSTSClient {
 
     public void removeTrustedService(String realmName) throws AxisFault {
 
-        if (useSoapService) {
+        if (soapEnabled) {
             try {
                 soapStub.removeTrustedService(realmName);
             } catch (Exception e) {
@@ -154,7 +154,7 @@ public class IdentityPassiveSTSClient {
 
     public org.wso2.carbon.identity.sts.passive.stub.types.ClaimDTO[] getAllTrustedServices() throws AxisFault {
 
-        if (useSoapService) {
+        if (soapEnabled) {
             try {
                 return soapStub.getAllTrustedServices();
             } catch (Exception e) {
