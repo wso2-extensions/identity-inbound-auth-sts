@@ -26,6 +26,27 @@
             To administer Identity Provider related functionality.
         </description>
         <parameter name="ServiceClass">org.wso2.carbon.identity.sts.passive.PassiveSTSService</parameter>
+
+        <operation name="addTrustedService">
+            <parameter name="AuthorizationAction" locked="true">/permission/admin/manage/identity/idpmgt/create
+            </parameter>
+        </operation>
+        <operation name="getAllTrustedServices">
+            <parameter name="AuthorizationAction" locked="true">/permission/admin/manage/identity/idpmgt/view
+            </parameter>
+        </operation>
+        <operation name="getResponse">
+            <parameter name="DoAuthentication" locked="true">false</parameter>
+        </operation>
+        <operation name="getTrustedServiceClaims">
+            <parameter name="AuthorizationAction" locked="true">/permission/admin/manage/identity/idpmgt/view
+            </parameter>
+        </operation>
+        <operation name="removeTrustedService">
+            <parameter name="AuthorizationAction" locked="true">/permission/admin/manage/identity/idpmgt/delete
+            </parameter>
+        </operation>
+
     </service>  
     <parameter name="hiddenService" locked="true">true</parameter>
 </serviceGroup>
