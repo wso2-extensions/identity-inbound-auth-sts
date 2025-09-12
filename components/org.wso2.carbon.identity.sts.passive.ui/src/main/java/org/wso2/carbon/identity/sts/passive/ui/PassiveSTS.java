@@ -478,8 +478,7 @@ public class PassiveSTS extends HttpServlet {
         ConfigurationContext configContext =
                 (ConfigurationContext) session.getServletContext().getAttribute(CarbonConstants.CONFIGURATION_CONTEXT);
 
-        IdentityPassiveSTSClient passiveSTSClient = null;
-        passiveSTSClient = new IdentityPassiveSTSClient(serverURL, configContext);
+        IdentityPassiveSTSClient passiveSTSClient = new IdentityPassiveSTSClient(serverURL, configContext);
 
         ResponseToken respToken;
         // Adding the AuthenticatedUser as a threadLocal property in order to avoid API changes related to RequestToken

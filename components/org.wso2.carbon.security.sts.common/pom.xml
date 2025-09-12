@@ -21,7 +21,7 @@
     <parent>
         <artifactId>identity-inbound-auth-sts</artifactId>
         <groupId>org.wso2.carbon.identity.inbound.auth.sts</groupId>
-        <version>5.12.13-SNAPSHOT</version>
+        <version>5.13.0-SNAPSHOT</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
