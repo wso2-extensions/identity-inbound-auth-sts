@@ -105,7 +105,7 @@ public class PassiveSTSService {
     private SOAPFault genFaultResponse(MessageContext messageCtx, String code, String subCode,
                                        String reason, String detail) {
         SOAPFactory soapFactory = null;
-        if (messageCtx.isSOAP11()) {
+        if (messageCtx!=null && messageCtx.isSOAP11()) {
             soapFactory = OMAbstractFactory.getSOAP11Factory();
             SOAPEnvelope message = soapFactory.getDefaultFaultEnvelope();
             SOAPFaultReason soapFaultReason = soapFactory.createSOAPFaultReason();
