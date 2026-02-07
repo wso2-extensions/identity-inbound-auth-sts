@@ -372,7 +372,7 @@
                 <plugin>
                     <groupId>org.apache.felix</groupId>
                     <artifactId>maven-bundle-plugin</artifactId>
-                    <version>3.2.0</version>
+                    <version>5.1.9</version>
                     <extensions>true</extensions>
                     <configuration>
                         <obrRepository>NONE</obrRepository>
@@ -415,12 +415,12 @@
             </plugin>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.3.1</version>
+                <version>3.14.1</version>
                 <inherited>true</inherited>
                 <configuration>
                     <encoding>UTF-8</encoding>
-                    <source>1.8</source>
-                    <target>1.8</target>
+                    <source>21</source>
+                    <target>21</target>
                 </configuration>
             </plugin>
             <plugin>
@@ -517,7 +517,7 @@
         <mockito-testng.version>0.5.2</mockito-testng.version>
 
         <h2database.version>2.2.220</h2database.version>
-        <jacoco.version>0.8.7</jacoco.version>
+        <jacoco.version>0.8.12</jacoco.version>
         <maven.surefire.plugin.version>3.2.5</maven.surefire.plugin.version>
 
         <apache.felix.scr.ds.annotations.version>1.2.4</apache.felix.scr.ds.annotations.version>
