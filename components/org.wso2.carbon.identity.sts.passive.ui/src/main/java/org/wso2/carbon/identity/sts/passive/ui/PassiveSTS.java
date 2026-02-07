@@ -24,6 +24,7 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.osgi.service.component.annotations.Component;
 import org.owasp.encoder.Encode;
 import org.wso2.carbon.CarbonConstants;
 import org.wso2.carbon.identity.application.authentication.framework.cache.AuthenticationRequestCacheEntry;
@@ -61,6 +62,7 @@ import org.wso2.carbon.utils.multitenancy.MultitenantConstants;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLSession;
+import javax.servlet.Servlet;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -90,6 +92,15 @@ import static org.wso2.carbon.identity.application.authentication.framework.util
 import static org.wso2.carbon.identity.sts.passive.ui.PassiveRequestorConstants.ERROR_AUTHENTICATION;
 import static org.wso2.carbon.identity.sts.passive.ui.PassiveRequestorConstants.ERROR_MSG_LOGOUT_WREPLY_MISMATCH;
 
+@Component(
+        service = Servlet.class,
+        immediate = true,
+        property = {
+                "osgi.http.whiteboard.servlet.pattern=/passivests",
+                "osgi.http.whiteboard.servlet.name=PassiveSTSServlet",
+                "osgi.http.whiteboard.servlet.asyncSupported=true"
+        }
+)
 public class PassiveSTS extends HttpServlet {
 
     private static final Log log = LogFactory.getLog(PassiveSTS.class);

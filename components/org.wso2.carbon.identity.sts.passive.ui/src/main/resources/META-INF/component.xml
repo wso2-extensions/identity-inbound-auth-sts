@@ -16,14 +16,6 @@
   ~ under the License.
   -->
 <component xmlns="http://products.wso2.org/carbon">
-    <servlets>
-        <servlet id="passiveSTS">
-            <servlet-name>PassiveSTSServlet</servlet-name>
-            <url-pattern>/passivests</url-pattern>
-            <display-name>Passive STS Servlet</display-name>
-            <servlet-class>org.wso2.carbon.identity.sts.passive.ui.PassiveSTS</servlet-class>
-        </servlet>
-    </servlets>
     <framework-configuration>
         <bypass>
             <authentication>
