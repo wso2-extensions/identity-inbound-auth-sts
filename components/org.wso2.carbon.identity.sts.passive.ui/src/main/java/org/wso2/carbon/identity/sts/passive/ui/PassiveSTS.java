@@ -114,9 +114,6 @@ public class PassiveSTS extends HttpServlet {
     private static final String STS_ACTION_SIGNIN = "wsignin1.0";
 
     private String stsRedirectPage = null;
-    private String redirectHtmlFilePath = CarbonUtils.getCarbonHome() + File.separator + "repository"
-            + File.separator + "resources" + File.separator + "identity" + File.separator + "pages" + File.separator +
-            "sts_response.html";
     private static final String HTTP = "http";
     private static final String HTTPS = "https";
     private static final String PASSIVE_STS_CLIENT_TYPE = "passivests";
@@ -133,12 +130,16 @@ public class PassiveSTS extends HttpServlet {
     private String readPassiveSTSHtmlRedirectPage() {
         FileInputStream fileInputStream = null;
         String fileContent = null;
+        String htmlPageToUse = useIntermediateLoaderPage() ? "sts_response_loader.html" : "sts_response.html";
+        String redirectHtmlFilePath =
+                CarbonUtils.getCarbonHome() + File.separator + "repository" + File.separator + "resources" +
+                        File.separator + "identity" + File.separator + "pages" + File.separator + htmlPageToUse;
         try {
             fileInputStream = new FileInputStream(new File(redirectHtmlFilePath));
             fileContent = new Scanner(fileInputStream, "UTF-8").useDelimiter("\\A").next();
 
             if (log.isDebugEnabled()) {
-                log.debug("sts_response.html : " + fileContent);
+                log.debug("Passive sts response html page : " + fileContent);
             }
 
         } catch (FileNotFoundException e) {
@@ -152,7 +153,7 @@ public class PassiveSTS extends HttpServlet {
                 try {
                     fileInputStream.close();
                 } catch (IOException e) {
-                    log.error("Error occurred when closing file input stream for sts_response.html", e);
+                    log.error("Error occurred when closing file input stream for passive sts response html page", e);
                 }
             }
         }
@@ -248,7 +249,7 @@ public class PassiveSTS extends HttpServlet {
         out.print(finalPage);
 
         if (log.isDebugEnabled()) {
-            log.debug("sts_response.html : " + finalPage);
+            log.debug("Passive sts response page : " + finalPage);
         }
         return;
     }
@@ -889,5 +890,20 @@ public class PassiveSTS extends HttpServlet {
             String key = (String) attrNames.nextElement();
             newSession.setAttribute(key, props.get(key));
         }
+    }
+
+    /**
+     * If this configuration is set to true, Passive sts response will be sent using an intermediate page that
+     * only contains a loader icon as the visual component
+     * (Ref: repository/resources/identity/pages/sts_response_loader.html).
+     * Otherwise, Passive sts response will be sent using the existing sts response page which contains
+     * additional text components (Ref: repository/resources/identity/pages/sts_response.html).
+     *
+     * @return true if the configuration is set to true, false otherwise.
+     */
+    private boolean useIntermediateLoaderPage() {
+
+        return Boolean.parseBoolean(IdentityUtil.getProperty(
+                PassiveRequestorConstants.USE_INTERMEDIATE_LOADER_PAGE_CONFIG_NAME));
     }
 }
