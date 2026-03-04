@@ -70,6 +70,9 @@ public class PassiveRequestorConstants {
     public static final String ERROR_MSG_LOGOUT_WREPLY_MISMATCH = "Error in validating the application's logout " +
             "redirect URL against the configured WReply Logout URL.";
 
+    public static final String USE_INTERMEDIATE_LOADER_PAGE_CONFIG_NAME =
+            "BrandingConfiguration.UseIntermediateLoaderPage";
+
     private PassiveRequestorConstants() {
     }
 }
