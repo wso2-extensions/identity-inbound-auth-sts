@@ -362,6 +362,11 @@
                 <artifactId>pax-logging-api</artifactId>
                 <version>${pax.logging.api.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.wso2.orbit.org.apache.commons.ssl</groupId>
+                <artifactId>not-yet-commons-ssl</artifactId>
+                <version>${not.yet.commons.ssl.wso2.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -524,6 +529,8 @@
 
         <!-- Pax Logging Version -->
         <pax.logging.api.version>1.10.1</pax.logging.api.version>
+
+        <not.yet.commons.ssl.wso2.version>0.3.9.wso2v1</not.yet.commons.ssl.wso2.version>
     </properties>
 
     <modules>
