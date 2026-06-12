@@ -60,6 +60,12 @@
                 <include>org.apache.rampart:rampart</include>
             </includes>
         </dependencySet>
+        <dependencySet>
+            <outputDirectory>wso2is-sts-connector-${project.version}/lib/</outputDirectory>
+            <includes>
+                <include>org.wso2.orbit.org.apache.commons.ssl:not-yet-commons-ssl</include>
+            </includes>
+        </dependencySet>
     </dependencySets>
     <files>
         <file>
