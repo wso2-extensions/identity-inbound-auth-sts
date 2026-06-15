@@ -3,12 +3,12 @@
     "owner": "WSO2",
     "category": "Inbound authenticator",
     "documentationUrl": "https://github.com/wso2-extensions/identity-inbound-auth-sts/tree/master/docs/README.md",
-    "description": "The Security Token Service (STS) component of WSO2 Identity Server enables you to configure the generic STS to issue claim-based security tokens. A claim-based security token is a common way for applications to acquire and authenticate the identity information they need about users inside their organization, in other organizations, and on the Internet. This Security Token Service is capable of issuing SAML 1.1 and SAML 2.0 tokens as recommended in WS-Trust and SAML Web Service Token Profile specifications.",
+    "description": "The Security Token Service (STS) component of WSO2 Identity Server enables you to configure the generic STS to issue claim-based security tokens. A claim-based security token is a common way for applications to acquire and authenticate the identity information they need about users inside their organization, in other organizations, and on the Internet. This Security Token Service is capable of issuing SAML 1.1 and SAML 2.0 tokens as recommended in WS-Trust and SAML Web Service Token Profile specifications. Security Notice: This connector includes not-yet-commons-ssl-0.3.9.jar as a transitive dependency of OpenSAML 2.6.6, which is required for the WS-Trust STS functionality. This library is associated with CVE-2014-3604. However, following a thorough analysis of the connector's code paths, it has been confirmed that the vulnerable code is not reachable at runtime. The library is required solely for class-loading during OpenSAML initialization. Automated vulnerability scanners may flag this CVE, but no remediation action is required. Upgrading away from this dependency requires migrating to OpenSAML 3.x, which involves a significant reimplementation of the WS-Trust connector. This is planned as part of a future release.",
     "status": "Active",
     "labels": ["Inbound Authenticator", "Security Token Service"],
     "releases": [
         {
-            "tagName": "v5.13.2",
+            "tagName": "v5.13.2.1",
             "products": [
                 "IS 7.2.0"
             ]
