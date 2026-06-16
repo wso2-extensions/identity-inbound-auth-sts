@@ -18,6 +18,8 @@ configure WS-Trust Security Token Service with WSO2 Identity Server.
         `<PRODUCT_HOME>/repository/components/dropins`.
         - Navigate to `<CONNECTOR_HOME>/deployment-client-modules` and copy the .mar file in that location to 
         `<PRODUCT_HOME>/repository/deployment/client/modules`.
+        - If the connector has a `<CONNECTOR_HOME>/lib` directory and if the commons-httpclient version in the pack is 3.1.0.wso2v6_15 or higher, navigate to this directory and copy the jar in that location to 
+        `<PRODUCT_HOME>/repository/components/dropins`. 
    4. Navigate back to `<PRODUCT_HOME>` and delete `<CONNECTOR_HOME>` folder. Now you have successfully installed the 
    connector.
    
