@@ -281,6 +281,15 @@
                 <groupId>org.apache.cxf.services.sts</groupId>
                 <artifactId>cxf-services-sts-core</artifactId>
                 <version>${cxf-bundle.version}</version>
+                <exclusions>
+                    <!-- org.ehcache:ehcache (pulled in by cxf-rt-ws-security) declares jaxb-runtime with the
+                         version range [2.2,3), which resolves to milestone builds whose transitive artifacts are
+                         only published in the retired java.net HTTP repositories and can no longer be fetched. -->
+                    <exclusion>
+                        <groupId>org.glassfish.jaxb</groupId>
+                        <artifactId>jaxb-runtime</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.apache.cxf</groupId>
@@ -291,6 +300,15 @@
                 <groupId>org.apache.cxf</groupId>
                 <artifactId>cxf-rt-ws-security</artifactId>
                 <version>${cxf-bundle.version}</version>
+                <exclusions>
+                    <!-- See the note on cxf-services-sts-core above. Up to ehcache 3.9.x this dependency was
+                         'provided' (hence non-transitive); ehcache 3.10.x, shipped with CXF 3.6.x, changed it to
+                         'runtime', which breaks dependency collection. -->
+                    <exclusion>
+                        <groupId>org.glassfish.jaxb</groupId>
+                        <artifactId>jaxb-runtime</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.apache.cxf</groupId>
