@@ -22,6 +22,7 @@
     <test name="passive-sts-test-all">
         <classes>
             <class name="org.wso2.carbon.identity.sts.passive.custom.provider.CustomAttributeProviderTest" />
+            <class name="org.wso2.carbon.identity.sts.passive.utils.RequestProcessorUtilTest" />
         </classes>
     </test>
 </suite>

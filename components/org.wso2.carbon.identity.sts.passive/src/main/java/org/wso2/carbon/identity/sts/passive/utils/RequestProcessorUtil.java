@@ -41,6 +41,7 @@ import org.apache.cxf.sts.token.provider.SAMLTokenProvider;
 import org.apache.cxf.sts.token.provider.TokenProvider;
 import org.apache.cxf.ws.security.sts.provider.STSException;
 import org.apache.cxf.ws.security.sts.provider.model.RequestSecurityTokenResponseCollectionType;
+import org.apache.cxf.ws.security.sts.provider.model.RequestSecurityTokenResponseType;
 import org.apache.cxf.ws.security.sts.provider.model.RequestSecurityTokenType;
 import org.apache.wss4j.common.WSS4JConstants;
 import org.apache.wss4j.common.crypto.Crypto;
@@ -72,11 +73,13 @@ import org.wso2.carbon.identity.sts.passive.custom.provider.CustomAttributeProvi
 import org.wso2.carbon.identity.sts.passive.custom.provider.CustomAuthenticationProvider;
 import org.wso2.carbon.idp.mgt.IdentityProviderManager;
 
+import javax.xml.bind.JAXBElement;
 import java.net.URI;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -518,5 +521,45 @@ public class RequestProcessorUtil {
                 replaceAll("ns2", "wst").
                 replaceAll("ns3", "wsu").
                 replaceAll("ns4", "wsse");
+    }
+
+    /**
+     * Remove AppliesTo element from the RequestSecurityTokenResponseCollectionType.
+     *
+     * @param responseCollection RequestSecurityTokenResponseCollectionType instance.
+     */
+    public static void removeAppliesToFromResponse(
+            RequestSecurityTokenResponseCollectionType responseCollection) {
+
+        if (responseCollection == null || responseCollection.getRequestSecurityTokenResponse() == null) {
+            return;
+        }
+
+        for (RequestSecurityTokenResponseType rstr : responseCollection.getRequestSecurityTokenResponse()) {
+            if (rstr.getAny() != null) {
+                Iterator<Object> iterator = rstr.getAny().iterator();
+                while (iterator.hasNext()) {
+                    Object item = iterator.next();
+                    if (isAppliesToElement(item)) {
+                        iterator.remove();
+                    }
+                }
+            }
+        }
+    }
+
+    private static boolean isAppliesToElement(Object item) {
+
+        if (item instanceof Element) {
+            Element element = (Element) item;
+            return "AppliesTo".equals(element.getLocalName()) ||
+                    (element.getNodeName() != null && element.getNodeName().endsWith("AppliesTo"));
+        } else if (item instanceof JAXBElement) {
+            JAXBElement<?> jaxbElement = (JAXBElement<?>) item;
+            return jaxbElement.getName() != null && "AppliesTo".equals(jaxbElement.getName().getLocalPart());
+        } else if (item != null && "AppliesToBean".equals(item.getClass().getSimpleName())) {
+            return true;
+        }
+        return false;
     }
 }
