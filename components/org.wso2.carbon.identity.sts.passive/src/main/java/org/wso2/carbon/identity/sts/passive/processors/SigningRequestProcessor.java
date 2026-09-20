@@ -53,6 +53,7 @@ import static org.wso2.carbon.identity.sts.passive.utils.RequestProcessorUtil.cr
 import static org.wso2.carbon.identity.sts.passive.utils.RequestProcessorUtil.createSecondaryParameters;
 import static org.wso2.carbon.identity.sts.passive.utils.RequestProcessorUtil.handleClaims;
 import static org.wso2.carbon.identity.sts.passive.utils.RequestProcessorUtil.issueToken;
+import static org.wso2.carbon.identity.sts.passive.utils.RequestProcessorUtil.removeAppliesToFromResponse;
 import static org.wso2.carbon.identity.sts.passive.utils.RequestProcessorUtil.setupMessageContext;
 
 public class SigningRequestProcessor extends RequestProcessor {
@@ -103,16 +104,18 @@ public class SigningRequestProcessor extends RequestProcessor {
             issueTokenRequest.getAny().add(tokenType);
             Element secondaryParameters = createSecondaryParameters(request);
             issueTokenRequest.getAny().add(secondaryParameters);
-            if (!Boolean.parseBoolean(IdentityUtil.getProperty(
-                    IdentityConstants.STS.PASSIVE_STS_DISABLE_APPLIES_TO_IN_RESPONSE))) {
-                issueTokenRequest.getAny().add(createAppliesToElement(request.getRealm()));
-            }
+            issueTokenRequest.getAny().add(createAppliesToElement(request.getRealm()));
             Map<String, Object> msgCtx = setupMessageContext(request.getUserName());
 
             // Make an issue token request.
             RequestSecurityTokenResponseCollectionType securityTokenResponse = issueToken(issueOperation, issueTokenRequest,
                     new CustomTokenPrincipal(request.getUserName()),
                     msgCtx);
+
+            if (Boolean.parseBoolean(IdentityUtil.getProperty(
+                    IdentityConstants.STS.PASSIVE_STS_DISABLE_APPLIES_TO_IN_RESPONSE))) {
+                removeAppliesToFromResponse(securityTokenResponse);
+            }
 
             // Convert the response into a JAXBElement.
             JAXBElement<RequestSecurityTokenResponseCollectionType> jaxbResponse =
