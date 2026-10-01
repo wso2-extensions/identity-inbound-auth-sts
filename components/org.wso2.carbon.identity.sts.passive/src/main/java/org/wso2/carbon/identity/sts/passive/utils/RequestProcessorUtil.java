@@ -80,14 +80,40 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static org.wso2.carbon.identity.sts.passive.PassiveRequestorConstants.STS_DIGEST_ALGORITHM_KEY;
 import static org.wso2.carbon.identity.sts.passive.PassiveRequestorConstants.STS_SIGNATURE_ALGORITHM_KEY;
 import static org.wso2.carbon.identity.sts.passive.PassiveRequestorConstants.STS_TIME_TO_LIVE_KEY;
+import static org.wso2.carbon.identity.sts.passive.PassiveRequestorConstants.WS_TRUST_200512_NS_URI;
 
 public class RequestProcessorUtil {
 
     private static final Log log = LogFactory.getLog(RequestProcessorUtil.class);
+
+    /**
+     * Prefixes relying parties expect for the namespaces of the generated RSTR, keyed by namespace URI.
+     * These are the only namespaces the positional mapping used before ever labelled.
+     */
+    private static final Map<String, String> CANONICAL_NAMESPACE_PREFIXES;
+
+    /**
+     * Matches the prefixes JAXB generates on its own (ns1, ns2, ...). Only these are rewritten, so that
+     * prefixes carried over from the issued token (e.g. the signed assertion) are never touched.
+     */
+    private static final Pattern JAXB_GENERATED_PREFIX_PATTERN = Pattern.compile("ns\\d+");
+
+    private static final Pattern NAMESPACE_DECLARATION_PATTERN =
+            Pattern.compile("xmlns:([^\\s=/>]+)\\s*=\\s*\"([^\"]*)\"");
+
+    static {
+        Map<String, String> prefixes = new HashMap<>();
+        prefixes.put(WS_TRUST_200512_NS_URI, "wst");
+        prefixes.put(WSS4JConstants.WSU_NS, "wsu");
+        prefixes.put(WSS4JConstants.WSSE_NS, "wsse");
+        CANONICAL_NAMESPACE_PREFIXES = Collections.unmodifiableMap(prefixes);
+    }
 
     /**
      * Sets the SAML token provider to the issue operation.
@@ -506,17 +532,107 @@ public class RequestProcessorUtil {
     }
 
     /**
-     * Change the namespaces of the default generated RSTR.
+     * Replaces the namespace prefixes JAXB generates for the RSTR with the prefixes relying parties
+     * expect (wst, wsu and wsse).
+     * <p>
+     * The prefixes are resolved through the namespace URI each generated prefix is bound to, since the
+     * order in which JAXB assigns ns1, ns2, ... is not guaranteed and does vary between runs. Generated
+     * prefixes bound to any other namespace are left as they are.
      *
      * @param response Default generated Request Security Token Response in the form of a string.
-     * @return RSTR with the changed namespaces.
+     * @return RSTR with the changed namespace prefixes.
      */
     public static String changeNamespaces(String response) {
 
-        // TODO - Improve this logic since the namespaces get scrambled time to time.
-        return response.
-                replaceAll("ns2", "wst").
-                replaceAll("ns3", "wsu").
-                replaceAll("ns4", "wsse");
+        if (StringUtils.isBlank(response)) {
+            return response;
+        }
+
+        Map<String, String> declaredPrefixes = getDeclaredNamespacePrefixes(response);
+        Map<String, String> prefixesToRename = new HashMap<>();
+
+        for (Map.Entry<String, String> declaredPrefix : declaredPrefixes.entrySet()) {
+            String prefix = declaredPrefix.getKey();
+            String namespaceURI = declaredPrefix.getValue();
+
+            if (!JAXB_GENERATED_PREFIX_PATTERN.matcher(prefix).matches()) {
+                continue;
+            }
+
+            String canonicalPrefix = CANONICAL_NAMESPACE_PREFIXES.get(namespaceURI);
+            if (canonicalPrefix == null) {
+                continue;
+            }
+
+            String alreadyBoundNamespaceURI = declaredPrefixes.get(canonicalPrefix);
+            if (alreadyBoundNamespaceURI != null && !alreadyBoundNamespaceURI.equals(namespaceURI)) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Skipping the rename of the namespace prefix: " + prefix + " to: " + canonicalPrefix +
+                            " since the latter is already bound to the namespace: " + alreadyBoundNamespaceURI);
+                }
+                continue;
+            }
+
+            prefixesToRename.put(prefix, canonicalPrefix);
+        }
+
+        if (prefixesToRename.isEmpty()) {
+            return response;
+        }
+
+        return renameNamespacePrefixes(response, prefixesToRename);
+    }
+
+    /**
+     * Collects the namespace prefixes declared in the given XML, mapped to the namespace URI each of them
+     * is bound to.
+     *
+     * @param response Request Security Token Response in the form of a string.
+     * @return Declared namespace prefixes mapped to their namespace URIs.
+     */
+    private static Map<String, String> getDeclaredNamespacePrefixes(String response) {
+
+        Map<String, String> declaredPrefixes = new HashMap<>();
+        Matcher matcher = NAMESPACE_DECLARATION_PATTERN.matcher(response);
+        while (matcher.find()) {
+            declaredPrefixes.put(matcher.group(1), matcher.group(2));
+        }
+        return declaredPrefixes;
+    }
+
+    /**
+     * Renames the given namespace prefixes in a single pass, covering both the namespace declarations
+     * (xmlns:ns2="...") and the qualified names using them (&lt;ns2:Foo&gt;, ns2:attribute="...").
+     *
+     * @param response         Request Security Token Response in the form of a string.
+     * @param prefixesToRename Current prefix mapped to the prefix it should be renamed to.
+     * @return RSTR with the renamed namespace prefixes.
+     */
+    private static String renameNamespacePrefixes(String response, Map<String, String> prefixesToRename) {
+
+        StringBuilder quotedPrefixes = new StringBuilder();
+        for (String prefix : prefixesToRename.keySet()) {
+            if (quotedPrefixes.length() > 0) {
+                quotedPrefixes.append("|");
+            }
+            quotedPrefixes.append(Pattern.quote(prefix));
+        }
+
+        // Either a declaration of one of the prefixes, or a qualified name using one of them.
+        Pattern pattern = Pattern.compile(
+                "xmlns:(" + quotedPrefixes + ")(?=\\s*=)|(?<![-\\w.:])(" + quotedPrefixes + ")(?=:)");
+
+        Matcher matcher = pattern.matcher(response);
+        StringBuffer renamedResponse = new StringBuffer();
+        while (matcher.find()) {
+            boolean isDeclaration = matcher.group(1) != null;
+            String prefix = isDeclaration ? matcher.group(1) : matcher.group(2);
+            String replacement = prefixesToRename.get(prefix);
+            matcher.appendReplacement(renamedResponse,
+                    Matcher.quoteReplacement(isDeclaration ? "xmlns:" + replacement : replacement));
+        }
+        matcher.appendTail(renamedResponse);
+
+        return renamedResponse.toString();
     }
 }
