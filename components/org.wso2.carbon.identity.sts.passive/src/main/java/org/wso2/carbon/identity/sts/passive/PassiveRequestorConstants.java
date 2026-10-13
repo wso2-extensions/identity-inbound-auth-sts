@@ -37,6 +37,15 @@ public class PassiveRequestorConstants {
 
     public static final String KEY_STORE_PASSWORD_KEY = "Security.KeyStore.KeyPassword";
 
+    /**
+     * When {@code PassiveSTS.DisableAppliesToInPassiveSTSResponse} is enabled to remove the
+     * {@code wsp:AppliesTo} element, this property decides whether the audience restriction is kept in the
+     * issued SAML assertion. Defaults to {@code true} when not configured, so only the {@code wsp:AppliesTo}
+     * element is removed. Set it to {@code false} to also remove the audience restriction.
+     */
+    public static final String PASSIVE_STS_PRESERVE_AUDIENCE_RESTRICTION_IN_RESPONSE_KEY =
+            "PassiveSTS.PreserveAudienceRestrictionInPassiveSTSResponse";
+
     public final static String ACTION = "wa";
 
     public final static String REPLY_TO = "wreply";
