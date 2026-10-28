@@ -91,6 +91,7 @@ import java.util.Set;
 import static org.wso2.carbon.identity.application.authentication.framework.util.FrameworkConstants.AUTHENTICATED_USER;
 import static org.wso2.carbon.identity.sts.passive.ui.PassiveRequestorConstants.ERROR_AUTHENTICATION;
 import static org.wso2.carbon.identity.sts.passive.ui.PassiveRequestorConstants.ERROR_MSG_LOGOUT_WREPLY_MISMATCH;
+import static org.wso2.carbon.identity.sts.passive.ui.PassiveRequestorConstants.ERROR_MSG_WREPLY_MISMATCH;
 
 @Component(
         service = Servlet.class,
@@ -785,10 +786,53 @@ public class PassiveSTS extends HttpServlet {
         String tenantDomain = resolveTenantDomain(paramMap);
         SessionDTO sessionDTO = buildSessionDTO(paramMap, tenantDomain, request.getQueryString());
 
+        if (!isConfiguredWreply(sessionDTO)) {
+            log.error("Provided wreply URL in the request does not match the configured wreply url.");
+            PassiveSTSUtil.sendToErrorPage(request, response, ERROR_AUTHENTICATION, ERROR_MSG_WREPLY_MISMATCH);
+            return;
+        }
+
         String sessionDataKey = UUIDGenerator.generateUUID();
         addSessionDataToCache(sessionDataKey, sessionDTO);
 
         sendToAuthenticationFramework(request, response, sessionDataKey, sessionDTO, tenantDomain);
+    }
+
+    /**
+     * Check whether the wreply url in the authentication request matches the wreply url configured in the service
+     * provider of the realm. A request without a wreply url or a realm is not checked here.
+     *
+     * @param sessionDTO    Session data of the authentication request.
+     * @return              True if the wreply url can be used for the request.
+     */
+    private boolean isConfiguredWreply(SessionDTO sessionDTO) {
+
+        String wreply = sessionDTO.getReplyTo();
+        if (StringUtils.isBlank(wreply) || StringUtils.isBlank(sessionDTO.getRealm())) {
+            return true;
+        }
+        String tenantDomain = sessionDTO.getTenantDomain();
+        if (StringUtils.isBlank(tenantDomain)) {
+            tenantDomain = MultitenantConstants.SUPER_TENANT_DOMAIN_NAME;
+        }
+        Property[] properties;
+        try {
+            properties = getInboundAuthConfigPropertiesFromSP(getServiceProvider(sessionDTO.getRealm(), tenantDomain));
+        } catch (PassiveSTSException e) {
+            if (log.isDebugEnabled()) {
+                log.debug("Error while retrieving the configured wreply url.", e);
+            }
+            return false;
+        }
+        if (ArrayUtils.isNotEmpty(properties)) {
+            for (Property property : properties) {
+                if (PASSIVE_STS_W_REPLY_PROPERTY.equalsIgnoreCase(property.getName())) {
+                    return StringUtils.isNotBlank(property.getValue()) &&
+                            StringUtils.removeEnd(property.getValue(), "/").equals(StringUtils.removeEnd(wreply, "/"));
+                }
+            }
+        }
+        return false;
     }
 
     private String resolveTenantDomain(Map<String, String[]> paramMap) {
