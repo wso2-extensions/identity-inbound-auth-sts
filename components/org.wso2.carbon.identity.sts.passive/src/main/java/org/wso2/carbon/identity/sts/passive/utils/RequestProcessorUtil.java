@@ -41,6 +41,7 @@ import org.apache.cxf.sts.token.provider.SAMLTokenProvider;
 import org.apache.cxf.sts.token.provider.TokenProvider;
 import org.apache.cxf.ws.security.sts.provider.STSException;
 import org.apache.cxf.ws.security.sts.provider.model.RequestSecurityTokenResponseCollectionType;
+import org.apache.cxf.ws.security.sts.provider.model.RequestSecurityTokenResponseType;
 import org.apache.cxf.ws.security.sts.provider.model.RequestSecurityTokenType;
 import org.apache.wss4j.common.WSS4JConstants;
 import org.apache.wss4j.common.crypto.Crypto;
@@ -72,14 +73,20 @@ import org.wso2.carbon.identity.sts.passive.custom.provider.CustomAttributeProvi
 import org.wso2.carbon.identity.sts.passive.custom.provider.CustomAuthenticationProvider;
 import org.wso2.carbon.idp.mgt.IdentityProviderManager;
 
+import javax.xml.bind.JAXBElement;
+import javax.xml.namespace.QName;
+
 import java.net.URI;
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -102,6 +109,12 @@ public class RequestProcessorUtil {
      * Matches the prefixes JAXB generates on its own (ns1, ns2, ...). Only these are rewritten, so that
      * prefixes carried over from the issued token (e.g. the signed assertion) are never touched.
      */
+    private static final String APPLIES_TO_LOCAL_NAME = "AppliesTo";
+
+    // WS-Policy namespaces CXF accepts for the AppliesTo element.
+    private static final Set<String> WS_POLICY_NAMESPACES = new HashSet<>(Arrays.asList(
+            STSConstants.WSP_NS, STSConstants.WSP_NS_04, STSConstants.WSP_NS_06));
+
     private static final Pattern JAXB_GENERATED_PREFIX_PATTERN = Pattern.compile("ns\\d+");
 
     private static final Pattern NAMESPACE_DECLARATION_PATTERN =
@@ -634,5 +647,54 @@ public class RequestProcessorUtil {
         matcher.appendTail(renamedResponse);
 
         return renamedResponse.toString();
+    }
+
+    /**
+     * Remove the {@code wsp:AppliesTo} element from the issued token responses before they are marshalled, so
+     * that it is not written to the Passive STS response.
+     * <p>
+     * CXF adds the request's {@code AppliesTo} element to the response as a separate item. The issued SAML
+     * assertion, including its audience restriction and signature, is a different item and is not changed.
+     *
+     * @param responseCollection The token responses returned by the issue operation.
+     */
+    public static void removeAppliesTo(RequestSecurityTokenResponseCollectionType responseCollection) {
+
+        if (responseCollection == null) {
+            return;
+        }
+        for (RequestSecurityTokenResponseType response : responseCollection.getRequestSecurityTokenResponse()) {
+            if (response != null) {
+                response.getAny().removeIf(RequestProcessorUtil::isAppliesTo);
+            }
+        }
+    }
+
+    private static boolean isAppliesTo(Object item) {
+
+        QName name = null;
+        if (item instanceof Element) {
+            Element element = (Element) item;
+            name = new QName(element.getNamespaceURI(), element.getLocalName());
+        } else if (item instanceof JAXBElement) {
+            name = ((JAXBElement<?>) item).getName();
+        }
+        return name != null && APPLIES_TO_LOCAL_NAME.equals(name.getLocalPart())
+                && WS_POLICY_NAMESPACES.contains(name.getNamespaceURI());
+    }
+
+    /**
+     * Resolve whether the audience restriction should be kept in the issued assertion when the
+     * {@code wsp:AppliesTo} element is removed from the Passive STS response.
+     *
+     * @param configuredValue Value of {@code PassiveSTS.PreserveAudienceRestrictionInPassiveSTSResponse}.
+     * @return {@code true} if the value is not configured, otherwise the configured boolean value.
+     */
+    public static boolean isAudienceRestrictionPreserved(String configuredValue) {
+
+        if (StringUtils.isBlank(configuredValue)) {
+            return true;
+        }
+        return Boolean.parseBoolean(configuredValue.trim());
     }
 }
