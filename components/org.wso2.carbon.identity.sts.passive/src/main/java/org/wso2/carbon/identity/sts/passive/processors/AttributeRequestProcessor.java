@@ -31,6 +31,7 @@ import org.w3c.dom.Element;
 import org.wso2.carbon.context.PrivilegedCarbonContext;
 import org.wso2.carbon.identity.base.IdentityConstants;
 import org.wso2.carbon.identity.core.util.IdentityUtil;
+import org.wso2.carbon.identity.sts.passive.PassiveRequestorConstants;
 import org.wso2.carbon.identity.sts.passive.RequestToken;
 import org.wso2.carbon.identity.sts.passive.ResponseToken;
 import org.wso2.carbon.identity.sts.passive.internal.IdentityPassiveSTSServiceComponent;
@@ -51,7 +52,9 @@ import static org.wso2.carbon.identity.sts.passive.utils.RequestProcessorUtil.ch
 import static org.wso2.carbon.identity.sts.passive.utils.RequestProcessorUtil.createAppliesToElement;
 import static org.wso2.carbon.identity.sts.passive.utils.RequestProcessorUtil.createSecondaryParameters;
 import static org.wso2.carbon.identity.sts.passive.utils.RequestProcessorUtil.handleClaims;
+import static org.wso2.carbon.identity.sts.passive.utils.RequestProcessorUtil.isAudienceRestrictionPreserved;
 import static org.wso2.carbon.identity.sts.passive.utils.RequestProcessorUtil.issueToken;
+import static org.wso2.carbon.identity.sts.passive.utils.RequestProcessorUtil.removeAppliesTo;
 import static org.wso2.carbon.identity.sts.passive.utils.RequestProcessorUtil.setupMessageContext;
 
 public class AttributeRequestProcessor extends RequestProcessor {
@@ -102,8 +105,14 @@ public class AttributeRequestProcessor extends RequestProcessor {
             issueTokenRequest.getAny().add(tokenType);
             Element secondaryParameters = createSecondaryParameters(request);
             issueTokenRequest.getAny().add(secondaryParameters);
-            if (!Boolean.parseBoolean(IdentityUtil.getProperty(
-                    IdentityConstants.STS.PASSIVE_STS_DISABLE_APPLIES_TO_IN_RESPONSE))) {
+            boolean disableAppliesTo = Boolean.parseBoolean(IdentityUtil.getProperty(
+                    IdentityConstants.STS.PASSIVE_STS_DISABLE_APPLIES_TO_IN_RESPONSE));
+            boolean preserveAudienceRestriction = isAudienceRestrictionPreserved(IdentityUtil.getProperty(
+                    PassiveRequestorConstants.PASSIVE_STS_PRESERVE_AUDIENCE_RESTRICTION_IN_RESPONSE_KEY));
+            // The AppliesTo element drives both the response wsp:AppliesTo element and the SAML audience
+            // restriction. Add it to the request unless AppliesTo is disabled and the audience restriction
+            // is not being preserved.
+            if (!disableAppliesTo || preserveAudienceRestriction) {
                 issueTokenRequest.getAny().add(createAppliesToElement(request.getRealm()));
             }
             Map<String, Object> msgCtx = setupMessageContext(request.getUserName());
@@ -112,6 +121,11 @@ public class AttributeRequestProcessor extends RequestProcessor {
             RequestSecurityTokenResponseCollectionType securityTokenResponse = issueToken(issueOperation, issueTokenRequest,
                     new CustomTokenPrincipal(request.getUserName()),
                     msgCtx);
+            // AppliesTo was added to the request only to build the audience restriction. Drop it from the
+            // response before it is marshalled, so only the wsp:AppliesTo element is removed.
+            if (disableAppliesTo && preserveAudienceRestriction) {
+                removeAppliesTo(securityTokenResponse);
+            }
 
             // Convert the response into a JAXBElement.
             JAXBElement<RequestSecurityTokenResponseCollectionType> jaxbResponse =
