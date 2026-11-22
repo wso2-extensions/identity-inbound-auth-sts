@@ -56,7 +56,7 @@
         <dependency>
             <groupId>org.wso2.orbit.org.opensaml</groupId>
             <artifactId>opensaml</artifactId>
-            <version>3.3.1.wso2v16</version>
+            <version>3.3.1.wso2v17</version>
         </dependency>
         <dependency>
             <groupId>org.ops4j.pax.logging</groupId>
@@ -86,12 +86,12 @@
         <dependency>
             <groupId>org.apache.wss4j</groupId>
             <artifactId>wss4j-ws-security-common</artifactId>
-            <version>2.3.0</version>
+            <version>2.4.4</version>
         </dependency>
         <dependency>
             <groupId>org.apache.wss4j</groupId>
             <artifactId>wss4j-ws-security-dom</artifactId>
-            <version>2.3.0</version>
+            <version>2.4.4</version>
         </dependency>
         <dependency>
             <groupId>org.apache.cxf</groupId>
